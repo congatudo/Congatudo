@@ -21,7 +21,6 @@
   },
   "author": "",
   "dependencies": {
-    "binary": "^0.3.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
     "cronstrue": "^1.92.0",

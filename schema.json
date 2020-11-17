@@ -451,7 +451,7 @@
     "RMSG_CLEAN_MODE": {
       "fields": {}
     },
-    "CMSG_RETURN_HOME": {
+    "QMSG_RETURN_HOME": {
       "fields": {
         "unk1": {
           "rule": "required",
@@ -460,7 +460,241 @@
         }
       }
     },
-    "SMSG_RETURN_HOME": {
+    "RMSG_RETURN_HOME": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_MAP_INFO": {
+      "fields": {
+        "mask": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_SET_POSITION": {
+      "fields": {
+        "mapHeadId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "poseX": {
+          "rule": "required",
+          "type": "float",
+          "id": 2
+        },
+        "poseY": {
+          "rule": "required",
+          "type": "float",
+          "id": 3
+        },
+        "posePhi": {
+          "rule": "required",
+          "type": "float",
+          "id": 4
+        },
+        "update": {
+          "rule": "required",
+          "type": "int32",
+          "id": 5
+        }
+      }
+    },
+    "RMSG_SET_POSITION": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "position": {
+          "rule": "required",
+          "type": "QMSG_SET_POSITION",
+          "id": 3
+        }
+      }
+    },
+    "QMSG_UNK1": {
+      "fields": {
+        "unk1": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "RMSG_UNK1": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_UNK2": {
+      "fields": {
+        "unk1": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "unk2": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        }
+      }
+    },
+    "RMSG_UNK2": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_DEVICE_TIME": {
+      "fields": {}
+    },
+    "RMSG_DEVICE_TIME": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "body": {
+          "rule": "required",
+          "type": "Body",
+          "id": 3
+        }
+      },
+      "nested": {
+        "Body": {
+          "fields": {
+            "deviceTime": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            },
+            "deviceTimezone": {
+              "rule": "required",
+              "type": "int32",
+              "id": 2
+            }
+          }
+        }
+      }
+    },
+    "QMSG_DEVICE_CHECK": {
+      "fields": {}
+    },
+    "RMSG_DEVICE_CHECK": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_SET_AREA": {
+      "fields": {
+        "mapHeadId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "unk1": {
+          "rule": "required",
+          "type": "int32",
+          "id": 2
+        },
+        "cleanAreaLength": {
+          "rule": "required",
+          "type": "int32",
+          "id": 3
+        },
+        "cleanAreaList": {
+          "rule": "repeated",
+          "type": "CleanArea",
+          "id": 4
+        }
+      },
+      "nested": {
+        "Coordinate": {
+          "fields": {
+            "x": {
+              "rule": "required",
+              "type": "float",
+              "id": 1
+            },
+            "y": {
+              "rule": "required",
+              "type": "float",
+              "id": 2
+            }
+          }
+        },
+        "CleanArea": {
+          "fields": {
+            "cleanAreaId": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            },
+            "unk1": {
+              "rule": "required",
+              "type": "int32",
+              "id": 2
+            },
+            "coordinateLength": {
+              "rule": "required",
+              "type": "int32",
+              "id": 3
+            },
+            "coordinateList": {
+              "rule": "repeated",
+              "type": "Coordinate",
+              "id": 4
+            }
+          }
+        }
+      }
+    },
+    "RMSG_SET_AREA": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "position": {
+          "rule": "required",
+          "type": "QMSG_SET_AREA",
+          "id": 3
+        }
+      }
+    },
+    "QMSG_CLEAN_AREA": {
+      "fields": {
+        "unk1": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "RMSG_CLEAN_AREA": {
       "fields": {
         "result": {
           "rule": "required",

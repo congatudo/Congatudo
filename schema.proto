@@ -5,14 +5,14 @@ message QMSG_PING {}
 message RMSG_PING {}
 
 message QMSG_DEVICE_LOGIN {
-    required string deviceSerialNumber = 1;
-    required bool unk1 = 2;
-    required int32 unk2 = 3;
+  required string deviceSerialNumber = 1;
+  required bool unk1 = 2;
+  required int32 unk2 = 3;
 }
 
 message RMSG_DEVICE_LOGIN {
-    required int32 result = 1;
-    optional string reason = 2;
+  required int32 result = 1;
+  optional string reason = 2;
 }
 
 message QMSG_DEVICE_SIGNUP {
@@ -115,41 +115,145 @@ message RMSG_LOCATE_DEVICE {}
 message QMSG_CONNECT_DEVICE {}
 
 message QMSG_DEVICE_STATUS {
-    required int32 mapHeadId = 1;
-    required int32 areaCleanFlag = 2;
-    required int32 workMode = 3;
-    required int32 battery = 4;
-    required bool chargeStatus = 5;
-    required int32 type = 6;
-    required int32 faultCode = 7;
-    required int32 cleanPreference = 8;
-    required int32 repeatClean = 9;
-    required int32 cleanTime = 10;
-    required int32 cleanSize = 11;
-    required int32 waterLevel = 12;
-    required int32 dustBoxType = 13;
-    required bool mopType = 14;
+  required int32 mapHeadId = 1;
+  required int32 areaCleanFlag = 2;
+  required int32 workMode = 3;
+  required int32 battery = 4;
+  required bool chargeStatus = 5;
+  required int32 type = 6;
+  required int32 faultCode = 7;
+  required int32 cleanPreference = 8;
+  required int32 repeatClean = 9;
+  required int32 cleanTime = 10;
+  required int32 cleanSize = 11;
+  required int32 waterLevel = 12;
+  required int32 dustBoxType = 13;
+  required bool mopType = 14;
 }
 
 message QMSG_SET_FAN_MODE {
-    required int32 mode = 1;
+  required int32 mode = 1;
 }
 
 message RMSG_SET_FAN_MODE {
-    required int32 result = 1;
+  required int32 result = 1;
 }
 
 message QMSG_CLEAN_MODE {
-    required int32 mode = 1;
-    required int32 unk1 = 2;
+  required int32 mode = 1;
+  required int32 unk1 = 2;
 }
 
 message RMSG_CLEAN_MODE {}
 
-message CMSG_RETURN_HOME {
-    required int32 unk1 = 1;
+message QMSG_RETURN_HOME {
+  required int32 unk1 = 1;
 }
 
-message SMSG_RETURN_HOME {
+message RMSG_RETURN_HOME {
+  required int32 result = 1;
+}
+
+message QMSG_MAP_INFO {
+  required int32 mask = 1;
+}
+
+message QMSG_SET_POSITION {
+  required int32 mapHeadId = 1;
+  required float poseX = 2;
+  required float poseY = 3;
+  required float posePhi = 4;
+  required int32 update = 5;
+}
+
+message RMSG_SET_POSITION {
+  required int32 result = 1;
+  required QMSG_SET_POSITION position = 3;
+}
+
+message QMSG_UNK1 {
+  required int32 unk1 = 1;
+}
+
+message RMSG_UNK1 {
+  required int32 result = 1;
+}
+
+message QMSG_UNK2 {
+    required int32 unk1 = 1;
+    required string unk2 = 2;
+}
+
+message RMSG_UNK2 {
     required int32 result = 1;
+}
+
+message QMSG_DEVICE_TIME {}
+
+message RMSG_DEVICE_TIME {
+    message Body {
+        required int32 deviceTime = 1;
+        required int32 deviceTimezone = 2;
+    }
+
+    required int32 result = 1;
+    required Body body = 3;
+}
+
+message QMSG_DEVICE_CHECK {}
+
+message RMSG_DEVICE_CHECK {
+    required int32 result = 1;
+}
+
+/* root: */
+/*     1 <varint> = 1575527664 */
+/*     2 <varint> = 0 */
+/*     3 <varint> = 1 */
+/*     4 <chunk> = message: */
+/*         1 <varint> = 4484492 */
+/*         2 <varint> = 0 */
+/*         3 <varint> = 4 */
+/*         4 <chunk> = message: */
+/*             1 <32bit> = 0x3F658650 / 1063618128 / 0.896581 */
+/*             2 <32bit> = 0xC0033576 / -1073531530 / -2.05014 */
+/*         4 <chunk> = message: */
+/*             1 <32bit> = 0x3F658650 / 1063618128 / 0.896581 */
+/*             2 <32bit> = 0xC044578D / -1069262963 / -3.06784 */
+/*         4 <chunk> = message: */
+/*             1 <32bit> = 0x3FF2C328 / 1072874280 / 1.89658 */
+/*             2 <32bit> = 0xC044578D / -1069262963 / -3.06784 */
+/*         4 <chunk> = message: */
+/*             1 <32bit> = 0x3FF2C328 / 1072874280 / 1.89658 */
+/*             2 <32bit> = 0xC0033576 / -1073531530 / -2.05014 */
+message QMSG_SET_AREA {
+  message Coordinate {
+    required float x = 1;
+    required float y = 2;
+  }
+
+  message CleanArea {
+    required int32 cleanAreaId = 1;
+    required int32 unk1 = 2;
+    required int32 coordinateLength = 3;
+    repeated Coordinate coordinateList = 4;
+  }
+
+  required int32 mapHeadId = 1;
+  required int32 unk1 = 2;
+  required int32 cleanAreaLength = 3;
+  repeated CleanArea cleanAreaList = 4;
+}
+
+message RMSG_SET_AREA {
+  required int32 result = 1;
+  required QMSG_SET_AREA position = 3;
+}
+
+message QMSG_CLEAN_AREA {
+  required int32 unk1 = 1;
+}
+
+message RMSG_CLEAN_AREA {
+  required int32 result = 1;
 }
