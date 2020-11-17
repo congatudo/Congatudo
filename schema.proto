@@ -1,0 +1,155 @@
+syntax = "proto2";
+
+message QMSG_PING {}
+
+message RMSG_PING {}
+
+message QMSG_DEVICE_LOGIN {
+    required string deviceSerialNumber = 1;
+    required bool unk1 = 2;
+    required int32 unk2 = 3;
+}
+
+message RMSG_DEVICE_LOGIN {
+    required int32 result = 1;
+    optional string reason = 2;
+}
+
+message QMSG_DEVICE_SIGNUP {
+  required string softwareVersion = 1;
+  required string hardwareVersion = 2;
+  required string deviceSerialNumber = 3;
+  required string deviceMac = 4;
+  required int32 deviceType = 5;
+  required int32 customerFirmwareId = 6;
+  required string ctrlVersion = 7;
+}
+
+message RMSG_DEVICE_SIGNUP {
+  message Device {
+    required int32 id = 1;
+  }
+
+  required int32 result = 1;
+  required Device device = 3;
+}
+
+message QMSG_DEVICE_VERSION {
+  required string softwareVersion = 1;
+  required string hardwareVersion = 2;
+}
+
+message RMSG_DEVICE_VERSION {
+  required int32 result = 1;
+}
+
+message QMSG_DEVICE_INFO {
+  message TaskList {
+    required int32 orderId = 1;
+    required bool enable = 2;
+    required bool repeat = 3;
+    required int32 weekday = 4;
+    required int32 day_time = 5;
+  }
+
+  message Voice {
+    required bool voiceMode = 1;
+    required bool volume = 2;
+  }
+
+  message Config {
+    required bool ecoMode = 1;
+    required bool repeatClean = 2;
+    required bool brokenEnable = 3;
+    required bool carpetTurbo = 4;
+    required bool historyMapEnable = 5;
+  }
+
+  message Status {
+    required bool isOpen = 1;
+    required int32 beginTime = 2;
+    required int32 endTime = 3;
+  }
+
+  required int32 deviceId = 1;
+  required Voice voice = 2;
+  required Config config = 3;
+  required TaskList taskList = 4;
+  required QMSG_DEVICE_OTA ota = 5;
+  required Status status = 7;
+}
+
+message RMSG_DEVICE_INFO {
+  required int32 result = 1;
+}
+
+message QMSG_DEVICE_OTA {
+  required bool newVersion = 1;
+  required string packageSize = 2;
+  required string systemVersion = 3;
+  required string otaPackageVersion = 4;
+  required string remoteUrl = 5;
+  required bool forceupgrade = 6;
+}
+
+message RMSG_DEVICE_OTA {
+  required int32 result = 1;
+}
+
+message QMSG_BATTERY_LEVEL {
+  message Battery {
+    required int32 level = 1;
+  }
+
+  required Battery battery = 1;
+}
+
+message RMSG_BATTERY_LEVEL {
+  required int32 result = 1;
+}
+
+message QMSG_LOCATE_DEVICE {}
+
+message RMSG_LOCATE_DEVICE {}
+
+message QMSG_CONNECT_DEVICE {}
+
+message QMSG_DEVICE_STATUS {
+    required int32 mapHeadId = 1;
+    required int32 areaCleanFlag = 2;
+    required int32 workMode = 3;
+    required int32 battery = 4;
+    required bool chargeStatus = 5;
+    required int32 type = 6;
+    required int32 faultCode = 7;
+    required int32 cleanPreference = 8;
+    required int32 repeatClean = 9;
+    required int32 cleanTime = 10;
+    required int32 cleanSize = 11;
+    required int32 waterLevel = 12;
+    required int32 dustBoxType = 13;
+    required bool mopType = 14;
+}
+
+message QMSG_SET_FAN_MODE {
+    required int32 mode = 1;
+}
+
+message RMSG_SET_FAN_MODE {
+    required int32 result = 1;
+}
+
+message QMSG_CLEAN_MODE {
+    required int32 mode = 1;
+    required int32 unk1 = 2;
+}
+
+message RMSG_CLEAN_MODE {}
+
+message CMSG_RETURN_HOME {
+    required int32 unk1 = 1;
+}
+
+message SMSG_RETURN_HOME {
+    required int32 result = 1;
+}

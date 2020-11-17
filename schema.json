@@ -1,0 +1,473 @@
+{
+  "nested": {
+    "QMSG_PING": {
+      "fields": {}
+    },
+    "RMSG_PING": {
+      "fields": {}
+    },
+    "QMSG_DEVICE_LOGIN": {
+      "fields": {
+        "deviceSerialNumber": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "unk1": {
+          "rule": "required",
+          "type": "bool",
+          "id": 2
+        },
+        "unk2": {
+          "rule": "required",
+          "type": "int32",
+          "id": 3
+        }
+      }
+    },
+    "RMSG_DEVICE_LOGIN": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "reason": {
+          "type": "string",
+          "id": 2
+        }
+      }
+    },
+    "QMSG_DEVICE_SIGNUP": {
+      "fields": {
+        "softwareVersion": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "hardwareVersion": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "deviceSerialNumber": {
+          "rule": "required",
+          "type": "string",
+          "id": 3
+        },
+        "deviceMac": {
+          "rule": "required",
+          "type": "string",
+          "id": 4
+        },
+        "deviceType": {
+          "rule": "required",
+          "type": "int32",
+          "id": 5
+        },
+        "customerFirmwareId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 6
+        },
+        "ctrlVersion": {
+          "rule": "required",
+          "type": "string",
+          "id": 7
+        }
+      }
+    },
+    "RMSG_DEVICE_SIGNUP": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "device": {
+          "rule": "required",
+          "type": "Device",
+          "id": 3
+        }
+      },
+      "nested": {
+        "Device": {
+          "fields": {
+            "id": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            }
+          }
+        }
+      }
+    },
+    "QMSG_DEVICE_VERSION": {
+      "fields": {
+        "softwareVersion": {
+          "rule": "required",
+          "type": "string",
+          "id": 1
+        },
+        "hardwareVersion": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        }
+      }
+    },
+    "RMSG_DEVICE_VERSION": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_DEVICE_INFO": {
+      "fields": {
+        "deviceId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "voice": {
+          "rule": "required",
+          "type": "Voice",
+          "id": 2
+        },
+        "config": {
+          "rule": "required",
+          "type": "Config",
+          "id": 3
+        },
+        "taskList": {
+          "rule": "required",
+          "type": "TaskList",
+          "id": 4
+        },
+        "ota": {
+          "rule": "required",
+          "type": "QMSG_DEVICE_OTA",
+          "id": 5
+        },
+        "status": {
+          "rule": "required",
+          "type": "Status",
+          "id": 7
+        }
+      },
+      "nested": {
+        "TaskList": {
+          "fields": {
+            "orderId": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            },
+            "enable": {
+              "rule": "required",
+              "type": "bool",
+              "id": 2
+            },
+            "repeat": {
+              "rule": "required",
+              "type": "bool",
+              "id": 3
+            },
+            "weekday": {
+              "rule": "required",
+              "type": "int32",
+              "id": 4
+            },
+            "dayTime": {
+              "rule": "required",
+              "type": "int32",
+              "id": 5
+            }
+          }
+        },
+        "Voice": {
+          "fields": {
+            "voiceMode": {
+              "rule": "required",
+              "type": "bool",
+              "id": 1
+            },
+            "volume": {
+              "rule": "required",
+              "type": "bool",
+              "id": 2
+            }
+          }
+        },
+        "Config": {
+          "fields": {
+            "ecoMode": {
+              "rule": "required",
+              "type": "bool",
+              "id": 1
+            },
+            "repeatClean": {
+              "rule": "required",
+              "type": "bool",
+              "id": 2
+            },
+            "brokenEnable": {
+              "rule": "required",
+              "type": "bool",
+              "id": 3
+            },
+            "carpetTurbo": {
+              "rule": "required",
+              "type": "bool",
+              "id": 4
+            },
+            "historyMapEnable": {
+              "rule": "required",
+              "type": "bool",
+              "id": 5
+            }
+          }
+        },
+        "Status": {
+          "fields": {
+            "isOpen": {
+              "rule": "required",
+              "type": "bool",
+              "id": 1
+            },
+            "beginTime": {
+              "rule": "required",
+              "type": "int32",
+              "id": 2
+            },
+            "endTime": {
+              "rule": "required",
+              "type": "int32",
+              "id": 3
+            }
+          }
+        }
+      }
+    },
+    "RMSG_DEVICE_INFO": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_DEVICE_OTA": {
+      "fields": {
+        "newVersion": {
+          "rule": "required",
+          "type": "bool",
+          "id": 1
+        },
+        "packageSize": {
+          "rule": "required",
+          "type": "string",
+          "id": 2
+        },
+        "systemVersion": {
+          "rule": "required",
+          "type": "string",
+          "id": 3
+        },
+        "otaPackageVersion": {
+          "rule": "required",
+          "type": "string",
+          "id": 4
+        },
+        "remoteUrl": {
+          "rule": "required",
+          "type": "string",
+          "id": 5
+        },
+        "forceupgrade": {
+          "rule": "required",
+          "type": "bool",
+          "id": 6
+        }
+      }
+    },
+    "RMSG_DEVICE_OTA": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_BATTERY_LEVEL": {
+      "fields": {
+        "battery": {
+          "rule": "required",
+          "type": "Battery",
+          "id": 1
+        }
+      },
+      "nested": {
+        "Battery": {
+          "fields": {
+            "level": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            }
+          }
+        }
+      }
+    },
+    "RMSG_BATTERY_LEVEL": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_LOCATE_DEVICE": {
+      "fields": {}
+    },
+    "RMSG_LOCATE_DEVICE": {
+      "fields": {}
+    },
+    "QMSG_CONNECT_DEVICE": {
+      "fields": {}
+    },
+    "QMSG_DEVICE_STATUS": {
+      "fields": {
+        "mapHeadId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "areaCleanFlag": {
+          "rule": "required",
+          "type": "int32",
+          "id": 2
+        },
+        "workMode": {
+          "rule": "required",
+          "type": "int32",
+          "id": 3
+        },
+        "battery": {
+          "rule": "required",
+          "type": "int32",
+          "id": 4
+        },
+        "chargeStatus": {
+          "rule": "required",
+          "type": "bool",
+          "id": 5
+        },
+        "type": {
+          "rule": "required",
+          "type": "int32",
+          "id": 6
+        },
+        "faultCode": {
+          "rule": "required",
+          "type": "int32",
+          "id": 7
+        },
+        "cleanPreference": {
+          "rule": "required",
+          "type": "int32",
+          "id": 8
+        },
+        "repeatClean": {
+          "rule": "required",
+          "type": "int32",
+          "id": 9
+        },
+        "cleanTime": {
+          "rule": "required",
+          "type": "int32",
+          "id": 10
+        },
+        "cleanSize": {
+          "rule": "required",
+          "type": "int32",
+          "id": 11
+        },
+        "waterLevel": {
+          "rule": "required",
+          "type": "int32",
+          "id": 12
+        },
+        "dustBoxType": {
+          "rule": "required",
+          "type": "int32",
+          "id": 13
+        },
+        "mopType": {
+          "rule": "required",
+          "type": "bool",
+          "id": 14
+        }
+      }
+    },
+    "QMSG_SET_FAN_MODE": {
+      "fields": {
+        "mode": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "RMSG_SET_FAN_MODE": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "QMSG_CLEAN_MODE": {
+      "fields": {
+        "mode": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "unk1": {
+          "rule": "required",
+          "type": "int32",
+          "id": 2
+        }
+      }
+    },
+    "RMSG_CLEAN_MODE": {
+      "fields": {}
+    },
+    "CMSG_RETURN_HOME": {
+      "fields": {
+        "unk1": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "SMSG_RETURN_HOME": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    }
+  }
+}
