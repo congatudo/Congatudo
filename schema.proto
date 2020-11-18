@@ -257,3 +257,11 @@ message QMSG_CLEAN_AREA {
 message RMSG_CLEAN_AREA {
   required int32 result = 1;
 }
+
+message QMSG_SET_MANUAL {
+  required int32 command = 1;
+}
+
+message RMSG_SET_MANUAL {
+  required int32 result = 1;
+}

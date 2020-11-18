@@ -702,6 +702,24 @@
           "id": 1
         }
       }
+    },
+    "QMSG_SET_MANUAL": {
+      "fields": {
+        "command": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "RMSG_SET_MANUAL": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
     }
   }
 }
