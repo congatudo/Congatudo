@@ -1,12 +1,12 @@
 {
   "nested": {
-    "QMSG_PING": {
+    "CLIENT_HEARTBEAT_REQ": {
       "fields": {}
     },
-    "RMSG_PING": {
+    "CLIENT_HEARTBEAT_RSP": {
       "fields": {}
     },
-    "QMSG_DEVICE_LOGIN": {
+    "CLIENT_ONLINE_REQ": {
       "fields": {
         "deviceSerialNumber": {
           "rule": "required",
@@ -25,7 +25,7 @@
         }
       }
     },
-    "RMSG_DEVICE_LOGIN": {
+    "CLIENT_ONLINE_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -38,7 +38,7 @@
         }
       }
     },
-    "QMSG_DEVICE_SIGNUP": {
+    "DEVICE_REGISTER_REQ": {
       "fields": {
         "softwareVersion": {
           "rule": "required",
@@ -77,7 +77,7 @@
         }
       }
     },
-    "RMSG_DEVICE_SIGNUP": {
+    "DEVICE_REGISTER_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -102,7 +102,7 @@
         }
       }
     },
-    "QMSG_DEVICE_VERSION": {
+    "DEVICE_VERSION_INFO_UPDATE_REQ": {
       "fields": {
         "softwareVersion": {
           "rule": "required",
@@ -116,7 +116,7 @@
         }
       }
     },
-    "RMSG_DEVICE_VERSION": {
+    "DEVICE_VERSION_INFO_UPDATE_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -125,7 +125,7 @@
         }
       }
     },
-    "QMSG_DEVICE_INFO": {
+    "PUSH_DEVICE_AGENT_SETTING_REQ": {
       "fields": {
         "deviceId": {
           "rule": "required",
@@ -149,7 +149,7 @@
         },
         "ota": {
           "rule": "required",
-          "type": "QMSG_DEVICE_OTA",
+          "type": "PUSH_DEVICE_PACKAGE_UPGRADE_INFO_REQ",
           "id": 5
         },
         "status": {
@@ -252,7 +252,7 @@
         }
       }
     },
-    "RMSG_DEVICE_INFO": {
+    "PUSH_DEVICE_AGENT_SETTING_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -261,7 +261,7 @@
         }
       }
     },
-    "QMSG_DEVICE_OTA": {
+    "PUSH_DEVICE_PACKAGE_UPGRADE_INFO_REQ": {
       "fields": {
         "newVersion": {
           "rule": "required",
@@ -295,7 +295,7 @@
         }
       }
     },
-    "RMSG_DEVICE_OTA": {
+    "PUSH_DEVICE_PACKAGE_UPGRADE_INFO_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -304,7 +304,7 @@
         }
       }
     },
-    "QMSG_BATTERY_LEVEL": {
+    "PUSH_DEVICE_BATTERY_INFO_REQ": {
       "fields": {
         "battery": {
           "rule": "required",
@@ -324,7 +324,7 @@
         }
       }
     },
-    "RMSG_BATTERY_LEVEL": {
+    "PUSH_DEVICE_BATTERY_INFO_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -333,16 +333,16 @@
         }
       }
     },
-    "QMSG_LOCATE_DEVICE": {
+    "DEVICE_SEEK_LOCATION_REQ": {
       "fields": {}
     },
-    "RMSG_LOCATE_DEVICE": {
+    "DEVICE_SEEK_LOCATION_RSP": {
       "fields": {}
     },
-    "QMSG_CONNECT_DEVICE": {
+    "DEVICE_STATUS_GETTING_REQ": {
       "fields": {}
     },
-    "QMSG_DEVICE_STATUS": {
+    "DEVICE_MAP_ID_WORK_STATUS_PUSH_REQ": {
       "fields": {
         "mapHeadId": {
           "rule": "required",
@@ -416,7 +416,7 @@
         }
       }
     },
-    "QMSG_SET_FAN_MODE": {
+    "DEVICE_SET_CLEAN_PREFERENCE_REQ": {
       "fields": {
         "mode": {
           "rule": "required",
@@ -425,7 +425,7 @@
         }
       }
     },
-    "RMSG_SET_FAN_MODE": {
+    "DEVICE_SET_CLEAN_PREFERENCE_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -434,7 +434,7 @@
         }
       }
     },
-    "QMSG_CLEAN_MODE": {
+    "DEVICE_AUTO_CLEAN_REQ": {
       "fields": {
         "mode": {
           "rule": "required",
@@ -448,10 +448,10 @@
         }
       }
     },
-    "RMSG_CLEAN_MODE": {
+    "DEVICE_AUTO_CLEAN_RSP": {
       "fields": {}
     },
-    "QMSG_RETURN_HOME": {
+    "DEVICE_CHARGE_REQ": {
       "fields": {
         "unk1": {
           "rule": "required",
@@ -460,7 +460,7 @@
         }
       }
     },
-    "RMSG_RETURN_HOME": {
+    "DEVICE_CHARGE_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -469,7 +469,7 @@
         }
       }
     },
-    "QMSG_MAP_INFO": {
+    "DEVICE_MAP_ID_GET_GLOBAL_INFO_REQ": {
       "fields": {
         "mask": {
           "rule": "required",
@@ -478,7 +478,7 @@
         }
       }
     },
-    "QMSG_SET_POSITION": {
+    "DEVICE_MAP_ID_SET_NAVIGATION_REQ": {
       "fields": {
         "mapHeadId": {
           "rule": "required",
@@ -507,7 +507,7 @@
         }
       }
     },
-    "RMSG_SET_POSITION": {
+    "DEVICE_MAP_ID_SET_NAVIGATION_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -516,12 +516,12 @@
         },
         "position": {
           "rule": "required",
-          "type": "QMSG_SET_POSITION",
+          "type": "DEVICE_MAP_ID_SET_NAVIGATION_REQ",
           "id": 3
         }
       }
     },
-    "QMSG_UNK1": {
+    "DEVICE_WORKSTATUS_REPORT_REQ": {
       "fields": {
         "unk1": {
           "rule": "required",
@@ -530,7 +530,7 @@
         }
       }
     },
-    "RMSG_UNK1": {
+    "DEVICE_WORKSTATUS_REPORT_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -539,7 +539,7 @@
         }
       }
     },
-    "QMSG_UNK2": {
+    "DEVICE_GET_ALL_GLOBAL_MAP_INFO_REQ": {
       "fields": {
         "unk1": {
           "rule": "required",
@@ -553,7 +553,7 @@
         }
       }
     },
-    "RMSG_UNK2": {
+    "DEVICE_GET_ALL_GLOBAL_MAP_INFO_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -562,10 +562,10 @@
         }
       }
     },
-    "QMSG_DEVICE_TIME": {
+    "DEVICE_GETTIME_REQ": {
       "fields": {}
     },
-    "RMSG_DEVICE_TIME": {
+    "DEVICE_GETTIME_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -595,10 +595,10 @@
         }
       }
     },
-    "QMSG_DEVICE_CHECK": {
+    "DEVICE_CONTROL_LOCK_REQ": {
       "fields": {}
     },
-    "RMSG_DEVICE_CHECK": {
+    "DEVICE_CONTROL_LOCK_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -607,7 +607,7 @@
         }
       }
     },
-    "QMSG_SET_AREA": {
+    "DEVICE_MAP_ID_SET_AREA_CLEAN_INFO_REQ": {
       "fields": {
         "mapHeadId": {
           "rule": "required",
@@ -671,7 +671,7 @@
         }
       }
     },
-    "RMSG_SET_AREA": {
+    "DEVICE_MAP_ID_SET_AREA_CLEAN_INFO_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -680,12 +680,12 @@
         },
         "position": {
           "rule": "required",
-          "type": "QMSG_SET_AREA",
+          "type": "DEVICE_MAP_ID_SET_AREA_CLEAN_INFO_REQ",
           "id": 3
         }
       }
     },
-    "QMSG_CLEAN_AREA": {
+    "DEVICE_AREA_CLEAN_REQ": {
       "fields": {
         "unk1": {
           "rule": "required",
@@ -694,7 +694,7 @@
         }
       }
     },
-    "RMSG_CLEAN_AREA": {
+    "DEVICE_AREA_CLEAN_RSP": {
       "fields": {
         "result": {
           "rule": "required",
@@ -703,7 +703,7 @@
         }
       }
     },
-    "QMSG_SET_MANUAL": {
+    "DEVICE_MANUAL_CTRL_REQ": {
       "fields": {
         "command": {
           "rule": "required",
@@ -712,7 +712,7 @@
         }
       }
     },
-    "RMSG_SET_MANUAL": {
+    "DEVICE_MANUAL_CTRL_RSP": {
       "fields": {
         "result": {
           "rule": "required",
