@@ -265,3 +265,63 @@ message DEVICE_MANUAL_CTRL_REQ {
 message DEVICE_MANUAL_CTRL_RSP {
   required int32 result = 1;
 }
+
+message DEVICE_MAP_ID_SET_SAVE_WAITING_MAP_INFO_REQ {
+  required int32 mode = 1;
+}
+
+message DEVICE_MAP_ID_SET_SAVE_WAITING_MAP_INFO_RSP {
+  required int32 result = 1;
+}
+
+message DEVICE_ORDERLIST_GETTING_REQ {}
+
+message DEVICE_ORDERLIST_GETTING_RSP {
+  message PlanInfo {
+    required int32 planId = 1;
+    required string planName = 2;
+  }
+
+  message MapInfo {
+    required int32 mapId = 1;
+    required string mapName = 2;
+    repeated PlanInfo planInfo = 3;
+  }
+
+  required int32 result = 1;
+  repeated DEVICE_ORDERLIST_SETTING_REQ orderList = 3;
+  repeated MapInfo mapInfoList = 4;
+}
+
+message DEVICE_ORDERLIST_SETTING_REQ {
+  message CleanInfo {
+    required int32 mapHeadId = 1;
+    required int32 planId = 2;
+    required int32 cleanMode = 3;
+    required int32 windPower = 4;
+    required int32 waterLevel = 5;
+    required int32 twiceClean = 6;
+  }
+
+  required int32 orderId = 1;
+  required bool enable = 2;
+  required bool repeat = 3;
+  required int32 weekDay = 4;
+  required int32 dayTime = 5;
+  required CleanInfo cleanInfo = 6;
+}
+
+message DEVICE_ORDERLIST_SETTING_RSP {
+  required int32 orderId = 1;
+  required int32 result = 2;
+}
+
+message DEVICE_ORDERLIST_DELETE_REQ {
+  required int32 orderId = 1;
+  required int32 mode = 2;
+}
+
+message DEVICE_ORDERLIST_DELETE_RSP {
+  required int32 orderId = 1;
+  required int32 result = 2;
+}

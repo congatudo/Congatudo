@@ -720,6 +720,193 @@
           "id": 1
         }
       }
+    },
+    "DEVICE_MAP_ID_SET_SAVE_WAITING_MAP_INFO_REQ": {
+      "fields": {
+        "mode": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "DEVICE_MAP_ID_SET_SAVE_WAITING_MAP_INFO_RSP": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        }
+      }
+    },
+    "DEVICE_ORDERLIST_GETTING_REQ": {
+      "fields": {}
+    },
+    "DEVICE_ORDERLIST_GETTING_RSP": {
+      "fields": {
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "orderList": {
+          "rule": "repeated",
+          "type": "DEVICE_ORDERLIST_SETTING_REQ",
+          "id": 3
+        },
+        "mapInfoList": {
+          "rule": "repeated",
+          "type": "MapInfo",
+          "id": 4
+        }
+      },
+      "nested": {
+        "PlanInfo": {
+          "fields": {
+            "planId": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            },
+            "planName": {
+              "rule": "required",
+              "type": "string",
+              "id": 2
+            }
+          }
+        },
+        "MapInfo": {
+          "fields": {
+            "mapId": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            },
+            "mapName": {
+              "rule": "required",
+              "type": "string",
+              "id": 2
+            },
+            "planInfo": {
+              "rule": "repeated",
+              "type": "PlanInfo",
+              "id": 3
+            }
+          }
+        }
+      }
+    },
+    "DEVICE_ORDERLIST_SETTING_REQ": {
+      "fields": {
+        "orderId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "enable": {
+          "rule": "required",
+          "type": "bool",
+          "id": 2
+        },
+        "repeat": {
+          "rule": "required",
+          "type": "bool",
+          "id": 3
+        },
+        "weekDay": {
+          "rule": "required",
+          "type": "int32",
+          "id": 4
+        },
+        "dayTime": {
+          "rule": "required",
+          "type": "int32",
+          "id": 5
+        },
+        "cleanInfo": {
+          "rule": "required",
+          "type": "CleanInfo",
+          "id": 6
+        }
+      },
+      "nested": {
+        "CleanInfo": {
+          "fields": {
+            "mapHeadId": {
+              "rule": "required",
+              "type": "int32",
+              "id": 1
+            },
+            "planId": {
+              "rule": "required",
+              "type": "int32",
+              "id": 2
+            },
+            "cleanMode": {
+              "rule": "required",
+              "type": "int32",
+              "id": 3
+            },
+            "windPower": {
+              "rule": "required",
+              "type": "int32",
+              "id": 4
+            },
+            "waterLevel": {
+              "rule": "required",
+              "type": "int32",
+              "id": 5
+            },
+            "twiceClean": {
+              "rule": "required",
+              "type": "int32",
+              "id": 6
+            }
+          }
+        }
+      }
+    },
+    "DEVICE_ORDERLIST_SETTING_RSP": {
+      "fields": {
+        "orderId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 2
+        }
+      }
+    },
+    "DEVICE_ORDERLIST_DELETE_REQ": {
+      "fields": {
+        "orderId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "mode": {
+          "rule": "required",
+          "type": "int32",
+          "id": 2
+        }
+      }
+    },
+    "DEVICE_ORDERLIST_DELETE_RSP": {
+      "fields": {
+        "orderId": {
+          "rule": "required",
+          "type": "int32",
+          "id": 1
+        },
+        "result": {
+          "rule": "required",
+          "type": "int32",
+          "id": 2
+        }
+      }
     }
   }
 }
