@@ -97,6 +97,14 @@
               "rule": "required",
               "type": "int32",
               "id": 1
+            },
+            "date": {
+              "type": "int32",
+              "id": 2
+            },
+            "unk1": {
+              "type": "int32",
+              "id": 3
             }
           }
         }
@@ -400,17 +408,14 @@
           "id": 11
         },
         "waterLevel": {
-          "rule": "required",
           "type": "int32",
           "id": 12
         },
         "dustBoxType": {
-          "rule": "required",
           "type": "int32",
           "id": 13
         },
         "mopType": {
-          "rule": "required",
           "type": "bool",
           "id": 14
         }
@@ -587,7 +592,6 @@
               "id": 1
             },
             "deviceTimezone": {
-              "rule": "required",
               "type": "int32",
               "id": 2
             }

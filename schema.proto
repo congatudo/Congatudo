@@ -28,6 +28,8 @@ message DEVICE_REGISTER_REQ {
 message DEVICE_REGISTER_RSP {
   message Device {
     required int32 id = 1;
+    optional int32 date = 2;
+    optional int32 unk1 = 3;
   }
 
   required int32 result = 1;
@@ -126,9 +128,9 @@ message DEVICE_MAP_ID_WORK_STATUS_PUSH_REQ {
   required int32 repeatClean = 9;
   required int32 cleanTime = 10;
   required int32 cleanSize = 11;
-  required int32 waterLevel = 12;
-  required int32 dustBoxType = 13;
-  required bool mopType = 14;
+  optional int32 waterLevel = 12;
+  optional int32 dustBoxType = 13;
+  optional bool mopType = 14;
 }
 
 message DEVICE_SET_CLEAN_PREFERENCE_REQ {
@@ -193,7 +195,7 @@ message DEVICE_GETTIME_REQ {}
 message DEVICE_GETTIME_RSP {
     message Body {
         required int32 deviceTime = 1;
-        required int32 deviceTimezone = 2;
+        optional int32 deviceTimezone = 2;
     }
 
     required int32 result = 1;
