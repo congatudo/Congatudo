@@ -78,7 +78,7 @@ export class ApiService {
      */
 
     static async startCleaningZonesById(zoneIds) {
-        var zonePresets = await ApiService.getZonesNew();
+        var zonePresets = await ApiService.getZonesOpenAPI();
         var zones = [];
         Object.keys(zoneIds).forEach(idsToClean => {
             Object.keys(zonePresets).forEach(zonesIds => {
@@ -260,7 +260,7 @@ export class ApiService {
         return await this.fetch("GET", "api/v2/robot/capabilities/ZoneCleaningCapability/presets_legacy");
     }
     
-    static async getZonesNew() {
+    static async getZonesOpenAPI() {
         return await this.fetch("GET", "api/v2/robot/capabilities/ZoneCleaningCapability/presets");
     }
 
