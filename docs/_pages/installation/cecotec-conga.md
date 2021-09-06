@@ -22,7 +22,7 @@ Please give it a try and [file any issues that you encounter there](https://gith
     - [Connect the robot to your local network](#connect-the-robot-to-your-local-network)
     - [Get root access in your Conga](#get-root-access-in-your-conga)
     - [Point your Conga robot to Valetudo Server](#point-your-conga-robot-to-valetudo-server)
-  - [Standalane installation](#standalane-installation)
+  - [Standalone installation](#standalone-installation)
     - [Build a binary for you standalone installation](#build-a-binary-for-you-standalone-installation)
     - [Prepare a valid configuration file](#prepare-a-valid-configuration-file)
     - [Copy the binary and its configuration to your robot](#copy-the-binary-and-its-configuration-to-your-robot)
@@ -74,7 +74,7 @@ $> echo "<your server ip> cecotec.das.3irobotix.net cecotec.download.3irobotix.n
 $> /etc/init.d/valetudo enable
 $> reboot
 ```
-## Standalane installation
+## Standalone installation
 ### Build a binary for you standalone installation
 Compile Valetudo under the path ./build/armv7/valetudo
 ```
@@ -88,9 +88,9 @@ $ cd backend
 $ npm run build
 ```
 ### Prepare a valid configuration file
-In your machine, get a valid valetudo config file in from: <https://github.com/Hypfer/Valetudo/blob/release/backend/lib/res/default_config.json?raw=true>
+In your machine, get a valid valetudo config file in from: https://github.com/Hypfer/Valetudo/blob/\<release\>/backend/lib/res/default_config.json?raw=true
 
-*At editing time, the newest release is (2021.08.1)[https://github.com/Hypfer/Valetudo/blob/2021.08.1/backend/lib/res/default_config.json?raw=true]*
+*At editing time, the newest release is [2021.08.1](https://github.com/Hypfer/Valetudo/blob/2021.08.1/backend/lib/res/default_config.json?raw=true)*
 
 Once you have already downloaded IT, edit the implementation of the valetudo robot to CecotecCongaRobot:
 ```
@@ -155,9 +155,9 @@ $> reboot
 
 ## Docker installation
 ### Configuration file
-Firstly, get a valid valetudo config file in <https://github.com/Hypfer/Valetudo/blob/release/backend/lib/res/default_config.json?raw=true>
+Firstly, get a valid valetudo config file in https://github.com/Hypfer/Valetudo/blob/\<release\>/backend/lib/res/default_config.json?raw=true
 
-*At editing time, the newest release is (2021.08.1)[https://github.com/Hypfer/Valetudo/blob/2021.08.1/backend/lib/res/default_config.json?raw=true]*
+*At editing time, the newest release is [2021.08.1](https://github.com/Hypfer/Valetudo/blob/2021.08.1/backend/lib/res/default_config.json?raw=true)*
 ### Use the prepared image
 Then, you are able to just run the dockerhub image
 ```
@@ -192,5 +192,6 @@ Check (this link)[https://www.gitmemory.com/issue/Koenkk/zigbee2mqtt/7662/852985
 - If you have a Home Assistant instance, you may try the [valetudo addon](https://github.com/txitxo0/valetudo-addon)
 
 ## Notes
-[^1]: Model 3090 original password hash `$1$ZnE1NgOT$oWafIj8xgsknzdJmRZM9N/` == `3irobotics`
-[^2]: Model 3x90 original password hash `$1$trVg0hig$L.xDOM91z4d/.8FZRnr.h1` == `@3I#sc$RD%xm^2S&`
+[1]: Model 3090 original password hash `$1$ZnE1NgOT$oWafIj8xgsknzdJmRZM9N/` == `3irobotics`
+
+[2]: Model 3x90 original password hash `$1$trVg0hig$L.xDOM91z4d/.8FZRnr.h1` == `@3I#sc$RD%xm^2S&`
