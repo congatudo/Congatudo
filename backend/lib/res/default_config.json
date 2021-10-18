@@ -54,7 +54,7 @@
             }
         },
         "customizations": {
-            "topicPrefix": "",
+            "topicPrefix": "valetudo",
             "provideMapData": true
         }
     },
