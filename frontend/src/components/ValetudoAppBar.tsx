@@ -420,6 +420,17 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                     <ListItem
                         button
                         component="a"
+                        href="https://github.com/freeconga/Valetudo"
+                        target="_blank"
+                    >
+                        <ListItemIcon>
+                            <GithubIcon/>
+                        </ListItemIcon>
+                        <ListItemText primary="freeconga/Valetudo"/>
+                    </ListItem>
+                    <ListItem
+                        button
+                        component="a"
                         href="https://github.com/Hypfer/Valetudo"
                         target="_blank"
                     >
