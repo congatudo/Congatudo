@@ -6,14 +6,14 @@ export class ApiService {
      * @param {*=} body
      */
     static async fetch(method, url, body) {
-        // @ts-ignore
+    // @ts-ignore
         let response = await fetch(url, {
             method: method,
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(body),
-            cache: "no-store"
+            cache: "no-store",
         });
         if (!response.ok) {
             throw Error(await response.text());
@@ -26,32 +26,48 @@ export class ApiService {
     }
 
     static async startCleaning() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/BasicControlCapability", {
-            action: "start"
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/BasicControlCapability",
+            {
+                action: "start",
+            }
+        );
     }
 
     static async pauseCleaning() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/BasicControlCapability", {
-            action: "pause"
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/BasicControlCapability",
+            {
+                action: "pause",
+            }
+        );
     }
 
     static async stopCleaning() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/BasicControlCapability", {
-            action: "stop"
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/BasicControlCapability",
+            {
+                action: "stop",
+            }
+        );
     }
 
     static async driveHome() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/BasicControlCapability", {
-            action: "home"
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/BasicControlCapability",
+            {
+                action: "home",
+            }
+        );
     }
 
     static async findRobot() {
         await this.fetch("PUT", "../api/v2/robot/capabilities/LocateCapability", {
-            action: "locate"
+            action: "locate",
         });
     }
 
@@ -64,69 +80,101 @@ export class ApiService {
      * @param {number} y
      */
     static async goto(x, y) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/GoToLocationCapability", {
-            action: "goto",
-            coordinates: {
-                x: x,
-                y: y
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/GoToLocationCapability",
+            {
+                action: "goto",
+                coordinates: {
+                    x: x,
+                    y: y,
+                },
             }
-        });
+        );
     }
 
     /**
      * @param {number[]} zoneIds
      */
+
     static async startCleaningZonesById(zoneIds) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/ZoneCleaningCapability/presets", {
-            action: "clean",
-            ids: zoneIds
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/ZoneCleaningCapability/presets",
+            {
+                action: "clean",
+                zones: zoneIds,
+            }
+        );
     }
 
     static async startCleaningZoneByCoords(zones) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/ZoneCleaningCapability", {
-            action: "clean",
-            zones: zones
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/ZoneCleaningCapability",
+            {
+                action: "clean",
+                zones: zones,
+            }
+        );
     }
 
     static async getSegments() {
-        return this.fetch("GET", "../api/v2/robot/capabilities/MapSegmentationCapability");
+        return this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/MapSegmentationCapability"
+        );
     }
 
     /**
      * @param {number[]} segmentIds
      */
     static async startCleaningSegments(segmentIds) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/MapSegmentationCapability", {
-            action: "start_segment_action",
-            segment_ids: segmentIds
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/MapSegmentationCapability",
+            {
+                action: "start_segment_action",
+                segment_ids: segmentIds,
+            }
+        );
     }
 
     static async splitSegment(pA, pB, segment_id) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/MapSegmentEditCapability", {
-            action: "split_segment",
-            pA: pA,
-            pB: pB,
-            segment_id: segment_id
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/MapSegmentEditCapability",
+            {
+                action: "split_segment",
+                pA: pA,
+                pB: pB,
+                segment_id: segment_id,
+            }
+        );
     }
 
     static async joinSegments(segment_a_id, segment_b_id) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/MapSegmentEditCapability", {
-            action: "join_segments",
-            segment_a_id: segment_a_id,
-            segment_b_id: segment_b_id
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/MapSegmentEditCapability",
+            {
+                action: "join_segments",
+                segment_a_id: segment_a_id,
+                segment_b_id: segment_b_id,
+            }
+        );
     }
 
     static async renameSegment(segment_id, name) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/MapSegmentRenameCapability", {
-            action: "rename_segment",
-            segment_id: segment_id,
-            name: name
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/MapSegmentRenameCapability",
+            {
+                action: "rename_segment",
+                segment_id: segment_id,
+                name: name,
+            }
+        );
     }
 
     static async getVacuumState() {
@@ -138,97 +186,122 @@ export class ApiService {
     }
 
     static async getFanSpeeds() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/FanSpeedControlCapability/presets");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/FanSpeedControlCapability/presets"
+        );
     }
 
     static async getWaterGradePresets() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/WaterUsageControlCapability/presets");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/WaterUsageControlCapability/presets"
+        );
     }
 
     /**
      * @param {string} level
      */
     static async setFanspeed(level) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/FanSpeedControlCapability/preset", {
-            name: level
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/FanSpeedControlCapability/preset",
+            {
+                name: level,
+            }
+        );
     }
 
     /**
      * @param {string} level
      */
     static async setWaterGrade(level) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/WaterUsageControlCapability/preset", {
-            name: level
-        });
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/WaterUsageControlCapability/preset",
+            {
+                name: level,
+            }
+        );
     }
 
     static async getSupportedVirtualRestrictions() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/CombinedVirtualRestrictionsCapability/properties");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/CombinedVirtualRestrictionsCapability/properties"
+        );
     }
 
     static async setPersistentData(virtualWalls, no_go_areas, no_mop_zones) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/CombinedVirtualRestrictionsCapability", {
-            virtualWalls: virtualWalls.map(w => {
-                return {
-                    points: {
-                        pA: {
-                            x: w[0],
-                            y: w[1],
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/CombinedVirtualRestrictionsCapability",
+            {
+                virtualWalls: virtualWalls.map((w) => {
+                    return {
+                        points: {
+                            pA: {
+                                x: w[0],
+                                y: w[1],
+                            },
+                            pB: {
+                                x: w[2],
+                                y: w[3],
+                            },
                         },
-                        pB: {
-                            x: w[2],
-                            y: w[3],
-                        },
-                    }
-                };
-            }),
-            restrictedZones: no_go_areas.map(a => {
-                return {
-                    points: {
-                        pA: {
-                            x: a[0],
-                            y: a[1],
-                        },
-                        pB: {
-                            x: a[2],
-                            y: a[3],
-                        },
-                        pC: {
-                            x: a[4],
-                            y: a[5],
-                        },
-                        pD: {
-                            x: a[6],
-                            y: a[7],
-                        },
-                    },
-                    type: "regular"
-                };
-            }).concat(no_mop_zones.map(a => {
-                return {
-                    points: {
-                        pA: {
-                            x: a[0],
-                            y: a[1],
-                        },
-                        pB: {
-                            x: a[2],
-                            y: a[3],
-                        },
-                        pC: {
-                            x: a[4],
-                            y: a[5],
-                        },
-                        pD: {
-                            x: a[6],
-                            y: a[7],
-                        },
-                    },
-                    type: "mop"
-                };
-            }))
-        });
+                    };
+                }),
+                restrictedZones: no_go_areas
+                    .map((a) => {
+                        return {
+                            points: {
+                                pA: {
+                                    x: a[0],
+                                    y: a[1],
+                                },
+                                pB: {
+                                    x: a[2],
+                                    y: a[3],
+                                },
+                                pC: {
+                                    x: a[4],
+                                    y: a[5],
+                                },
+                                pD: {
+                                    x: a[6],
+                                    y: a[7],
+                                },
+                            },
+                            type: "regular",
+                        };
+                    })
+                    .concat(
+                        no_mop_zones.map((a) => {
+                            return {
+                                points: {
+                                    pA: {
+                                        x: a[0],
+                                        y: a[1],
+                                    },
+                                    pB: {
+                                        x: a[2],
+                                        y: a[3],
+                                    },
+                                    pC: {
+                                        x: a[4],
+                                        y: a[5],
+                                    },
+                                    pD: {
+                                        x: a[6],
+                                        y: a[7],
+                                    },
+                                },
+                                type: "mop",
+                            };
+                        })
+                    ),
+            }
+        );
     }
 
     static async getLatestMap() {
@@ -236,19 +309,40 @@ export class ApiService {
     }
 
     static async getSpots() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/GoToLocationCapability/presets_legacy");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/GoToLocationCapability/presets_legacy"
+        );
     }
 
     static async getZones() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/ZoneCleaningCapability/presets_legacy");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/ZoneCleaningCapability/presets_legacy"
+        );
+    }
+
+    static async getZonesOpenAPI() {
+        return await this.fetch(
+            "GET",
+            "api/v2/robot/capabilities/ZoneCleaningCapability/presets"
+        );
     }
 
     static async saveSpots(spotConfig) {
-        await this.fetch("POST", "../api/v2/robot/capabilities/GoToLocationCapability/presets_legacy", spotConfig);
+        await this.fetch(
+            "POST",
+            "../api/v2/robot/capabilities/GoToLocationCapability/presets_legacy",
+            spotConfig
+        );
     }
 
     static async saveZones(zonesConfig) {
-        await this.fetch("POST", "../api/v2/robot/capabilities/ZoneCleaningCapability/presets_legacy", zonesConfig);
+        await this.fetch(
+            "POST",
+            "../api/v2/robot/capabilities/ZoneCleaningCapability/presets_legacy",
+            zonesConfig
+        );
     }
 
     static async startManualControl() {
@@ -264,7 +358,7 @@ export class ApiService {
             angle: angle,
             velocity: velocity,
             duration: duration,
-            sequenceId: sequenceId
+            sequenceId: sequenceId,
         });
     }
 
@@ -281,7 +375,7 @@ export class ApiService {
     }
 
     static async setValetudoLogLevel(level) {
-        await this.fetch("PUT", "../api/v2/valetudo/log/level", {level: level});
+        await this.fetch("PUT", "../api/v2/valetudo/log/level", { level: level });
     }
 
     static async getRobot() {
@@ -297,11 +391,11 @@ export class ApiService {
     }
 
     static async addTimer(cron) {
-        await this.fetch("POST", "api/timers", {cron: cron});
+        await this.fetch("POST", "api/timers", { cron: cron });
     }
 
     static async toggleTimer(id, enabled) {
-        await this.fetch("PUT", "api/timers/" + id, {enabled: enabled});
+        await this.fetch("PUT", "api/timers/" + id, { enabled: enabled });
     }
 
     static async deleteTimer(id) {
@@ -309,33 +403,57 @@ export class ApiService {
     }
 
     static async getDndConfiguration() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/DoNotDisturbCapability");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/DoNotDisturbCapability"
+        );
     }
 
-    static async setDndConfiguration(enabled, start_hour, start_minute, end_hour, end_minute) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/DoNotDisturbCapability", {
-            enabled: enabled,
-            start: {
-                hour: start_hour,
-                minute: start_minute
-            },
-            end: {
-                hour: end_hour,
-                minute: end_minute
+    static async setDndConfiguration(
+        enabled,
+        start_hour,
+        start_minute,
+        end_hour,
+        end_minute
+    ) {
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/DoNotDisturbCapability",
+            {
+                enabled: enabled,
+                start: {
+                    hour: start_hour,
+                    minute: start_minute,
+                },
+                end: {
+                    hour: end_hour,
+                    minute: end_minute,
+                },
             }
-        });
+        );
     }
 
     static async getCarpetModeStatus() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/CarpetModeControlCapability");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/CarpetModeControlCapability"
+        );
     }
 
     static async enableCarpetMode() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/CarpetModeControlCapability", {action: "enable"});
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/CarpetModeControlCapability",
+            { action: "enable" }
+        );
     }
 
     static async disableCarpetMode() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/CarpetModeControlCapability", {action: "disable"});
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/CarpetModeControlCapability",
+            { action: "disable" }
+        );
     }
 
     static async getCapabilities() {
@@ -343,33 +461,49 @@ export class ApiService {
     }
 
     static async getPersistentMapCapabilityStatus() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/PersistentMapControlCapability");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/PersistentMapControlCapability"
+        );
     }
 
     static async enablePersistentMaps() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/PersistentMapControlCapability", {action: "enable"});
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/PersistentMapControlCapability",
+            { action: "enable" }
+        );
     }
 
     static async disablePersistentMaps() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/PersistentMapControlCapability", {action: "disable"});
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/PersistentMapControlCapability",
+            { action: "disable" }
+        );
     }
 
     static async resetPersistentMaps() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/MapResetCapability", {action: "reset"});
+        await this.fetch("PUT", "../api/v2/robot/capabilities/MapResetCapability", {
+            action: "reset",
+        });
     }
 
-
     static async resetConsumable(type, subType) {
-        var url = "../api/v2/robot/capabilities/ConsumableMonitoringCapability/" + type;
+        var url =
+      "../api/v2/robot/capabilities/ConsumableMonitoringCapability/" + type;
 
         if (subType) {
             url += "/" + subType;
         }
-        await this.fetch("PUT", url, {action: "reset"});
+        await this.fetch("PUT", url, { action: "reset" });
     }
 
     static async getConsumableStatus() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/ConsumableMonitoringCapability");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/ConsumableMonitoringCapability"
+        );
     }
 
     static async getCleanSummary() {
@@ -377,27 +511,36 @@ export class ApiService {
     }
 
     static async setTimezone(newTimezone) {
-        return await this.fetch("POST", "api/set_timezone", {new_zone: newTimezone});
+        return await this.fetch("POST", "api/set_timezone", {
+            new_zone: newTimezone,
+        });
     }
 
     static async retrieveCleanRecord(recordId) {
-        return await this.fetch("PUT", "api/clean_record", {recordId: recordId});
+        return await this.fetch("PUT", "api/clean_record", { recordId: recordId });
     }
 
     static async getWifiStatus() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/WifiConfigurationCapability");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/WifiConfigurationCapability"
+        );
     }
 
     static async saveWifiConfig(ssid, password) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/WifiConfigurationCapability", {
-            ssid: ssid,
-            credentials: {
-                type: "wpa2_psk",
-                typeSpecificSettings: {
-                    password: password
-                }
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/WifiConfigurationCapability",
+            {
+                ssid: ssid,
+                credentials: {
+                    type: "wpa2_psk",
+                    typeSpecificSettings: {
+                        password: password,
+                    },
+                },
             }
-        });
+        );
     }
 
     static async getMqttConfig() {
@@ -405,34 +548,55 @@ export class ApiService {
     }
 
     static async saveMqttConfig(mqttConfig) {
-        await this.fetch("PUT", "../api/v2/valetudo/config/interfaces/mqtt", mqttConfig);
+        await this.fetch(
+            "PUT",
+            "../api/v2/valetudo/config/interfaces/mqtt",
+            mqttConfig
+        );
     }
 
     static async getToken() {
         return await this.fetch("GET", "api/token");
     }
 
-
     static async getSpeakerVolume() {
-        return await this.fetch("GET", "../api/v2/robot/capabilities/SpeakerVolumeControlCapability");
+        return await this.fetch(
+            "GET",
+            "../api/v2/robot/capabilities/SpeakerVolumeControlCapability"
+        );
     }
 
     static async setSpeakerVolume(volume) {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/SpeakerVolumeControlCapability", {action: "set_volume", value: volume});
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/SpeakerVolumeControlCapability",
+            { action: "set_volume", value: volume }
+        );
     }
 
     static async testSpeakerVolume() {
-        await this.fetch("PUT", "../api/v2/robot/capabilities/SpeakerTestCapability", {action: "play_test_sound"});
+        await this.fetch(
+            "PUT",
+            "../api/v2/robot/capabilities/SpeakerTestCapability",
+            { action: "play_test_sound" }
+        );
     }
     static async getInstallVoicePackStatus() {
         return await this.fetch("GET", "api/install_voice_pack_status");
     }
 
     static async getHttpAuthConfig() {
-        return await this.fetch("GET", "../api/v2/valetudo/config/interfaces/http/auth/basic");
+        return await this.fetch(
+            "GET",
+            "../api/v2/valetudo/config/interfaces/http/auth/basic"
+        );
     }
 
     static async saveHttpAuthConfig(httpAuthConfig) {
-        await this.fetch("PUT", "../api/v2/valetudo/config/interfaces/http/auth/basic", httpAuthConfig);
+        await this.fetch(
+            "PUT",
+            "../api/v2/valetudo/config/interfaces/http/auth/basic",
+            httpAuthConfig
+        );
     }
 }
