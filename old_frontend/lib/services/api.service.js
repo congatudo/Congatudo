@@ -98,14 +98,26 @@ export class ApiService {
      */
 
     static async startCleaningZonesById(zoneIds) {
-        await this.fetch(
-            "PUT",
-            "../api/v2/robot/capabilities/ZoneCleaningCapability/presets",
-            {
-                action: "clean",
-                zones: zoneIds,
-            }
-        );
+        var zonePresets = await ApiService.getZonesOpenAPI();
+        var zones = [];
+        Object.keys(zoneIds).forEach(idsToClean => {
+            Object.keys(zonePresets).forEach(zonesIds => {
+                if (zonePresets[zonesIds].id === zoneIds[idsToClean]){
+                    for (var multipleZoneIds = 0; multipleZoneIds<zonePresets[zonesIds].zones.length; multipleZoneIds++){
+                        var zone = {};
+                        zone.iterations = 1;
+                        zone.metaData = zonePresets[zonesIds].metaData;
+                        zone.points = zonePresets[zonesIds].zones[multipleZoneIds].points;
+                        zones.push(zone);
+                    }
+                }
+            });
+        });
+
+        await this.fetch("PUT", "../api/v2/robot/capabilities/ZoneCleaningCapability", {
+            action: "clean",
+            zones: zones
+        });
     }
 
     static async startCleaningZoneByCoords(zones) {
@@ -325,7 +337,7 @@ export class ApiService {
     static async getZonesOpenAPI() {
         return await this.fetch(
             "GET",
-            "api/v2/robot/capabilities/ZoneCleaningCapability/presets"
+            "../api/v2/robot/capabilities/ZoneCleaningCapability/presets"
         );
     }
 
