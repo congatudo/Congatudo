@@ -1,0 +1,58 @@
+{
+  "include": [
+    {
+      "build_from": "arm32v7/alpine:3.14",
+      "image_name": "alpine-armv7",
+      "pkg_options": "expose-gc,max-heap-size=38",
+      "pkg_target": "node16-linuxstatic-armv7"
+    },
+    {
+      "build_from": "arm64v8/alpine:3.14",
+      "image_name": "alpine-aarch64",
+      "pkg_options": "expose-gc,max-heap-size=64",
+      "pkg_target": "node16-linuxstatic-arm64"
+    },
+    {
+      "build_from": "amd64/alpine:3.14",
+      "image_name": "alpine-amd64",
+      "pkg_options": "expose-gc,max-heap-size=64",
+      "pkg_target": "node16-linuxstatic-x64"
+    },
+    {
+      "build_from": "i386/alpine:3.14",
+      "image_name": "alpine-i386",
+      "pkg_options": "expose-gc,max-heap-size=64",
+      "pkg_target": "node16-linuxstatic-x64"
+    },
+    {
+      "build_from": "homeassistant/armhf-base:3.14",
+      "image_name": "homeassistant-armhf",
+      "pkg_options": "expose-gc,max-heap-size=38",
+      "pkg_target": "node16-linuxstatic-armv7"
+    },
+    {
+      "build_from": "homeassistant/armv7-base:3.14",
+      "image_name": "homeassistant-armv7",
+      "pkg_options": "expose-gc,max-heap-size=38",
+      "pkg_target": "node16-linuxstatic-armv7"
+    },
+    {
+      "build_from": "homeassistant/aarch64-base:3.14",
+      "image_name": "homeassistant-aarch64",
+      "pkg_options": "expose-gc,max-heap-size=64",
+      "pkg_target": "node16-linuxstatic-arm64"
+    },
+    {
+      "build_from": "homeassistant/amd64-base:3.14",
+      "image_name": "homeassistant-amd64",
+      "pkg_options": "expose-gc,max-heap-size=64",
+      "pkg_target": "node16-linuxstatic-x64"
+    },
+    {
+      "build_from": "homeassistant/i386-base:3.14",
+      "image_name": "homeassistant-i386",
+      "pkg_options": "expose-gc,max-heap-size=64",
+      "pkg_target": "node16-linuxstatic-x64"
+    }
+  ]
+}
