@@ -60,8 +60,8 @@ jobs:
           push: false
           load: true
           tags: |
-            freeconga/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
-            freeconga/congatudo:${{ matrix.image_name }}-latest
+            ${{ env.REGISTRY }}/freeconga/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+            ${{ env.REGISTRY }}/freeconga/congatudo:${{ matrix.image_name }}-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           build-args: |
@@ -71,7 +71,7 @@ jobs:
       - name: Test
         shell: '/bin/bash {0}'
         run: |
-          docker run --rm freeconga/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+          docker run --rm ${{ env.REGISTRY }}/freeconga/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
           ret=$?
           if [ $ret -eq 1 ]; then
             exit 0
@@ -80,8 +80,8 @@ jobs:
           fi
       - name: Push
         run: |
-          docker push freeconga/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
-          docker push freeconga/congatudo:${{ matrix.image_name }}-latest
+          docker push ${{ env.REGISTRY }}/freeconga/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+          docker push ${{ env.REGISTRY }}/freeconga/congatudo:${{ matrix.image_name }}-latest
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
@@ -102,33 +102,32 @@ jobs:
       - name: Create manifest
         run: |
           # TODO: Use matrix here.
-          docker manifest create freeconga/congatudo:alpine-latest \
-            --amend freeconga/congatudo:alpine-armv7-latest \
-            --amend freeconga/congatudo:alpine-aarch64-latest \
-            --amend freeconga/congatudo:alpine-amd64-latest \
-            --amend freeconga/congatudo:alpine-i386-latest
-          docker manifest create freeconga/congatudo:homeassistant-latest \
-            --amend freeconga/congatudo:homeassistant-armhf-latest \
-            --amend freeconga/congatudo:homeassistant-armv7-latest \
-            --amend freeconga/congatudo:homeassistant-aarch64-latest \
-            --amend freeconga/congatudo:homeassistant-amd64-latest \
-            --amend freeconga/congatudo:homeassistant-i386-latest
-          docker manifest create freeconga/congatudo:alpine-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:alpine-armv7-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:alpine-aarch64-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:alpine-amd64-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:alpine-i386-${{ needs.info.outputs.version }}
-          docker manifest create freeconga/congatudo:homeassistant-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:homeassistant-armhf-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:homeassistant-armv7-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:homeassistant-aarch64-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }} \
-            --amend freeconga/congatudo:homeassistant-i386-${{ needs.info.outputs.version }}
+          docker manifest create ${{ env.REGISTRY }}/freeconga/congatudo:alpine-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-armv7-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-aarch64-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-amd64-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-i386-latest
+          docker manifest create ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-armhf-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-armv7-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-aarch64-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-amd64-latest \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-i386-latest
+          docker manifest create ${{ env.REGISTRY }}/freeconga/congatudo:alpine-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-armv7-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-aarch64-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-amd64-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:alpine-i386-${{ needs.info.outputs.version }}
+          docker manifest create ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-armhf-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-armv7-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-aarch64-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-i386-${{ needs.info.outputs.version }}
       - name: Push manifest
         run: |
           # TODO: Use matrix here.
-          docker manifest push freeconga/congatudo:alpine-latest
-          docker manifest push freeconga/congatudo:homeassistant-latest
-          docker manifest push freeconga/congatudo:alpine-${{ needs.info.outputs.version }}
-          docker manifest push freeconga/congatudo:homeassistant-${{ needs.info.outputs.version }}
-
+          docker manifest push ${{ env.REGISTRY }}/freeconga/congatudo:alpine-latest
+          docker manifest push ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-latest
+          docker manifest push ${{ env.REGISTRY }}/freeconga/congatudo:alpine-${{ needs.info.outputs.version }}
+          docker manifest push ${{ env.REGISTRY }}/freeconga/congatudo:homeassistant-${{ needs.info.outputs.version }}
