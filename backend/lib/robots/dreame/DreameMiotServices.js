@@ -211,7 +211,7 @@ module.exports = {
                 },
 
                 ACTION_RESULT: {
-                    PIID: 6 //TODO: validate
+                    PIID: 6
                 }
             },
             ACTIONS: {
@@ -288,6 +288,9 @@ module.exports = {
                 ADDITIONAL_CLEANUP_PROPERTIES: {
                     PIID: 10
                 },
+                POST_CHARGE_CONTINUE: {
+                    PIID: 11
+                },
                 CARPET_MODE: {
                     PIID: 12
                 },
@@ -310,6 +313,15 @@ module.exports = {
                 OBSTACLE_AVOIDANCE: {
                     PIID: 21
                 },
+                AI_CAMERA_SETTINGS: {
+                    PIID: 22
+                },
+                MOP_DOCK_SETTINGS: {
+                    PIID: 23
+                },
+                MOP_DOCK_STATUS: {
+                    PIID: 25
+                },
                 KEY_LOCK: {
                     PIID: 27
                 },
@@ -318,6 +330,24 @@ module.exports = {
                 },
                 TIGHT_MOP_PATTERN: {
                     PIID: 29
+                },
+                MOP_DOCK_UV_TREATMENT: {
+                    PIID: 32
+                },
+                CARPET_DETECTION_SENSOR: {
+                    PIID: 33
+                },
+                MOP_DOCK_WET_DRY_SWITCH: {
+                    PIID: 34
+                },
+                MOP_LIFT_CARPET_BEHAVIOUR: {
+                    PIID: 36
+                },
+                MOP_DOCK_DETERGENT: {
+                    PIID: 37
+                },
+                MOP_DRYING_TIME: {
+                    PIID: 40
                 }
             },
             ACTIONS: {
@@ -326,6 +356,9 @@ module.exports = {
                 },
                 STOP: {
                     AIID: 2
+                },
+                MOP_DOCK_INTERACT: {
+                    AIID: 4
                 }
             }
         },
@@ -448,6 +481,70 @@ module.exports = {
                 }
             }
         },
+        SECONDARY_FILTER: {
+            SIID: 17,
+            PROPERTIES: {
+                TIME_LEFT: { //Hours
+                    PIID: 2
+                },
+                PERCENT_LEFT: {
+                    PIID: 1
+                }
+            },
+            ACTIONS: {
+                RESET: {
+                    AIID: 1
+                }
+            }
+        },
+        MOP: {
+            SIID: 18,
+            PROPERTIES: {
+                TIME_LEFT: { //Hours
+                    PIID: 2
+                },
+                PERCENT_LEFT: {
+                    PIID: 1
+                }
+            },
+            ACTIONS: {
+                RESET: {
+                    AIID: 1
+                }
+            }
+        },
+        SILVER_ION: {
+            SIID: 19,
+            PROPERTIES: {
+                TIME_LEFT: { //Hours
+                    PIID: 2
+                },
+                PERCENT_LEFT: {
+                    PIID: 1
+                }
+            },
+            ACTIONS: {
+                RESET: {
+                    AIID: 1
+                }
+            }
+        },
+        DETERGENT: {
+            SIID: 20,
+            PROPERTIES: {
+                TIME_LEFT: { //Hours
+                    PIID: 2
+                },
+                PERCENT_LEFT: {
+                    PIID: 1
+                }
+            },
+            ACTIONS: {
+                RESET: {
+                    AIID: 1
+                }
+            }
+        },
         MAP: {
             SIID: 6,
             PROPERTIES: {
@@ -524,6 +621,9 @@ module.exports = {
                     AIID: 1
                 }
             }
+        },
+        TIMERS: {
+            SIID: 8
         }
     })
 };

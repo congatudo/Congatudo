@@ -4,14 +4,18 @@ import {
     useMapResetMutation,
     usePersistentDataMutation,
     usePersistentDataQuery,
-    useStartMappingPassMutation
+    useRobotMapQuery,
+    useStartMappingPassMutation,
+    useValetudoInformationQuery
 } from "../api";
 import {
     Save as PersistentMapControlIcon,
     Layers as MappingPassIcon,
     LayersClear as MapResetIcon,
     RoomPreferences as SegmentEditIcon,
-    Dangerous as VirtualRestrictionsIcon
+    Dangerous as VirtualRestrictionsIcon,
+    Crop as CleanupCoverageIcon,
+    Download as ValetudoMapDownloadIcon,
 } from "@mui/icons-material";
 import React from "react";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -21,6 +25,8 @@ import {SpacerListMenuItem} from "../components/list_menu/SpacerListMenuItem";
 import {ListMenu} from "../components/list_menu/ListMenu";
 import {ToggleSwitchListMenuItem} from "../components/list_menu/ToggleSwitchListMenuItem";
 import {MapManagementHelp} from "./res/MapManagementHelp";
+import PaperContainer from "../components/PaperContainer";
+import {MapUtilitiesHelp} from "./res/MapUtilitiesHelp";
 
 
 const MappingPassButtonItem = (): JSX.Element => {
@@ -32,10 +38,12 @@ const MappingPassButtonItem = (): JSX.Element => {
             secondaryLabel="Create a new map"
             icon={<MappingPassIcon/>}
             buttonLabel="Go"
-            confirmationDialogTitle="Start mapping pass?"
-            confirmationDialogBody="Do you really want to start a mapping pass?"
-            dialogAction={startMappingPass}
-            dialogActionLoading={mappingPassStarting}
+            confirmationDialog={{
+                title: "Start mapping pass?",
+                body: "Do you really want to start a mapping pass?"
+            }}
+            action={startMappingPass}
+            actionLoading={mappingPassStarting}
         />
     );
 };
@@ -50,10 +58,12 @@ const MapResetButtonItem = (): JSX.Element => {
             icon={<MapResetIcon/>}
             buttonLabel="Go"
             buttonIsDangerous={true}
-            confirmationDialogTitle="Reset map?"
-            confirmationDialogBody="Do you really want to reset the map?"
-            dialogAction={resetMap}
-            dialogActionLoading={mapResetting}
+            confirmationDialog={{
+                title: "Reset map?",
+                body: "Do you really want to reset the map?"
+            }}
+            action={resetMap}
+            actionLoading={mapResetting}
         />
     );
 };
@@ -105,6 +115,45 @@ const PersistentMapSwitchListItem = () => {
                 }}
             />
         </>
+    );
+};
+
+const ValetudoMapDataExportButtonItem = (): JSX.Element => {
+    const {
+        data: valetudoInformation,
+        isLoading: valetudoInformationLoading
+    } = useValetudoInformationQuery();
+
+    const {
+        data: mapData,
+        isLoading: mapIsLoading,
+    } = useRobotMapQuery();
+
+
+    return (
+        <ButtonListMenuItem
+            primaryLabel="Export ValetudoMap"
+            secondaryLabel="Download a ValetudoMap data export to use with other tools"
+            icon={<ValetudoMapDownloadIcon/>}
+            buttonLabel="Go"
+            action={() => {
+                if (valetudoInformation && mapData) {
+                    const timestamp = new Date().toISOString().replaceAll(":","-").split(".")[0];
+                    const mapExportBlob = new Blob(
+                        [JSON.stringify(mapData, null, 2)],
+                        { type: "application/json" }
+                    );
+
+                    const linkElement = document.createElement("a");
+
+                    linkElement.href = URL.createObjectURL(mapExportBlob);
+                    linkElement.download = `ValetudoMapExport-${valetudoInformation.systemId}-${timestamp}.json`;
+
+                    linkElement.click();
+                }
+            }}
+            actionLoading={valetudoInformationLoading || mapIsLoading}
+        />
     );
 };
 
@@ -199,13 +248,35 @@ const MapManagement = (): JSX.Element => {
         mapSegmentRenameCapabilitySupported
     ]);
 
+    const utilityMapItems = React.useMemo(() => {
+        return [
+            <LinkListMenuItem
+                key="robotCoverageMap"
+                url="/settings/map_management/robot_coverage"
+                primaryLabel="Robot Coverage Map"
+                secondaryLabel="Check the robots coverage"
+                icon={<CleanupCoverageIcon/>}
+            />,
+            <ValetudoMapDataExportButtonItem key="valetudoMapDataExport" />
+        ];
+    }, []);
+
     return (
-        <ListMenu
-            primaryHeader={"Robot-managed Map Features"}
-            secondaryHeader={"These features are managed and provided by the robot's firmware"}
-            listItems={robotManagedListItems}
-            helpText={MapManagementHelp}
-        />
+        <PaperContainer>
+            <ListMenu
+                primaryHeader={"Robot-managed Map Features"}
+                secondaryHeader={"These features are managed and provided by the robot's firmware"}
+                listItems={robotManagedListItems}
+                helpText={MapManagementHelp}
+            />
+            <ListMenu
+                primaryHeader={"Map Utilities"}
+                secondaryHeader={"Do neat things with the map"}
+                listItems={utilityMapItems}
+                helpText={MapUtilitiesHelp}
+                style={{marginTop: "1rem"}}
+            />
+        </PaperContainer>
     );
 };
 

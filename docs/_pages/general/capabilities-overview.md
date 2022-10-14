@@ -1,7 +1,7 @@
 ---
 title: Capabilities Overview
 category: General
-order: 9
+order: 10
 ---
 
 # Capabilities overview
@@ -56,8 +56,6 @@ This capability enables you to set the suction power of your robot.
 This capability enables you to send your robot to a location on your map. It will simply stay there and do nothing.
 
 One common use-case of this is to send the robot to your bin.
-
-Furthermore, this capability will enable you to define ValetudoGoToLocationPresets which are predefined spots that can be called via MQTT.
 
 ## KeyLockCapability <a id="KeyLockCapability"></a>
 
@@ -143,5 +141,3 @@ This capability enables you to get the current Wi-Fi connection details (includi
 ## ZoneCleaningCapability <a id="ZoneCleaningCapability"></a>
 
 This capability enables you to send your robot to clean one or more (depending on the vendor) zones drawn onto the map.
-
-Furthermore, this also enables you to define ValetudoZonePresets which are predefined zones that can be called via MQTT.

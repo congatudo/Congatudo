@@ -1,5 +1,4 @@
 const basicAuth = require("express-basic-auth");
-const bodyParser = require("body-parser");
 const compression = require("compression");
 const dynamicMiddleware = require("express-dynamic-middleware");
 const express = require("express");
@@ -20,12 +19,13 @@ const ValetudoRouter = require("./ValetudoRouter");
 
 
 const fs = require("fs");
-const MiioValetudoRobot = require("../robots/MiioValetudoRobot");
+const MQTTRouter = require("./MQTTRouter");
+const NetworkAdvertisementManagerRouter = require("./NetworkAdvertisementManagerRouter");
 const NTPClientRouter = require("./NTPClientRouter");
 const SSDPRouter = require("./SSDPRouter");
 const SystemRouter = require("./SystemRouter");
 const TimerRouter = require("./TimerRouter");
-const Tools = require("../Tools");
+const Tools = require("../utils/Tools");
 const UpdaterRouter = require("./UpdaterRouter");
 const ValetudoEventRouter = require("./ValetudoEventRouter");
 
@@ -33,6 +33,8 @@ class WebServer {
     /**
      * @param {object} options
      * @param {import("../core/ValetudoRobot")} options.robot
+     * @param {import("../mqtt/MqttController")} options.mqttController
+     * @param {import("../NetworkAdvertisementManager")} options.networkAdvertisementManager
      * @param {import("../NTPClient")} options.ntpClient
      * @param {import("../updater/Updater")} options.updater
      * @param {import("../ValetudoEventStore")} options.valetudoEventStore
@@ -50,11 +52,11 @@ class WebServer {
 
         this.port = this.webserverConfig.port;
 
-        this.basicAuthInUse = false; //TODO: redo auth with jwt or something like that
+        this.basicAuthInUse = false; //TODO: redo auth
 
         this.app = express();
         this.app.use(compression());
-        this.app.use(bodyParser.json());
+        this.app.use(express.json());
 
         this.app.disable("x-powered-by");
 
@@ -92,8 +94,18 @@ class WebServer {
         const server = http.createServer(this.app);
 
         this.loadApiSpec();
-        this.validator = function noOpValidationMiddleware(req, res, next) {
-            next();
+        this.validator = function superBasicValidationMiddleware(req, res, next) {
+            // We can save a lot of code in our routers by always at least making sure that req.body exists
+            // even if it is not being validated by the schema
+            if (req.method === "PUT" || req.method === "POST") {
+                if (Tools.IS_EMPTY_OBJECT_OR_UNDEFINED_OR_NULL(req.body)) {
+                    res.sendStatus(400);
+                } else {
+                    next();
+                }
+            } else {
+                next();
+            }
         };
 
         if (this.openApiSpec) {
@@ -112,6 +124,10 @@ class WebServer {
 
         this.app.use("/api/v2/valetudo/", this.valetudoRouter.getRouter());
 
+        this.app.use("/api/v2/mqtt/", new MQTTRouter({config: this.config, mqttController: options.mqttController, validator: this.validator}).getRouter());
+
+        this.app.use("/api/v2/networkadvertisement/", new NetworkAdvertisementManagerRouter({config: this.config, networkAdvertisementManager: options.networkAdvertisementManager, validator: this.validator}).getRouter());
+
         this.app.use("/api/v2/ntpclient/", new NTPClientRouter({config: this.config, ntpClient: options.ntpClient, validator: this.validator}).getRouter());
 
         this.app.use("/api/v2/timers/", new TimerRouter({config: this.config, robot: this.robot, validator: this.validator}).getRouter());
@@ -125,8 +141,6 @@ class WebServer {
         this.app.use("/_ssdp/", new SSDPRouter({config: this.config, robot: this.robot}).getRouter());
 
         this.app.use(express.static(path.join(__dirname, "../../..", "frontend/build")));
-
-        this.app.use("/old_frontend", express.static(path.join(__dirname, "../../..", "old_frontend/lib")));
 
         this.app.get("/api/v2", (req, res) => {
             let endpoints = listEndpoints(this.app);
@@ -147,24 +161,13 @@ class WebServer {
             res.json(endpointsMap);
         });
 
-        /*
-            TODO: MOVE THIS HACK ELSEWHERE!
 
-             This is a hack for miio vacuums with a recent miio_client
+        this.robot.initModelSpecificWebserverRoutes(this.app);
 
-             To properly spoof the http_dns request, we need to have this route on port 80 instead of the
-             miio-implementation specific second webserver on 8079 :/
-         */
-        if (this.robot instanceof MiioValetudoRobot) {
-            this.app.get("/gslb", (req, res) => {
-                //@ts-ignore
-                this.robot.handleHttpDnsRequest(req, res);
-            });
-        }
 
         this.app.use((err, req, res, next) => {
             if (err instanceof swaggerValidation.InputValidationError) {
-                Logger.warn("Received request with invalid payload", err.errors);
+                Logger.warn(`Received "${req.method} "to "${req.originalUrl}" with invalid payload`, err.errors);
                 res.status(400).json({message: "Request payload is invalid.", error: err.errors});
             } else {
                 Logger.error("Unhandled WebServer Error", err);
@@ -243,6 +246,24 @@ class WebServer {
         } catch (e) {
             Logger.warn("Failed to load OpenApi spec. Swagger endpoint and payload validation will be unavailable.", e.message);
         }
+
+
+        const capabilityRoutePathRegex = /\/api\/v2\/robot\/capabilities\/(?<capabilityName>[A-Za-z]+)/;
+        const supportedCapabilities = Object.keys(this.robot.capabilities);
+
+        Object.keys(spec.paths).forEach(pathName => {
+            const regexResult = capabilityRoutePathRegex.exec(pathName);
+            const capabilityName = regexResult?.groups?.capabilityName;
+
+            if (capabilityName !== undefined && !supportedCapabilities.includes(capabilityName)) {
+                delete(spec.paths[pathName]);
+            }
+        });
+
+        spec.tags = spec.tags.filter(tag => {
+            return !(tag.name.endsWith("Capability") && !supportedCapabilities.includes(tag.name));
+        });
+
 
         this.openApiSpec = spec;
     }

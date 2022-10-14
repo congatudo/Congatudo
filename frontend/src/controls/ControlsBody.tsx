@@ -1,16 +1,18 @@
 import {Grid} from "@mui/material";
-import {Opacity as WaterUsageIcon,} from "@mui/icons-material";
-import {Capability} from "../api";
+import {
+    Opacity as WaterUsageIcon,
+    AppRegistration as OperationModeIcon,
+} from "@mui/icons-material";
+import {Capability, useRobotInformationQuery} from "../api";
 import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import BasicControls from "./BasicControls";
-import GoToLocationPresets from "./GoToLocationPresets";
 import PresetSelectionControl from "./PresetSelection";
 import RobotStatus from "./RobotStatus";
-import ZonePresets from "./ZonePresets";
 import Dock from "./Dock";
 import CurrentStatistics from "./CurrentStatistics";
 import Attachments from "./Attachments";
 import {FanSpeedIcon} from "../components/CustomIcons";
+import React from "react";
 
 
 const ControlsBody = (): JSX.Element => {
@@ -18,77 +20,78 @@ const ControlsBody = (): JSX.Element => {
         basicControls,
         fanSpeed,
         waterControl,
-        goToLocation,
-        zoneCleaning,
+        operationMode,
         triggerEmptySupported,
+        mopDockCleanTriggerSupported,
+        mopDockDryTriggerSupported,
         currentStatistics,
     ] = useCapabilitiesSupported(
         Capability.BasicControl,
         Capability.FanSpeedControl,
         Capability.WaterUsageControl,
-        Capability.GoToLocation,
-        Capability.ZoneCleaning,
+        Capability.OperationModeControl,
         Capability.AutoEmptyDockManualTrigger,
+        Capability.MopDockCleanManualTrigger,
+        Capability.MopDockDryManualTrigger,
         Capability.CurrentStatistics
     );
 
+    const {
+        data: robotInformation,
+    } = useRobotInformationQuery();
+
+
     return (
         <Grid container spacing={2} direction="column" sx={{userSelect: "none"}}>
-            {basicControls && (
-                <Grid item>
-                    <BasicControls />
-                </Grid>
+            {basicControls && <BasicControls />}
+
+            <RobotStatus />
+
+            {operationMode && (
+                <PresetSelectionControl
+                    capability={Capability.OperationModeControl}
+                    label="Mode"
+                    icon={
+                        <OperationModeIcon
+                            fontSize="small"
+                        />
+                    }
+                />
             )}
-            <Grid item>
-                <RobotStatus />
-            </Grid>
+
             {fanSpeed && (
-                <Grid item>
-                    <PresetSelectionControl
-                        capability={Capability.FanSpeedControl}
-                        label="Fan speed"
-                        icon={
-                            <FanSpeedIcon
-                                fontSize="small"
-                            />
-                        }
-                    />
-                </Grid>
+                <PresetSelectionControl
+                    capability={Capability.FanSpeedControl}
+                    label="Fan speed"
+                    icon={
+                        <FanSpeedIcon
+                            fontSize="small"
+                        />
+                    }
+                />
             )}
             {waterControl && (
-                <Grid item>
-                    <PresetSelectionControl
-                        capability={Capability.WaterUsageControl}
-                        label="Water usage"
-                        icon={<WaterUsageIcon fontSize="small" />}
-                    />
-                </Grid>
+                <PresetSelectionControl
+                    capability={Capability.WaterUsageControl}
+                    label="Water usage"
+                    icon={<WaterUsageIcon fontSize="small" />}
+                />
             )}
-            {triggerEmptySupported && (
-                <Grid item>
-                    <Dock/>
-                </Grid>
-            )}
-            {goToLocation && (
-                <Grid item>
-                    <GoToLocationPresets />
-                </Grid>
-            )}
-            {zoneCleaning && (
-                <Grid item>
-                    <ZonePresets />
-                </Grid>
-            )}
-            <Grid item>
-                <Attachments/>
-            </Grid>
+
             {
-                currentStatistics && (
-                    <Grid item>
-                        <CurrentStatistics/>
-                    </Grid>
-                )
+                (triggerEmptySupported || mopDockCleanTriggerSupported || mopDockDryTriggerSupported) &&
+
+                <Dock/>
             }
+
+            {
+                robotInformation &&
+                robotInformation.modelDetails.supportedAttachments.length > 0 &&
+
+                <Attachments/>
+            }
+
+            {currentStatistics && <CurrentStatistics/>}
         </Grid>
     );
 };

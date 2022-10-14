@@ -61,13 +61,25 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/NTPClientConfigDTO"
+            },
+            "examples": {
+              "custom":{
+                "description": "Set custom NTP server",
+                "value": {
+                  "enabled": true,
+                  "server": "ntp_host_or_ip",
+                  "port": 123,
+                  "interval": 7200000,
+                  "timeout": 10000
+                }
+              }
             }
           }
         }
       },
       "responses": {
-        "202": {
-          "$ref": "#/components/responses/202"
+        "200": {
+          "$ref": "#/components/responses/200"
         }
       }
     }

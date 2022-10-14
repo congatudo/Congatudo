@@ -5,14 +5,18 @@ const fs = require("fs");
 const http = require("http");
 const os = require("os");
 const path = require("path");
+const Semaphore = require("semaphore");
 
 const Dummycloud = require("../miio/Dummycloud");
 const Logger = require("../Logger");
 const MiioSocket = require("../miio/MiioSocket");
 const NotImplementedError = require("../core/NotImplementedError");
 const RetryWrapper = require("../miio/RetryWrapper");
-const Tools = require("../Tools");
+const Tools = require("../utils/Tools");
 const ValetudoRobot = require("../core/ValetudoRobot");
+
+const entities = require("../entities");
+const stateAttrs = entities.state.attributes;
 
 class MiioValetudoRobot extends ValetudoRobot {
     /**
@@ -43,13 +47,11 @@ class MiioValetudoRobot extends ValetudoRobot {
                 return new MiioSocket({
                     socket: socket,
                     token: this.localSecret,
-                    onMessage: () => {/* intentional default that may be overridden */},
                     deviceId: undefined,
                     rinfo: {address: this.ip, port: MiioSocket.PORT},
                     timeout: undefined,
-                    onConnected: undefined,
                     name: "local",
-                    isServerSocket: false
+                    isCloudSocket: false
                 });
             })(),
             () => {
@@ -65,78 +67,110 @@ class MiioValetudoRobot extends ValetudoRobot {
             onConnected: () => {
                 return this.onCloudConnected();
             },
-            onMessage: msg => {
-                return this.onMessage(msg);
+            onIncomingCloudMessage: msg => {
+                return this.onIncomingCloudMessage(msg);
             }
         });
 
-        this.mapUploadInProgress = false;
+        this.fdsUploadSemaphore = Semaphore(2);
         this.mapPollingIntervals = {
             default: 60,
-            active: this.config.get("embedded") === true && Tools.IS_LOWMEM_HOST() ? 4 : 2
+            active: this.config.get("embedded") === true && Tools.IS_LOWMEM_HOST() ? 4 : 2,
+            error: 30
         };
+        this.mapPollMutex = Semaphore(1);
+        this.mapPollTimeout = undefined;
         this.expressApp = express();
 
-        this.mapUploadServer = http.createServer(this.expressApp);
+        this.fdsMockServer = http.createServer(this.expressApp);
 
-        this.expressApp.put("/api/miio/map_upload_handler/:filename?", (req, res) => {
-            Logger.debug("Map upload started with:", {
+        this.expressApp.put("/api/miio/fds_upload_handler/:filename?", (req, res) => {
+            Logger.debug("FDS upload started with:", {
                 query: req.query,
                 params: req.params
             });
 
-            if (!this.mapUploadInProgress) {
-                this.mapUploadInProgress = true;
-                const uploadBuffer = Buffer.allocUnsafe(parseInt(req.header("content-length")));
-                let offset = 0;
+            this.fdsUploadSemaphore.take(() => {
+                const expectedSize = parseInt(req.header("content-length"));
+                let finished = false;
 
-                req.on("data", chunk => {
-                    for (let i = 0; i < chunk.length; i++) {
-                        uploadBuffer[offset] = chunk[i];
-                        offset++;
-                    }
-                });
+                if (expectedSize < MAX_UPLOAD_FILESIZE) {
+                    let uploadTimeout = setTimeout(() => {
+                        finished = true;
 
-                req.on("end", () => {
-                    if (this.config.get("debug").storeRawUploadedMaps === true) {
-                        try {
-                            const location = path.join(os.tmpdir(), "raw_map_" + new Date().getTime());
-                            fs.writeFileSync(location, uploadBuffer);
+                        res.end();
+                        req.socket?.destroy();
 
-                            Logger.info("Wrote uploaded raw map to " + location);
-                        } catch (e) {
-                            Logger.warn("Failed to store raw uploaded map.", e);
-                        }
-                    }
-
-                    this.handleUploadedMapData(
-                        uploadBuffer,
-                        req.query,
-                        req.params
-                    ).catch(err => {
-                        Logger.warn("Error while handling uploaded map data", {
+                        Logger.warn("FDS upload timeout", {
                             query: req.query,
-                            params: req.params,
-                            error: err
+                            params: req.params
                         });
-                    }).finally(() => {
-                        this.mapUploadInProgress = false;
+                        this.fdsUploadSemaphore.leave();
+                    }, 3000);
+
+
+                    const uploadBuffer = Buffer.allocUnsafe(expectedSize);
+                    let offset = 0;
+
+                    req.on("data", chunk => {
+                        /*
+                            We don't need a range check here, because even if content-length is shorter than
+                            what is actually uploaded, trying to write outside a buffer like we do here
+                            just fails silently without any breakage. Thanks javascript
+                         */
+                        for (let i = 0; i < chunk.length; i++) {
+                            uploadBuffer[offset] = chunk[i];
+                            offset++;
+                        }
                     });
 
-                    res.sendStatus(200);
-                });
-            } else {
-                res.end();
-                req.connection.destroy();
-            }
+                    req.on("end", () => {
+                        clearTimeout(uploadTimeout);
+
+                        if (this.config.get("debug").storeRawFDSUploads === true) {
+                            try {
+                                const location = path.join(os.tmpdir(), "raw_upload_" + new Date().getTime());
+                                fs.writeFileSync(location, uploadBuffer);
+
+                                Logger.info("Wrote uploaded raw file to " + location);
+                            } catch (e) {
+                                Logger.warn("Failed to store raw file.", e);
+                            }
+                        }
+
+                        this.handleUploadedFDSData(
+                            uploadBuffer,
+                            req.query,
+                            req.params
+                        ).catch(err => {
+                            Logger.warn("Error while handling uploaded map data", {
+                                query: req.query,
+                                params: req.params,
+                                error: err
+                            });
+                        }).finally(() => {
+                            if (finished !== true) {
+                                res.sendStatus(200);
+                                this.fdsUploadSemaphore.leave();
+                            }
+                        });
+                    });
+                } else {
+                    Logger.warn(`Received FDSMock upload request with a content-length of ${expectedSize}. Aborting.`);
+
+                    res.end();
+                    req.socket?.destroy();
+                    this.fdsUploadSemaphore.leave();
+                }
+            });
         });
 
-        this.mapUploadServer.on("error", (e) => {
-            Logger.error("MapUploadServer Error: ",e);
+        this.fdsMockServer.on("error", (e) => {
+            Logger.error("FDSMockServer Error: ",e);
         });
 
-        this.mapUploadServer.listen(8079, this.dummycloudBindIp, function() {
-            Logger.info("Map Upload Server running on port " + 8079);
+        this.fdsMockServer.listen(8079, this.dummycloudBindIp, function() {
+            Logger.info("FDSMockServer running on port " + 8079);
         });
     }
 
@@ -198,7 +232,7 @@ class MiioValetudoRobot extends ValetudoRobot {
         }
 
         if (!cloudSecret && this.config.get("embedded") === true) {
-            cloudSecret = MiioValetudoRobot.READ_DEVICE_CONF(this.deviceConfPath)["key"];
+            cloudSecret = this.getCloudSecretFromFS();
         }
 
         if (cloudSecret && cloudSecret.length >= 32) {
@@ -221,68 +255,73 @@ class MiioValetudoRobot extends ValetudoRobot {
         this.tokenFilePath = "/dev/null";
     }
 
-    // clang-format off
-    /*
-    Handles http_dns load balancing requests.
+    initModelSpecificWebserverRoutes(app) {
+        super.initModelSpecificWebserverRoutes(app);
 
-    Example request and response (the latter is pretty-printed for readability).
+        /*
+        Handles http_dns load balancing requests.
+        To properly spoof the http_dns request, we need to have this route on port 80 instead of the
+        miio-implementation specific second webserver on 8079
 
-    GET /gslb?tver=2&id=277962183&dm=ot.io.mi.com&timestamp=1574455630&sign=nNevMcHtzuB90okJfG9zSyPTw87u8U8HQpVNXqpVt%2Bk%3D HTTP/1.1
-    Host:110.43.0.83
-    User-Agent:miio-client
+        Example request and response (the latter is pretty-printed for readability).
 
-    {
-        "info": {
-            "host_list": [{
-                    "ip": "120.92.65.244",
-                    "port": 8053
-                }, {
-                    "ip": "120.92.142.94",
-                    "port": 8053
-                }, {
-                    "ip": "58.83.177.237",
-                    "port": 8053
-                }, {
-                    "ip": "58.83.177.239",
-                    "port": 8053
-                }, {
-                    "ip": "58.83.177.236",
-                    "port": 8053
-                }, {
-                    "ip": "120.92.65.242",
-                    "port": 8053
-                }
-            ],
-            "enable": 1
-        },
-        "sign": "NxPNmsa8eh2/Y6OdJKoEaEonR6Lvrw5CkV5+mnpZois=",
-        "timestamp": "1574455630"
-    }
-    */
-    // clang-format on
-    handleHttpDnsRequest(req, res) {
-        // ot.io.mi.com asks for UDP host
-        // ott.io.mi.com asks for TCP hosts, which our dummycloud doesn’t (yet) support.
-        if (req.query["dm"] === "ott.io.mi.com") {
-            res.status(501).send("miio/tcp not implemented");
+        GET /gslb?tver=2&id=277962183&dm=ot.io.mi.com&timestamp=1574455630&sign=nNevMcHtzuB90okJfG9zSyPTw87u8U8HQpVNXqpVt%2Bk%3D HTTP/1.1
+        Host:110.43.0.83
+        User-Agent:miio-client
+
+        {
+            "info": {
+                "host_list": [{
+                        "ip": "120.92.65.244",
+                        "port": 8053
+                    }, {
+                        "ip": "120.92.142.94",
+                        "port": 8053
+                    }, {
+                        "ip": "58.83.177.237",
+                        "port": 8053
+                    }, {
+                        "ip": "58.83.177.239",
+                        "port": 8053
+                    }, {
+                        "ip": "58.83.177.236",
+                        "port": 8053
+                    }, {
+                        "ip": "120.92.65.242",
+                        "port": 8053
+                    }
+                ],
+                "enable": 1
+            },
+            "sign": "NxPNmsa8eh2/Y6OdJKoEaEonR6Lvrw5CkV5+mnpZois=",
+            "timestamp": "1574455630"
         }
-        const info = {
-            "host_list": [
-                {
-                    "ip": this.embeddedDummycloudIp,
-                    "port": 8053
-                }
-            ],
-            "enable": 1
-        };
-        const signature = crypto.createHmac("sha256", this.cloudSecret)
-            .update(JSON.stringify(info))
-            .digest("base64");
+        */
+        app.get("/gslb", (req, res) => {
+            // ot.io.mi.com asks for UDP host
+            // ott.io.mi.com asks for TCP hosts, which our dummycloud doesn’t (yet) support.
+            if (req.query["dm"] === "ott.io.mi.com") {
+                res.status(501).send("miio/tcp not implemented");
+                return;
+            }
+            const info = {
+                "host_list": [
+                    {
+                        "ip": this.embeddedDummycloudIp,
+                        "port": 8053
+                    }
+                ],
+                "enable": 1
+            };
+            const signature = crypto.createHmac("sha256", this.cloudSecret)
+                .update(JSON.stringify(info))
+                .digest("base64");
 
-        res.status(200).send({
-            "info": info,
-            "timestamp": req.query["timestamp"],
-            "sign": signature
+            res.json({
+                "info": info,
+                "timestamp": req.query["timestamp"],
+                "sign": signature
+            });
         });
     }
 
@@ -317,30 +356,15 @@ class MiioValetudoRobot extends ValetudoRobot {
      * @param {object} options
      * @param {number=} options.retries
      * @param {number=} options.timeout custom timeout in milliseconds
+     * @param {boolean=} options.preferLocalInterface
      * @returns {Promise<object>}
      */
     sendCommand(method, args = [], options = {}) {
-        if (this.dummyCloud.miioSocket.connected) {
+        if (this.dummyCloud.miioSocket.connected && options.preferLocalInterface !== true) {
             return this.sendCloud({"method": method, "params": args}, options);
         } else {
-            return this.localSocket.sendMessage(method, args, options);
+            return this.localSocket.sendMessage({"method": method, "params": args}, options);
         }
-    }
-
-    /**
-     * Sends a {'method': method, 'params': args} message to the robot.
-     * Only uses the local socket
-     *
-     * @public
-     * @param {string} method
-     * @param {object|Array} args
-     * @param {object} options
-     * @param {number=} options.retries
-     * @param {number=} options.timeout custom timeout in milliseconds
-     * @returns {Promise<object>}
-     */
-    sendLocal(method, args = [], options = {}) {
-        return this.localSocket.sendMessage(method, args, options);
     }
 
     /**
@@ -357,13 +381,12 @@ class MiioValetudoRobot extends ValetudoRobot {
     }
 
     /**
-     * Called when a message is received, either from cloud or local interface.
      *
      * @protected
      * @param {any} msg the json object sent by the remote device
      * @returns {boolean} True if the message was handled.
      */
-    onMessage(msg) {
+    onIncomingCloudMessage(msg) {
         switch (msg.method) {
             case "_sync.gen_tmp_presigned_url":
             case "_sync.gen_presigned_url":
@@ -374,8 +397,7 @@ class MiioValetudoRobot extends ValetudoRobot {
                 let result = {ok: true};
 
                 const expires = Math.floor(new Date(new Date().getTime() + 15 * 60000).getTime() / 1000); //+15min;
-                let url = this.mapUploadUrlPrefix + "/api/miio/map_upload_handler?ts=" +
-                    process.hrtime().toString().replace(/,/g, "") + "&suffix=" + key + "&Expires=" + expires;
+                let url = `${this.mapUploadUrlPrefix}/api/miio/fds_upload_handler?ts=${process.hrtime().toString().replace(/,/g, "")}&suffix=${key}&Expires=${expires}`;
 
                 if (msg.method === "_sync.gen_tmp_presigned_url") {
                     result[key] = indices.map(i => {
@@ -417,7 +439,7 @@ class MiioValetudoRobot extends ValetudoRobot {
      * @protected
      */
     onCloudConnected() {
-        Logger.info("Cloud connected");
+        Logger.info("Dummycloud connected");
         // start polling the map after a brief delay of 3.5s
         setTimeout(() => {
             return this.pollMap();
@@ -425,14 +447,61 @@ class MiioValetudoRobot extends ValetudoRobot {
     }
 
     /**
-     * Poll the map.
-     *
-     * @protected
-     * @abstract
+     * @public
      * @returns {void}
      */
     pollMap() {
+        this.mapPollMutex.take(() => {
+            let repollSeconds = this.mapPollingIntervals.default;
+
+            // Clear pending timeout, since we’re starting a new poll right now.
+            if (this.mapPollTimeout) {
+                clearTimeout(this.mapPollTimeout);
+
+                this.mapPollTimeout = undefined;
+            }
+
+            this.executeMapPoll().then((response) => {
+                repollSeconds = this.determineNextMapPollInterval(response);
+            }).catch(() => {
+                repollSeconds = this.mapPollingIntervals.error;
+            }).finally(() => {
+                this.mapPollTimeout = setTimeout(() => {
+                    this.pollMap();
+                }, repollSeconds * 1000);
+
+                this.mapPollMutex.leave();
+            });
+        });
+    }
+
+    /**
+     *
+     * @protected
+     * @abstract
+     * @returns {Promise<any>}
+     */
+    async executeMapPoll() {
         throw new NotImplementedError();
+    }
+
+    /**
+     * @protected
+     * @param {any} pollResponse Implementation specific
+     * @return {number} seconds
+     */
+    determineNextMapPollInterval(pollResponse) {
+        let repollSeconds = this.mapPollingIntervals.default;
+
+        let StatusStateAttribute = this.state.getFirstMatchingAttribute({
+            attributeClass: stateAttrs.StatusStateAttribute.name
+        });
+
+        if (StatusStateAttribute && StatusStateAttribute.isActiveState) {
+            repollSeconds = this.mapPollingIntervals.active;
+        }
+
+        return repollSeconds;
     }
 
     /**
@@ -465,7 +534,8 @@ class MiioValetudoRobot extends ValetudoRobot {
      * @param {object} params implementation specific url parameters
      * @returns {Promise<void>}
      */
-    async handleUploadedMapData(data, query, params) {
+    async handleUploadedFDSData(data, query, params) {
+        // By-default we assume that everything uploaded will be a map
         this.preprocessMap(data).then(async (preprocessedData) => {
             const parsedMap = await this.parseMap(preprocessedData);
 
@@ -487,6 +557,10 @@ class MiioValetudoRobot extends ValetudoRobot {
         await super.shutdown();
         await this.dummyCloud.shutdown();
         await this.localSocket.shutdown();
+    }
+
+    getCloudSecretFromFS() {
+        return MiioValetudoRobot.READ_DEVICE_CONF(this.deviceConfPath)["key"];
     }
 
     static READ_DEVICE_CONF(pathOnDisk) {
@@ -522,5 +596,6 @@ class MiioValetudoRobot extends ValetudoRobot {
 }
 
 const DEVICE_CONF_KEY_VALUE_REGEX = /^(?<key>[A-Za-z\d:.]+)=(?<value>[A-Za-z\d:.]+)$/;
+const MAX_UPLOAD_FILESIZE = 4 * 1024 * 1024; // 4 MiB
 
 module.exports = MiioValetudoRobot;

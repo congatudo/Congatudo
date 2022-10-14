@@ -9,6 +9,8 @@ import Connectivity from "./connectivity/Connectivity";
 import NTPConnectivity from "./connectivity/NTPConnectivity";
 import AuthSettings from "./connectivity/AuthSettings";
 import WifiConnectivity from "./connectivity/WifiConnectivity";
+import NetworkAdvertisementSettings from "./connectivity/NetworkAdvertisementSettings";
+import RobotCoverageMapPage from "../map/RobotCoverageMapPage";
 
 const SettingsRouter = (): JSX.Element => {
     const {path} = useRouteMatch();
@@ -52,6 +54,13 @@ const SettingsRouter = (): JSX.Element => {
                     />
                 </Route>
             }
+
+            <Route exact path={path + "/map_management/robot_coverage"}>
+                <RobotCoverageMapPage/>
+            </Route>
+
+
+
             <Route exact path={path + "/connectivity"}>
                 <Connectivity/>
             </Route>
@@ -60,6 +69,9 @@ const SettingsRouter = (): JSX.Element => {
             </Route>
             <Route exact path={path + "/connectivity/mqtt"}>
                 <MQTTConnectivity/>
+            </Route>
+            <Route exact path={path + "/connectivity/networkadvertisement"}>
+                <NetworkAdvertisementSettings/>
             </Route>
             <Route exact path={path + "/connectivity/ntp"}>
                 <NTPConnectivity/>

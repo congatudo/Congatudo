@@ -4,6 +4,7 @@ module.exports = {
     Dreame1CManualControlCapability: require("./Dreame1CManualControlCapability"),
     Dreame1CVoicePackManagementCapability: require("./Dreame1CVoicePackManagementCapability"),
     Dreame1CZoneCleaningCapability: require("./Dreame1CZoneCleaningCapability"),
+    DreameAICameraGoToLocationCapability: require("./DreameAICameraGoToLocationCapability"),
     DreameAutoEmptyDockAutoEmptyControlCapability: require("./DreameAutoEmptyDockAutoEmptyControlCapability"),
     DreameAutoEmptyDockManualTriggerCapability: require("./DreameAutoEmptyDockManualTriggerCapability"),
     DreameBasicControlCapability: require("./DreameBasicControlCapability"),
@@ -21,6 +22,10 @@ module.exports = {
     DreameMapSegmentRenameCapability: require("./DreameMapSegmentRenameCapability"),
     DreameMapSegmentationCapability: require("./DreameMapSegmentationCapability"),
     DreameMappingPassCapability: require("./DreameMappingPassCapability"),
+    DreameMopDockCleanManualTriggerCapability: require("./DreameMopDockCleanManualTriggerCapability"),
+    DreameMopDockDryManualTriggerCapability: require("./DreameMopDockDryManualTriggerCapability"),
+    DreameMopDockWaterUsageControlCapability: require("./DreameMopDockWaterUsageControlCapability"),
+    DreameOperationModeControlCapability: require("./DreameOperationModeControlCapability"),
     DreamePendingMapChangeHandlingCapability: require("./DreamePendingMapChangeHandlingCapability"),
     DreamePersistentMapControlCapability: require("./DreamePersistentMapControlCapability"),
     DreameSpeakerTestCapability: require("./DreameSpeakerTestCapability"),
@@ -28,5 +33,5 @@ module.exports = {
     DreameTotalStatisticsCapability: require("./DreameTotalStatisticsCapability"),
     DreameVoicePackManagementCapability: require("./DreameVoicePackManagementCapability"),
     DreameWaterUsageControlCapability: require("./DreameWaterUsageControlCapability"),
-    DreameZoneCleaningCapability: require("./DreameZoneCleaningCapability")
+    DreameZoneCleaningCapability: require("./DreameZoneCleaningCapability"),
 };

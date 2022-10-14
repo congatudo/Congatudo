@@ -6,10 +6,12 @@ import {MQTTIcon} from "../../components/CustomIcons";
 import {
     AccessTime as NTPIcon,
     VpnKey as AuthIcon,
-    Wifi as WifiIcon
+    Wifi as WifiIcon,
+    AutoFixHigh as NetworkAdvertisementIcon
 } from "@mui/icons-material";
 import {ListMenu} from "../../components/list_menu/ListMenu";
 import {SpacerListMenuItem} from "../../components/list_menu/SpacerListMenuItem";
+import PaperContainer from "../../components/PaperContainer";
 
 const Connectivity = (): JSX.Element => {
     const [
@@ -50,8 +52,18 @@ const Connectivity = (): JSX.Element => {
                 key="ntpConnectivity"
                 url="/settings/connectivity/ntp"
                 primaryLabel="NTP Connectivity"
-                secondaryLabel="Configure Valetudos integrated Network Time Protocol (NTP) client"
+                secondaryLabel="Configure the integrated Network Time Protocol (NTP) client"
                 icon={<NTPIcon/>}
+            />
+        );
+
+        items.push(
+            <LinkListMenuItem
+                key="networkAdvertisementSettings"
+                url="/settings/connectivity/networkadvertisement"
+                primaryLabel="Network Advertisement"
+                secondaryLabel="Control Bonjour/mDNS and SSDP/UPnP discoverability"
+                icon={<NetworkAdvertisementIcon/>}
             />
         );
 
@@ -71,11 +83,13 @@ const Connectivity = (): JSX.Element => {
     ]);
 
     return (
-        <ListMenu
-            primaryHeader={"Connectivity Settings"}
-            secondaryHeader={"Configure how Valetudo and your robot communicate with the outside world"}
-            listItems={listItems}
-        />
+        <PaperContainer>
+            <ListMenu
+                primaryHeader={"Connectivity Settings"}
+                secondaryHeader={"Configure how Valetudo and your robot communicate with the outside world"}
+                listItems={listItems}
+            />
+        </PaperContainer>
     );
 };
 

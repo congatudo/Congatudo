@@ -86,28 +86,6 @@ const fakeConfig = {
     onUpdate: (_) => {
     },
     get: key => fakeConfig[key],
-    "goToLocationPresets": {
-        "a9666386-7041-4bd4-a823-ebefa48665eb": {
-            "__class": "ValetudoGoToLocation",
-            "metaData": {},
-            "name": "SpotA",
-            "coordinates": {
-                "x": 2589,
-                "y": 2364
-            },
-            "id": "a9666386-7041-4bd4-a823-ebefa48665eb"
-        },
-        "6c74ac84-dfe9-4c4c-8bec-836ff268d630": {
-            "__class": "ValetudoGoToLocation",
-            "metaData": {},
-            "name": "SpotB",
-            "coordinates": {
-                "x": 2186,
-                "y": 2262
-            },
-            "id": "6c74ac84-dfe9-4c4c-8bec-836ff268d630"
-        }
-    },
 };
 const eventStore = new ValetudoEventStore()
 
@@ -195,7 +173,8 @@ class FakeMqttController extends MqttController {
             controller: this,
             baseTopic: "<TOPIC PREFIX>",
             topicName: "<IDENTIFIER>",
-            friendlyName: "Robot"
+            friendlyName: "Robot",
+            optionalExposedCapabilities: this.getOptionalExposableCapabilities()
         });
 
         //          __.--,
@@ -273,6 +252,8 @@ class FakeMqttController extends MqttController {
     }
 
     async generateDocs() {
+        this.currentConfig.optionalExposedCapabilities = this.getOptionalExposableCapabilities();
+        
         await this.reconfigure(async () => {
             await this.robotHandle.configure();
         }, {
@@ -283,7 +264,7 @@ class FakeMqttController extends MqttController {
 
         // Give time for the status attributes to propagate
         setTimeout(() => {
-            this.setState("sentinel").then();
+            this.setState("sentinel").catch(err => {console.error(err)});
         }, 500);
 
         // Promise resolved/rejected by doGenerateDocs(), in turn called when Homie state == ready by setState().
@@ -370,6 +351,10 @@ class FakeMqttController extends MqttController {
             attributes.push(`capability: [${handle.capability.getType()}](/pages/general/capabilities-overview.html#${this.generateAnchor(handle.capability.getType())})`);
         }
         markdown += `*${attributes.join(", ")}*` + "\n\n";
+        
+        if (handle.constructor.OPTIONAL === true) {
+            markdown += `**Note:** This is an optional exposed capability handle and thus will only be available via MQTT if enabled in the Valetudo configuration.\n\n`;
+        }
 
         if (handle.helpText) {
             markdown += handle.helpText + "\n\n";

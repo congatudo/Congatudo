@@ -5,7 +5,7 @@ const MqttController = require("./mqtt/MqttController");
 const NTPClient = require("./NTPClient");
 const os = require("os");
 const path = require("path");
-const Tools = require("./Tools");
+const Tools = require("./utils/Tools");
 const v8 = require("v8");
 const ValetudoEventStore = require("./ValetudoEventStore");
 const Webserver = require("./webserver/WebServer");
@@ -68,19 +68,26 @@ class Valetudo {
             robot: this.robot
         });
 
+        this.mqttController = new MqttController({
+            config: this.config,
+            robot: this.robot
+        });
+
+        this.networkAdvertisementManager = new NetworkAdvertisementManager({
+            config: this.config,
+            robot: this.robot
+        });
+
         this.webserver = new Webserver({
             config: this.config,
             robot: this.robot,
+            mqttController: this.mqttController,
+            networkAdvertisementManager: this.networkAdvertisementManager,
             ntpClient: this.ntpClient,
             updater: this.updater,
             valetudoEventStore: this.valetudoEventStore
         });
 
-
-        this.mqttClient = new MqttController({
-            config: this.config,
-            robot: this.robot
-        });
 
         this.scheduler = new Scheduler({
             config: this.config,
@@ -88,10 +95,6 @@ class Valetudo {
             ntpClient: this.ntpClient
         });
 
-        this.networkAdvertisementManager = new NetworkAdvertisementManager({
-            config: this.config,
-            robot: this.robot
-        });
 
         this.setupDebuggingFeatures();
         this.setupMemoryManagement();
@@ -126,14 +129,16 @@ class Valetudo {
         //@ts-ignore
         if (typeof global.gc === "function") {
             const heapLimit = v8.getHeapStatistics().heap_size_limit;
-            const overLimit = heapLimit + (10*1024*1024); //10mb of buffers and other stuff sounds somewhat reasonable
+            const overHeapLimit = heapLimit + (10*1024*1024); //10mb of buffers and other stuff sounds somewhat reasonable
+            const rssLimit = os.totalmem()*(1/3);
+
             let lastForcedGc = new Date(0);
 
             this.gcInterval = setInterval(() => {
                 //@ts-ignore
                 const rss = process.memoryUsage.rss();
 
-                if (rss > overLimit) {
+                if (rss > overHeapLimit) {
                     const now = new Date();
                     //It doesn't make sense to GC every 250ms repeatedly. Therefore, we rate-limit this
                     if (now.getTime() - 2500 > lastForcedGc.getTime()) {
@@ -143,7 +148,6 @@ class Valetudo {
                         //eslint-disable-next-line no-undef
                         global.gc();
 
-                        //@ts-ignore
                         const rssAfter = process.memoryUsage.rss();
                         const rssDiff = rss - rssAfter;
 
@@ -155,7 +159,7 @@ class Valetudo {
                     }
                 }
 
-                if (rss > os.totalmem()*(1/3) && this.config.get("embedded") === true) {
+                if (rss > rssLimit && this.config.get("embedded") === true) {
                     Logger.error(
                         "Valetudo is currently taking up " + rss +
                         " bytes which is more than 1/3 of available system memory. " +
@@ -214,8 +218,8 @@ class Valetudo {
 
         await this.networkAdvertisementManager.shutdown();
         await this.scheduler.shutdown();
-        if (this.mqttClient) {
-            await this.mqttClient.shutdown();
+        if (this.mqttController) {
+            await this.mqttController.shutdown();
         }
 
         await this.webserver.shutdown();

@@ -17,7 +17,7 @@ This should hopefully answer all the questions you might have and also be intere
 Valetudo is a cloud replacement for vacuum robots enabling local-only operation. It is not a custom firmware.
 That means that it cannot change anything about how the robot operates.
 
-What it can do however is protect your data and enable you to connect your robot
+What it can do however is protecting your data and enable you to connect your robot
 to your home automation system without having to detour through a vendor cloud, which,
 apart from the whole data problematic, might not be reachable due to your internet connection
 being down or some servers in the datacenter being on fire.
@@ -76,8 +76,8 @@ Valetudo fully supports:
 - Room Cleaning, splitting, merging and renaming
 - Water Pump controls and editing no-mop zones
 - Editing Virtual Walls, No-Go Areas
-- Dynamic zoned cleanup with stored presets
-- Go-To locations with stored presets
+- Dynamic zoned cleanup
+- Go-To locations
 - Start/Stop/Home/Locate and Fan speed control
 - Consumables monitoring
 - Carpet mode and persistent data control
@@ -141,13 +141,10 @@ You don't need to be a developer to contribute to Valetudo, because the best way
 
 Just stick around in the Telegram Group, the IRC and/or the Github Discussions :)
 
-Furthermore, there's always stuff to improve in the docs, which is another great way to contribute to Valetudo without writing a single line of code.
-
 ### As a developer
 
 If you're a developer, the usual stuff applies.
 They may be Issues tagged with "Good First Issue" which should be the right place to start.
-If not, you can also search for "TODO" in the codebase. Maybe you'll find something
 
 If you intend to open a PR, please make sure to make yourself familiar with the [PR Template](https://raw.githubusercontent.com/Hypfer/Valetudo/master/.github/PULL_REQUEST_TEMPLATE.md).
 

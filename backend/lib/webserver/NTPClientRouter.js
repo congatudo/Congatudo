@@ -29,9 +29,15 @@ class NTPClientRouter {
         });
 
         this.router.put("/config", this.validator, (req, res) => {
-            this.config.set("ntpClient", req.body);
+            this.config.set("ntpClient", {
+                enabled: req.body.enabled,
+                server: req.body.server,
+                port: req.body.port,
+                interval: req.body.interval,
+                timeout: req.body.timeout
+            });
 
-            res.sendStatus(202);
+            res.sendStatus(200);
         });
     }
 

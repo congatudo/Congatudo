@@ -1,13 +1,16 @@
 ---
 title: Getting Started
 category: General
-order: 7
+order: 8
 ---
 
 # Getting Started
 
 This page shall help you start using Valetudo. Make sure that you've read the [latest newcomer guide](https://valetudo.cloud/pages/general/newcomer_guide_late_2021.html).
 If you haven't done that already please do so and then come back here.
+
+You may also want to read the [Why Valetudo?](https://valetudo.cloud/pages/general/why-valetudo.html) and [Why not Valetudo?](https://valetudo.cloud/pages/general/why-not-valetudo.html)
+pages before continuing with this guide.
 
 ## Table of Contents
 0. [Choosing a robot](#choosing_a_robot)
@@ -19,8 +22,10 @@ If you haven't done that already please do so and then come back here.
 ## Choosing a robot<a id='choosing_a_robot'></a>
 
 First, you'll need to acquire a supported robot. There are many ways to do that, but usually they involve you paying money.
-To not waste all that hard-earned money, please make sure to thoroughly read the [supported robots](https://valetudo.cloud/pages/general/supported-robots.html)
-docs page. There are remarks for each device, which shall help you decide on what to buy.
+To not waste all that hard-earned money, please make sure to thoroughly read the [buying supported robots](https://valetudo.cloud/pages/general/buying-supported-robots.html)
+docs page. 
+There's also the [supported robots](https://valetudo.cloud/pages/general/supported-robots.html) page, which features
+remarks for each device to further help you decide on what to buy.
 
 Please refrain from buying any random robot just to then ask how we can make Valetudo on that thing happen.
 
@@ -48,7 +53,14 @@ and follow the instructions there after pressing the + button on the bottom righ
 [<img src="https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-05.png" width=250>](https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-05.png)
 
 
-You can also connect to the Webinterface of Valetudo in your browser and use it to do the provisioning.
+If you are using a laptop, an iphone or remember to disable mobile data on your android phone yourself,
+you can also visit Valetudo by connecting to the AP provided by the robot and do the provisioning via its webinterface:
+
+![image](https://user-images.githubusercontent.com/974410/142760331-ee5a4031-c692-49be-9ad8-4144f35bb5e0.png)
+
+The IP of robot can either be figured out by the IP assigned to you by its DHCP server or by just trying out
+`http://192.168.5.1` and `http://192.168.8.1`. 
+Note that some browsers might try redirecting you to `https://` without you noticing.
 
 ## Using Valetudo<a id='using_valetudo'></a>
 
@@ -63,8 +75,6 @@ which will autodiscover Valetudo instances on your network.
 If you're using a computer running Microsoft Windows, you can also open the explorer and navigate to "Network" where your new robot should also be autodiscovered.
 
 ![image](https://user-images.githubusercontent.com/974410/127387044-da7e8c18-390f-40bc-88b1-3ff316e4e6cf.png)
-
-If things don't work as expected after the initial Wi-Fi provisioning, please try rebooting the robot once.
 
 ## Now What?<a id='now_what'></a>
 

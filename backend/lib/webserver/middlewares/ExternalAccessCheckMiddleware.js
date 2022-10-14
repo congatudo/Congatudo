@@ -1,9 +1,9 @@
+const hashlru = require("hashlru");
 const isInSubnet = require("is-in-subnet");
 const Logger = require("../../Logger");
-const QuickLRU = require("quick-lru");
-const Tools = require("../../Tools");
+const Tools = require("../../utils/Tools");
 
-const IPAccessLRU = new QuickLRU({ maxSize: 15 });
+const IPAccessLRU = hashlru(15);
 
 /**
  *
@@ -17,7 +17,7 @@ module.exports = function checkExternalAccess(req, res, next) {
     } else {
         Logger.warn(`Blocked external request to ${req.url} from ${req.ip}`);
 
-        res.status(401).send("External access to Valetudo is blocked.");
+        res.status(418).send("External access to Valetudo is blocked.");
     }
 };
 

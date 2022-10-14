@@ -28,6 +28,8 @@ import {
     useSystemHostInfoQuery,
     useSystemRuntimeInfoQuery,
     useValetudoVersionQuery,
+    useRobotPropertiesQuery,
+    useValetudoInformationQuery,
 } from "../api";
 import RatioBar from "../components/RatioBar";
 import {convertSecondsToHumans} from "../utils";
@@ -35,11 +37,14 @@ import {useIsMobileView} from "../hooks";
 import ReloadableCard from "../components/ReloadableCard";
 import LoadingFade from "../components/LoadingFade";
 import PaperContainer from "../components/PaperContainer";
+import TextInformationGrid from "../components/TextInformationGrid";
 
 const ThickLinearProgressWithTopMargin = styled(LinearProgress)({
     marginTop: "2px",
     height: "6px"
 });
+
+
 
 const SystemRuntimeInfo = (): JSX.Element => {
     const {
@@ -228,52 +233,99 @@ const SystemInformation = (): JSX.Element => {
         isLoading: versionLoading,
     } = useValetudoVersionQuery();
     const {
+        data: valetudoInformation,
+        isLoading: valetudoInformationLoading
+    } = useValetudoInformationQuery();
+    const {
         data: systemHostInfo,
         isLoading: systemHostInfoLoading,
         isFetching: systemHostInfoFetching,
         refetch: fetchSystemHostInfo,
     } = useSystemHostInfoQuery();
+    const {
+        data: robotProperties,
+        isLoading: robotPropertiesLoading
+    } = useRobotPropertiesQuery();
 
-    const systemLoading = robotInformationLoading || versionLoading || systemHostInfoLoading;
+    const valetudoInformationViewLoading = versionLoading || valetudoInformationLoading;
 
-    const systemInformation = React.useMemo(() => {
-        if (systemLoading) {
+    const valetudoInformationView = React.useMemo(() => {
+        if (valetudoInformationViewLoading) {
             return (
                 <LoadingFade/>
             );
         }
 
-        if (!robotInformation || !version) {
+        if (!version && !valetudoInformation) {
+            return <Typography color="error">No valetudo information</Typography>;
+        }
+
+        const items = [
+            {
+                header: "Release",
+                body: version?.release
+            },
+            {
+                header: "Commit",
+                body: version?.commit
+            },
+            {
+                header: "Embedded",
+                body: valetudoInformation?.embedded ? "true" : "false"
+            },
+            {
+                header: "System ID",
+                body: valetudoInformation?.systemId
+            }
+        ].filter(item => {
+            return item.body !== undefined;
+        }) as Array<{header: string, body: string}>;
+
+        return (
+            <TextInformationGrid items={items}/>
+        );
+    }, [valetudoInformationViewLoading, version, valetudoInformation]);
+
+
+    const robotInformationViewLoading = robotInformationLoading || robotPropertiesLoading;
+
+    const robotInformationView = React.useMemo(() => {
+        if (robotInformationViewLoading) {
+            return (
+                <LoadingFade/>
+            );
+        }
+
+        if (!robotInformation && !robotProperties) {
             return <Typography color="error">No robot information</Typography>;
         }
 
-        const items: Array<[header: string, body: string]> = [
-            ["Manufacturer", robotInformation.manufacturer],
-            ["Model", robotInformation.modelName],
-            ["Valetudo Implementation", robotInformation.implementation],
-            ["Release", version.release],
-            ["Commit", version.commit],
-        ];
+        const items = [
+            {
+                header: "Manufacturer",
+                body: robotInformation?.manufacturer
+            },
+            {
+                header: "Model",
+                body: robotInformation?.modelName
+            },
+            {
+                header: "Valetudo Implementation",
+                body: robotInformation?.implementation
+            },
+            {
+                header: "Firmware Version",
+                body: robotProperties?.firmwareVersion
+            }
+        ].filter(item => {
+            return item.body !== undefined;
+        }) as Array<{header: string, body: string}>;
 
         return (
-            <Grid
-                container
-                spacing={2}
-                style={{wordBreak: "break-all"}}
-            >
-                {items.map(([header, body]) => {
-                    return (
-                        <Grid item key={header}>
-                            <Typography variant="caption" color="textSecondary">
-                                {header}
-                            </Typography>
-                            <Typography variant="body2">{body}</Typography>
-                        </Grid>
-                    );
-                })}
-            </Grid>
+            <TextInformationGrid items={items}/>
         );
-    }, [robotInformation, systemLoading, version]);
+
+    }, [robotInformation, robotInformationViewLoading, robotProperties]);
 
     const systemHostInformation = React.useMemo(() => {
         if (systemHostInfoLoading) {
@@ -383,10 +435,26 @@ const SystemInformation = (): JSX.Element => {
                     >
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
-                                System
+                                Robot
                             </Typography>
                             <Divider/>
-                            {systemInformation}
+                            {robotInformationView}
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid
+                    item
+                    style={{flexGrow: 1}}
+                >
+                    <Card
+                        sx={{boxShadow: 3}}
+                    >
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                Valetudo
+                            </Typography>
+                            <Divider/>
+                            {valetudoInformationView}
                         </CardContent>
                     </Card>
                 </Grid>

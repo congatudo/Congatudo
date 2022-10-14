@@ -1,6 +1,7 @@
 const express = require("express");
 const jstoxml = require("jstoxml");
-const Tools = require("../Tools");
+const Logger = require("../Logger");
+const Tools = require("../utils/Tools");
 
 
 class SSDPRouter {
@@ -22,6 +23,8 @@ class SSDPRouter {
 
     initRoutes() {
         this.router.get("/valetudo.xml", (req, res) => {
+            Logger.debug(`SSDP: Received device description request from ${req.ip}`);
+
             res.set("Content-Type", "text/xml");
             res.send(this.getDeviceDescription(req.hostname));
         });

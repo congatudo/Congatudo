@@ -2,6 +2,7 @@ const CapabilityMqttHandle = require("./CapabilityMqttHandle");
 const Commands = require("../common/Commands");
 const DataType = require("../homie/DataType");
 const HassAnchor = require("../homeassistant/HassAnchor");
+const Logger = require("../../Logger");
 const PropertyMqttHandle = require("../handles/PropertyMqttHandle");
 
 class BasicControlCapabilityMqttHandle extends CapabilityMqttHandle {
@@ -42,10 +43,13 @@ class BasicControlCapabilityMqttHandle extends CapabilityMqttHandle {
                 }
             }
         }).also((prop) => {
-            HassAnchor.getTopicReference(HassAnchor.REFERENCE.BASIC_CONTROL_COMMAND).post(prop.getBaseTopic() + "/set").then();
+            HassAnchor.getTopicReference(HassAnchor.REFERENCE.BASIC_CONTROL_COMMAND).post(prop.getBaseTopic() + "/set").catch(err => {
+                Logger.error("Error while posting value to HassAnchor", err);
+            });
         }));
     }
 }
 
+BasicControlCapabilityMqttHandle.OPTIONAL = false;
 
 module.exports = BasicControlCapabilityMqttHandle;

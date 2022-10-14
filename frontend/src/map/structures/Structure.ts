@@ -1,8 +1,6 @@
+import {Canvas2DContextTrackingWrapper} from "../utils/Canvas2DContextTrackingWrapper";
+import {PointCoordinates} from "../utils/types";
 
-export type PointCoordinates = {
-    x: number;
-    y: number;
-}
 export type StructureInterceptionHandlerResult = {
     stopPropagation: boolean; //Will always redraw
     deleteMe?: boolean;
@@ -24,7 +22,7 @@ abstract class Structure {
         this.type = this.getType();
     }
 
-    abstract draw(ctx: CanvasRenderingContext2D, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number, pixelSize: number) : void
+    abstract draw(ctxWrapper: Canvas2DContextTrackingWrapper, transformationMatrixToScreenSpace: DOMMatrixInit, scaleFactor: number, pixelSize: number) : void
 
     /**
      * Handler for intercepting tap events on the canvas
@@ -49,7 +47,6 @@ abstract class Structure {
     postProcess() : void {
         //intentional
     }
-
 }
 
 export default Structure;

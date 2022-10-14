@@ -32,7 +32,7 @@ class DreameWaterUsageControlCapability extends WaterUsageControlCapability {
         });
 
         if (matchedPreset) {
-            await this.helper.writeProperty(this.siid, this.piid, matchedPreset.value);
+            return this.helper.writeProperty(this.siid, this.piid, matchedPreset.value);
         } else {
             throw new Error("Invalid Preset");
         }

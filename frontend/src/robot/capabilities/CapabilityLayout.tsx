@@ -1,6 +1,5 @@
 import React from "react";
 import {Grid, useMediaQuery, useTheme} from "@mui/material";
-import MasonryItem from "@mui/lab/MasonryItem";
 import Masonry from "@mui/lab/Masonry";
 import ReloadableCard from "../../components/ReloadableCard";
 
@@ -13,7 +12,7 @@ export const CapabilityContainer: React.FunctionComponent<{ children: React.Reac
     const wideLayout = useWideLayout();
     if (wideLayout && children) {
         return (
-            <Masonry columns={3} spacing={2} style={{padding: "0.2rem"}}>
+            <Masonry columns={3} spacing={2}>
                 {children}
             </Masonry>
         );
@@ -54,11 +53,7 @@ export const CapabilityItem: React.FunctionComponent<
     );
 
     if (wideLayout) {
-        return (
-            <MasonryItem>
-                {content}
-            </MasonryItem>
-        );
+        return content;
     } else {
         return (
             <Grid item xs={12} sm={6} md={4}>

@@ -92,15 +92,100 @@ const VALETUDO_ARCHITECTURES = {
 };
 
 const ModelDescriptions = {
-  Dreame: {
-    "1C": {
-      valetudoSupport: VALETUDO_SUPPORT_GRADES.OKAY,
-      developerSupport: DEVELOPER_SUPPORT_GRADES.BEST_EFFORT,
-      testedWorking: true,
-      recommended: BUY_GRADES.OKAY_ISH,
-      comment:
-        "vSLAM and a small battery, though there are persistent maps and everything seems to work",
-      architecture: VALETUDO_ARCHITECTURES.ARM,
+    "Dreame": {
+        "1C": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.OKAY,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.BEST_EFFORT,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY_ISH,
+            comment: "vSLAM and a small battery, though there are persistent maps and everything seems to work",
+            architecture: VALETUDO_ARCHITECTURES.ARM,
+        },
+        "1T": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.BEST_EFFORT,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY_ISH,
+            comment: [
+                "vSLAM + ToF offers a huge upgrade over only vSLAM, however it is still inferior to Lidar-based mapping.",
+                "On initial root, it might be required to do a factory reset so that the device.conf gets regenerated."
+            ].join("\n"),
+            architecture: VALETUDO_ARCHITECTURES.AARCH64,
+        },
+        "D9": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.YES,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY_ISH,
+            comment: "256 MB RAM are problematic when dealing with large floorplans",
+            architecture: VALETUDO_ARCHITECTURES.ARM_LOWMEM,
+        },
+        "D9 Pro": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.YES,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY_ISH,
+            comment: "256 MB RAM are problematic when dealing with large floorplans\n\nBasically the same as the D9",
+            architecture: VALETUDO_ARCHITECTURES.ARM_LOWMEM,
+        },
+        "F9": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.BEST_EFFORT,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY_ISH,
+            comment: "vSLAM :(",
+            architecture: VALETUDO_ARCHITECTURES.ARM,
+        },
+        "L10 Pro": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.YES,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY,
+            comment: "None",
+            architecture: VALETUDO_ARCHITECTURES.AARCH64,
+        },
+        "MOVA Z500": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.BEST_EFFORT,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY_ISH,
+            comment: "vSLAM :(",
+            architecture: VALETUDO_ARCHITECTURES.ARM,
+        },
+        "Z10 Pro": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.YES,
+            testedWorking: true,
+            recommended: BUY_GRADES.GET_IT_RIGHT_NOW,
+            comment: "The auto-empty-dock is a neat addition",
+            architecture: VALETUDO_ARCHITECTURES.AARCH64,
+        },
+        "P2148": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.YES,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY_ISH,
+            comment: [
+                "With its 5.5cm height and 32.3cm diameter, this robot offers a solution for some tricky homes.",
+                "As it is china exclusive, spare parts may be hard to find in the rest of the world.",
+                "",
+                "On initial root, it might be required to do a factory reset so that the device.conf gets regenerated.",
+                "",
+                "There is no reset button on this robot. Instead, press and hold the two buttons for",
+                "- <1s for the UART shell spawn",
+                "- >3s for Wi-Fi reset",
+                "- >5s for full factory reset"
+            ].join("\n"),
+            architecture: VALETUDO_ARCHITECTURES.AARCH64,
+        },
+        "W10": {
+            valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
+            developerSupport: DEVELOPER_SUPPORT_GRADES.YES,
+            testedWorking: true,
+            recommended: BUY_GRADES.OKAY,
+            comment: "The mopping feature is pretty great, however the missing obstacle avoidance is a bit annoying considering the pricetag",
+            architecture: VALETUDO_ARCHITECTURES.ARM_LOWMEM,
+        }
     },
     "1T": {
       valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
@@ -291,8 +376,12 @@ function getModelDescription(vendor, model) {
  * @type {string[]}
  */
 const HIDDEN_IMPLEMENTATIONS = [
-  "RoborockS6MaxVValetudoRobot",
-  "RoborockS7ValetudoRobot",
+    "ViomiV7ValetudoRobot",
+    "RoborockM1SValetudoRobot",
+    "RoborockS6MaxVValetudoRobot",
+    "RoborockS7ValetudoRobot",
+    "DreameP2149ValetudoRobot",
+    "DreameL10SUltraValetudoRobot",
 ];
 
 const vendors = {};
@@ -329,7 +418,7 @@ Object.values(Robots).forEach((robotClass) => {
 const header = `---
 title: Supported Robots
 category: General
-order: 8
+order: 9
 ---
 
 # Supported Robots

@@ -2,7 +2,7 @@
 import {ValetudoDataPoint} from "./api";
 
 export function convertSecondsToHumans(seconds: number, showSeconds = true, showDays = true): string {
-    let levels = [];
+    let levels;
 
     if (showDays) {
         levels = [
@@ -62,6 +62,42 @@ export function convertSecondsToHumans(seconds: number, showSeconds = true, show
     return humanReadableTimespan.trim();
 }
 
+export function convertBytesToHumans(bytes: number): string {
+    if (bytes >= 1024*1024*1024) {
+        return `${(((bytes/1024)/1024)/1024).toFixed(2)} GiB`;
+    } else if (bytes >= 1024*1024) {
+        return `${((bytes/1024)/1024).toFixed(2)} MiB`;
+    } else if (bytes >= 1024) {
+        return `${(bytes/1024).toFixed(2)} KiB`;
+    } else {
+        return `${bytes} bytes`;
+    }
+}
+
+//Adapted from https://stackoverflow.com/a/41358305
+export function convertNumberToRoman(num: number): string {
+    const symbols: Record<string, number> = {
+        XC: 90,
+        L: 50,
+        XL: 40,
+        X: 10,
+        IX: 9,
+        V: 5,
+        IV: 4,
+        I: 1
+    };
+    let str = "";
+
+    for (const i of Object.keys(symbols)) {
+        const quantity = Math.floor(num / symbols[i]);
+
+        num -= quantity * symbols[i];
+        str += i.repeat(quantity);
+    }
+
+    return str;
+}
+
 // Adapted from https://gist.github.com/erikvullings/ada7af09925082cbb89f40ed962d475e
 export const deepCopy = <T>(target: T): T => {
     if (target === null) {
@@ -93,11 +129,13 @@ const consumableTypeMapping: Record<string, string> = {
     "brush": "Brush",
     "filter": "Filter",
     "sensor": "Sensor cleaning",
-    "mop": "Mop"
+    "mop": "Mop",
+    "detergent": "Detergent"
 };
 
 const consumableSubtypeMapping: Record<string, string> = {
     "main": "Main",
+    "secondary": "Secondary",
     "side_right": "Right",
     "side_left": "Left",
     "all": "",
@@ -164,9 +202,9 @@ export function adjustColorBrightness(hexInput: string, percent: number) : strin
         hex = hex.replace(/(.)/g, "$1$1");
     }
 
-    let r = parseInt(hex.substr(0, 2), 16);
-    let g = parseInt(hex.substr(2, 2), 16);
-    let b = parseInt(hex.substr(4, 2), 16);
+    let r = parseInt(hex.slice(0, 2), 16);
+    let g = parseInt(hex.slice(2, 4), 16);
+    let b = parseInt(hex.slice(4, 6), 16);
 
     const calculatedPercent = (100 + percent) / 100;
 

@@ -36,16 +36,16 @@ class ValetudoEventRouter {
             const event = this.valetudoEventStore.getById(req.params.id);
 
             if (event) {
-                if (req.body && req.body.interaction) {
+                if (req.body.interaction) {
                     try {
                         await this.valetudoEventStore.interact(event, req.body.interaction);
                     } catch (e) {
-                        return res.status(400).send("Failed to interact with event: " + e?.message);
+                        return res.status(500).send("Failed to interact with event: " + e?.message);
                     }
 
                     res.json(event);
                 } else {
-                    res.status(400).send("Missing or invalid request body");
+                    res.sendStatus(400);
                 }
             } else {
                 res.sendStatus(404);

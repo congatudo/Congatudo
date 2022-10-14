@@ -2,11 +2,12 @@ const capabilities = require("./capabilities");
 
 const ConsumableMonitoringCapability = require("../../core/capabilities/ConsumableMonitoringCapability");
 const DreameMiotServices = require("./DreameMiotServices");
+const DreameUtils = require("./DreameUtils");
 const DreameValetudoRobot = require("./DreameValetudoRobot");
 const entities = require("../../entities");
+const LinuxTools = require("../../utils/LinuxTools");
 const Logger = require("../../Logger");
 const MopAttachmentReminderValetudoEvent = require("../../valetudo_events/events/MopAttachmentReminderValetudoEvent");
-const Tools = require("../../Tools");
 const ValetudoRestrictedZone = require("../../entities/core/ValetudoRestrictedZone");
 const ValetudoSelectionPreset = require("../../entities/core/ValetudoSelectionPreset");
 
@@ -36,6 +37,15 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                 }
             )
         );
+
+        /** @type {Array<{siid: number, piid: number, did: number}>} */
+        this.statePropertiesToPoll = this.getStatePropertiesToPoll().map(e => {
+            return {
+                siid: e.siid,
+                piid: e.piid,
+                did:  this.deviceId
+            };
+        });
 
         this.lastMapPoll = new Date(0);
 
@@ -73,15 +83,6 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
             }),
             siid: MIOT_SERVICES.VACUUM_2.SIID,
             piid: MIOT_SERVICES.VACUUM_2.PROPERTIES.FAN_SPEED.PIID
-        }));
-
-        this.registerCapability(new capabilities.DreameWaterUsageControlCapability({
-            robot: this,
-            presets: Object.keys(DreameValetudoRobot.WATER_GRADES).map(k => {
-                return new ValetudoSelectionPreset({name: k, value: DreameValetudoRobot.WATER_GRADES[k]});
-            }),
-            siid: MIOT_SERVICES.VACUUM_2.SIID,
-            piid: MIOT_SERVICES.VACUUM_2.PROPERTIES.WATER_USAGE.PIID
         }));
 
         this.registerCapability(new capabilities.DreameLocateCapability({
@@ -127,7 +128,7 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
             },
             segmentCleaningModeId: 18,
             iterationsSupported: 4,
-            customOrderSupported: false
+            customOrderSupported: true
         }));
 
         this.registerCapability(new capabilities.DreameMapSegmentEditCapability({
@@ -225,12 +226,6 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
             install_voicepack_piid: MIOT_SERVICES.AUDIO.PROPERTIES.INSTALL_VOICEPACK.PIID
         }));
 
-        this.registerCapability(new capabilities.DreameCarpetModeControlCapability({
-            robot: this,
-            siid: MIOT_SERVICES.VACUUM_2.SIID,
-            piid: MIOT_SERVICES.VACUUM_2.PROPERTIES.CARPET_MODE.PIID
-        }));
-
         this.registerCapability(new capabilities.DreamePendingMapChangeHandlingCapability({
             robot: this,
             miot_actions: {
@@ -247,22 +242,6 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                     piid: MIOT_SERVICES.MAP.PROPERTIES.ACTION_RESULT.PIID
                 }
             }
-        }));
-
-        this.registerCapability(new capabilities.DreameMappingPassCapability({
-            robot: this,
-            miot_actions: {
-                start: {
-                    siid: MIOT_SERVICES.VACUUM_2.SIID,
-                    aiid: MIOT_SERVICES.VACUUM_2.ACTIONS.START.AIID
-                }
-            },
-            miot_properties: {
-                mode: {
-                    piid: MIOT_SERVICES.VACUUM_2.PROPERTIES.MODE.PIID
-                }
-            },
-            mappingModeId: 21
         }));
 
         this.registerCapability(new capabilities.DreameManualControlCapability({
@@ -325,10 +304,6 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
             }
         }));
 
-        this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
-            type: entities.state.attributes.AttachmentStateAttribute.TYPE.WATERTANK,
-            attached: false
-        }));
 
         this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
             type: entities.state.attributes.AttachmentStateAttribute.TYPE.MOP,
@@ -336,8 +311,8 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
         }));
     }
 
-    onMessage(msg) {
-        if (super.onMessage(msg) === true) {
+    onIncomingCloudMessage(msg) {
+        if (super.onIncomingCloudMessage(msg) === true) {
             return true;
         }
 
@@ -348,7 +323,14 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                         case MIOT_SERVICES.MAP.SIID:
                             switch (e.piid) {
                                 case MIOT_SERVICES.MAP.PROPERTIES.MAP_DATA.PIID:
-                                    //intentional since these will only be P-Frames which are unsupported (yet?)
+                                    /*
+                                        Most of the time, these will be P-Frames, which Valetudo ignores, however
+                                        sometimes, they may be I-Frames as well. Usually that's right when a new map
+                                        is being created, as then the map data is small enough to fit into a miio msg
+                                     */
+                                    this.preprocessAndParseMap(e.value).catch(err => {
+                                        Logger.warn("Error while trying to parse map update", err);
+                                    });
                                     break;
                                 case MIOT_SERVICES.MAP.PROPERTIES.CLOUD_FILE_NAME.PIID:
                                 case MIOT_SERVICES.MAP.PROPERTIES.CLOUD_FILE_NAME_2.PIID:
@@ -365,6 +347,9 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                         case MIOT_SERVICES.SIDE_BRUSH.SIID:
                         case MIOT_SERVICES.FILTER.SIID:
                         case MIOT_SERVICES.SENSOR.SIID:
+                        case MIOT_SERVICES.MOP.SIID:
+                        case MIOT_SERVICES.SECONDARY_FILTER.SIID:
+                        case MIOT_SERVICES.DETERGENT.SIID:
                             this.parseAndUpdateState([e]);
                             break;
                         case MIOT_SERVICES.DEVICE.SIID:
@@ -377,7 +362,19 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                             //Intentionally ignored since we only poll that info when required and therefore don't care about updates
                             break;
                         case MIOT_SERVICES.AUTO_EMPTY_DOCK.SIID:
+                        case MIOT_SERVICES.TIMERS.SIID:
                             //Intentionally left blank (for now?)
+                            break;
+                        case MIOT_SERVICES.SILVER_ION.SIID:
+                            //Intentionally ignored for now, because I have no idea what that should be or where it could be located
+                            //TODO: figure out
+                            break;
+                        case 10001:
+                            /*
+                                Seems to have something to do with the AI camera
+                                Sample value: {"operType":"properties_changed","operation":"monitor","result":0,"status":0}
+                             */
+                            //Intentionally ignored
                             break;
                         default:
                             Logger.warn("Unhandled property change ", e);
@@ -406,8 +403,13 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
         return false;
     }
 
-    async pollState() {
-        const response = await this.sendCommand("get_properties", [
+    /**
+     * May be extended by children
+     *
+     * @return {Array<{piid: number, siid: number}>}
+     */
+    getStatePropertiesToPoll() {
+        return [
             {
                 siid: MIOT_SERVICES.VACUUM_2.SIID,
                 piid: MIOT_SERVICES.VACUUM_2.PROPERTIES.MODE.PIID
@@ -440,11 +442,14 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                 siid: MIOT_SERVICES.BATTERY.SIID,
                 piid: MIOT_SERVICES.BATTERY.PROPERTIES.CHARGING.PIID
             }
-        ].map(e => {
-            e.did = this.deviceId;
+        ];
+    }
 
-            return e;
-        }));
+    async pollState() {
+        const response = await this.sendCommand(
+            "get_properties",
+            this.statePropertiesToPoll
+        );
 
         if (response) {
             this.parseAndUpdateState(response);
@@ -517,14 +522,41 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                             break;
                         }
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.WATER_TANK_ATTACHMENT.PIID: {
-                            this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
-                                type: entities.state.attributes.AttachmentStateAttribute.TYPE.WATERTANK,
-                                attached: elem.value === 1
+                            const supportedAttachments = this.getModelDetails().supportedAttachments;
+
+                            if (supportedAttachments.includes(stateAttrs.AttachmentStateAttribute.TYPE.WATERTANK)) {
+                                this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
+                                    type: entities.state.attributes.AttachmentStateAttribute.TYPE.WATERTANK,
+                                    attached: elem.value === 1
+                                }));
+                            }
+
+                            if (supportedAttachments.includes(stateAttrs.AttachmentStateAttribute.TYPE.MOP)) {
+                                this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
+                                    type: entities.state.attributes.AttachmentStateAttribute.TYPE.MOP,
+                                    attached: elem.value === 1
+                                }));
+                            }
+
+                            break;
+                        }
+                        case MIOT_SERVICES.VACUUM_2.PROPERTIES.MOP_DOCK_STATUS.PIID: {
+                            this.state.upsertFirstMatchingAttribute(new entities.state.attributes.DockStatusStateAttribute({
+                                value: DreameValetudoRobot.MOP_DOCK_STATUS_MAP[elem.value]
                             }));
 
-                            this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
-                                type: entities.state.attributes.AttachmentStateAttribute.TYPE.MOP,
-                                attached: elem.value === 1
+                            break;
+                        }
+                        case MIOT_SERVICES.VACUUM_2.PROPERTIES.MOP_DOCK_SETTINGS.PIID: {
+                            const deserializedValue = DreameUtils.DESERIALIZE_MOP_DOCK_SETTINGS(elem.value);
+
+                            let matchingOperationMode = Object.keys(DreameValetudoRobot.OPERATION_MODES).find(key => {
+                                return DreameValetudoRobot.OPERATION_MODES[key] === deserializedValue.operationMode;
+                            });
+
+                            this.state.upsertFirstMatchingAttribute(new stateAttrs.PresetSelectionStateAttribute({
+                                type: stateAttrs.PresetSelectionStateAttribute.TYPE.OPERATION_MODE,
+                                value: matchingOperationMode
                             }));
                             break;
                         }
@@ -536,7 +568,12 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.CARPET_MODE.PIID:
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.KEY_LOCK.PIID:
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.OBSTACLE_AVOIDANCE.PIID:
+                        case MIOT_SERVICES.VACUUM_2.PROPERTIES.POST_CHARGE_CONTINUE.PIID:
                             //ignored for now
+                            break;
+                        case 38:
+                            //No idea what this does
+                            //TODO: figure out
                             break;
 
                         default:
@@ -568,6 +605,9 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                 case MIOT_SERVICES.SIDE_BRUSH.SIID:
                 case MIOT_SERVICES.FILTER.SIID:
                 case MIOT_SERVICES.SENSOR.SIID:
+                case MIOT_SERVICES.MOP.SIID:
+                case MIOT_SERVICES.SECONDARY_FILTER.SIID:
+                case MIOT_SERVICES.DETERGENT.SIID:
                     if (this.capabilities[ConsumableMonitoringCapability.TYPE]) {
                         this.capabilities[ConsumableMonitoringCapability.TYPE].parseConsumablesMessage(elem);
                     }
@@ -582,11 +622,12 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
             let newState;
             let statusValue;
             let statusFlag;
+            let statusError;
             let statusMetaData = {};
 
             if (this.errorCode === "0" || this.errorCode === "") {
-                statusValue = DreameValetudoRobot.STATUS_MAP[this.mode].value;
-                statusFlag = DreameValetudoRobot.STATUS_MAP[this.mode].flag;
+                statusValue = DreameValetudoRobot.STATUS_MAP[this.mode]?.value ?? stateAttrs.StatusStateAttribute.VALUE.IDLE;
+                statusFlag = DreameValetudoRobot.STATUS_MAP[this.mode]?.flag;
 
                 if (statusValue === stateAttrs.StatusStateAttribute.VALUE.DOCKED && this.taskStatus !== 0) {
                     // Robot has a pending task but is charging due to low battery and will resume when battery >= 80%
@@ -598,11 +639,12 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                 if (this.errorCode === "68") { //Docked with mop still attached. For some reason, dreame decided to have this as an error
                     statusValue = stateAttrs.StatusStateAttribute.VALUE.DOCKED;
                     this.valetudoEventStore.raise(new MopAttachmentReminderValetudoEvent({}));
+                } else if (this.errorCode === "114") { //Reminder message to regularly clean the mop dock
+                    statusValue = stateAttrs.StatusStateAttribute.VALUE.DOCKED;
                 } else {
                     statusValue = stateAttrs.StatusStateAttribute.VALUE.ERROR;
 
-                    statusMetaData.error_code = this.errorCode;
-                    statusMetaData.error_description = DreameValetudoRobot.GET_ERROR_CODE_DESCRIPTION(this.errorCode);
+                    statusError = DreameValetudoRobot.MAP_ERROR_CODE(this.errorCode);
                 }
 
             }
@@ -610,7 +652,8 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
             newState = new stateAttrs.StatusStateAttribute({
                 value: statusValue,
                 flag: statusFlag,
-                metaData: statusMetaData
+                metaData: statusMetaData,
+                error: statusError
             });
 
             this.state.upsertFirstMatchingAttribute(newState);
@@ -632,13 +675,13 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
 
         if (this.config.get("embedded") === true) {
             try {
-                const {partitions, rootPartition} = Tools.PARSE_PROC_CMDLINE();
+                const parsedCmdline = LinuxTools.READ_PROC_CMDLINE();
 
-                if (partitions[rootPartition]) {
-                    Logger.info(`Current rootfs: ${partitions[rootPartition]} (${rootPartition})`);
+                if (parsedCmdline.partitions[parsedCmdline.root]) {
+                    Logger.info(`Current rootfs: ${parsedCmdline.partitions[parsedCmdline.root]} (${parsedCmdline.root})`);
                 }
             } catch (e) {
-                Logger.warn("Unable to parse /proc/cmdline", e);
+                Logger.warn("Unable to read /proc/cmdline", e);
             }
         }
     }

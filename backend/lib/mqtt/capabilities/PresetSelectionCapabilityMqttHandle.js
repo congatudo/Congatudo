@@ -7,6 +7,7 @@ const DataType = require("../homie/DataType");
 const EntityCategory = require("../homeassistant/EntityCategory");
 const HassAnchor = require("../homeassistant/HassAnchor");
 const InLineHassComponent = require("../homeassistant/components/InLineHassComponent");
+const Logger = require("../../Logger");
 const PropertyMqttHandle = require("../handles/PropertyMqttHandle");
 const stateAttrs = require("../../entities/state/attributes");
 
@@ -71,8 +72,12 @@ class PresetSelectionCapabilityMqttHandle extends CapabilityMqttHandle {
                 if (options.capability.getType() === capabilities.FanSpeedControlCapability.TYPE) {
 
                     // Sent as a topic reference since this is used for the autoconfig
-                    HassAnchor.getTopicReference(HassAnchor.REFERENCE.FAN_SPEED_PRESETS).post(this.capability.getPresets()).then();
-                    HassAnchor.getTopicReference(HassAnchor.REFERENCE.FAN_SPEED_SET).post(prop.getBaseTopic() + "/set").then();
+                    HassAnchor.getTopicReference(HassAnchor.REFERENCE.FAN_SPEED_PRESETS).post(this.capability.getPresets()).catch(err => {
+                        Logger.error("Error while posting value to HassAnchor", err);
+                    });
+                    HassAnchor.getTopicReference(HassAnchor.REFERENCE.FAN_SPEED_SET).post(prop.getBaseTopic() + "/set").catch(err => {
+                        Logger.error("Error while posting value to HassAnchor", err);
+                    });
 
                 } else if (options.capability.getType() === capabilities.WaterUsageControlCapability.TYPE) {
                     this.controller.withHass((hass) => {
@@ -83,13 +88,33 @@ class PresetSelectionCapabilityMqttHandle extends CapabilityMqttHandle {
                                 name: capabilities.WaterUsageControlCapability.TYPE,
                                 friendlyName: CAPABILITIES_TO_FRIENDLY_NAME_MAPPING[capabilities.WaterUsageControlCapability.TYPE],
                                 componentType: ComponentType.SELECT,
-                                baseTopicReference: HassAnchor.getTopicReference(HassAnchor.REFERENCE.HASS_WATER_GRADE_PRESETS),
                                 autoconf: {
                                     state_topic: prop.getBaseTopic(),
                                     value_template: "{{ value }}",
                                     command_topic: prop.getBaseTopic() + "/set",
                                     options: this.capability.getPresets(),
                                     icon: "mdi:water-pump",
+                                    entity_category: EntityCategory.CONFIG,
+                                }
+                            })
+                        );
+                    });
+
+                } else if (options.capability.getType() === capabilities.OperationModeControlCapability.TYPE) {
+                    this.controller.withHass((hass) => {
+                        prop.attachHomeAssistantComponent(
+                            new InLineHassComponent({
+                                hass: hass,
+                                robot: this.robot,
+                                name: capabilities.OperationModeControlCapability.TYPE,
+                                friendlyName: CAPABILITIES_TO_FRIENDLY_NAME_MAPPING[capabilities.OperationModeControlCapability.TYPE],
+                                componentType: ComponentType.SELECT,
+                                autoconf: {
+                                    state_topic: prop.getBaseTopic(),
+                                    value_template: "{{ value }}",
+                                    command_topic: prop.getBaseTopic() + "/set",
+                                    options: this.capability.getPresets(),
+                                    icon: "mdi:developer-board",
                                     entity_category: EntityCategory.CONFIG,
                                 }
                             })
@@ -109,6 +134,7 @@ class PresetSelectionCapabilityMqttHandle extends CapabilityMqttHandle {
 const CAPABILITIES_TO_FRIENDLY_NAME_MAPPING = {
     [capabilities.FanSpeedControlCapability.TYPE]: "Fan speed",
     [capabilities.WaterUsageControlCapability.TYPE]: "Water grade",
+    [capabilities.OperationModeControlCapability.TYPE]: "Operation mode",
 };
 
 const CAPABILITIES_TO_STATE_ATTR_MAPPING = {
@@ -119,6 +145,10 @@ const CAPABILITIES_TO_STATE_ATTR_MAPPING = {
     [capabilities.WaterUsageControlCapability.TYPE]: {
         attributeClass: stateAttrs.PresetSelectionStateAttribute.name,
         attributeType: stateAttrs.PresetSelectionStateAttribute.TYPE.WATER_GRADE
+    },
+    [capabilities.OperationModeControlCapability.TYPE]: {
+        attributeClass: stateAttrs.PresetSelectionStateAttribute.name,
+        attributeType: stateAttrs.PresetSelectionStateAttribute.TYPE.OPERATION_MODE
     },
 };
 

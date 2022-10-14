@@ -1,7 +1,7 @@
 ---
 title: Roborock, Files to backup
 category: Misc
-order: 32
+order: 33
 ---
 ## Important Roborock Stuff
 
@@ -15,7 +15,7 @@ These is a list of important files on the robot. I am mainly writing this down h
 
 Zones + Spots configuration, mqtt + other config
 
-`/mnt/data/valetudo/config.json`
+`/mnt/data/valetudo/valetudo_config.json`
 
 Status to keep map
 

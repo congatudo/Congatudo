@@ -1,13 +1,9 @@
 import {RawMapData} from "../api";
-import {FourColorTheoremSolver} from "./utils/map-color-finder";
 import {Theme} from "@mui/material";
 import {adjustColorBrightness} from "../utils";
+import {RGBColor, LayerColors, RENDER_LAYERS_TO_IMAGEDATA} from "./MapLayerRenderUtils";
 
-type RGBColor = {
-    r: number;
-    g: number;
-    b: number;
-}
+
 
 function hexToRgb(hex: string) : RGBColor {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
@@ -24,17 +20,17 @@ function hexToRgb(hex: string) : RGBColor {
 }
 
 export class MapLayerRenderer {
-    private canvas: HTMLCanvasElement;
-    private readonly ctx: CanvasRenderingContext2D | null;
+    private readonly canvas: HTMLCanvasElement;
+    private readonly ctx: CanvasRenderingContext2D;
     private width: number;
     private height: number;
 
     private mapLayerRenderWebWorker: Worker;
     private mapLayerRenderWebWorkerAvailable = false;
-    private pendingCallback: any;
+    private pendingCallback: (() => void) | undefined;
     private colors: { floor: string; wall: string; segments: string[] };
-    private darkColors: { floor: RGBColor; wall: RGBColor; segments: RGBColor[] };
-    private lightColors: { floor: RGBColor; wall: RGBColor; segments: RGBColor[] };
+    private readonly darkColors: { floor: RGBColor; wall: RGBColor; segments: RGBColor[] };
+    private readonly lightColors: { floor: RGBColor; wall: RGBColor; segments: RGBColor[] };
 
     constructor() {
         this.width = 1;
@@ -44,11 +40,7 @@ export class MapLayerRenderer {
         this.canvas.width = this.width;
         this.canvas.height = this.height;
 
-        this.ctx = this.canvas.getContext("2d");
-
-        if (this.ctx === null) {
-            throw new Error("Context is null");
-        }
+        this.ctx = this.canvas.getContext("2d")!;
 
         this.colors = {
             floor:"#0076ff",
@@ -78,7 +70,7 @@ export class MapLayerRenderer {
             })
         };
 
-        this.mapLayerRenderWebWorker = new Worker("mapLayerRenderWebWorker.js");
+        this.mapLayerRenderWebWorker = new Worker(new URL("./MapLayerRenderer.worker", import.meta.url));
 
         this.mapLayerRenderWebWorker.onerror = (ev => {
             // eslint-disable-next-line no-console
@@ -89,22 +81,23 @@ export class MapLayerRenderer {
 
         this.mapLayerRenderWebWorker.onmessage = (evt) => {
             if (evt.data.pixels !== undefined) {
-                if (this.ctx !== null) {
-                    const imageData = new ImageData(
-                        new Uint8ClampedArray( evt.data.pixels ),
-                        evt.data.width,
-                        evt.data.height
-                    );
+                const imageData = new ImageData(
+                    new Uint8ClampedArray(evt.data.pixels),
+                    evt.data.width,
+                    evt.data.height
+                );
 
-                    this.ctx.putImageData(imageData, 0, 0);
+                this.ctx.putImageData(imageData, 0, 0);
 
-                    if (typeof this.pendingCallback === "function") {
-                        this.pendingCallback();
-                        this.pendingCallback = undefined;
-                    }
+                if (typeof this.pendingCallback === "function") {
+                    this.pendingCallback();
+                    this.pendingCallback = undefined;
                 }
             } else {
                 if (evt.data.ready === true) {
+                    // eslint-disable-next-line no-console
+                    console.info("MapLayerRenderer.worker available");
+
                     this.mapLayerRenderWebWorkerAvailable = true;
 
                     return;
@@ -116,7 +109,7 @@ export class MapLayerRenderer {
     }
 
     draw(data : RawMapData, theme: Theme): Promise<void> {
-        let colorsToUse: { floor: RGBColor; wall: RGBColor; segments: RGBColor[]; };
+        let colorsToUse: LayerColors;
 
         switch (theme.palette.mode) {
             case "light":
@@ -128,10 +121,6 @@ export class MapLayerRenderer {
         }
 
         return new Promise((resolve, reject) => {
-            if (this.ctx === null) {
-                throw new Error("Context is null");
-            }
-
             //As the map data might change dimensions, we need to keep track of that.
             if (
                 this.canvas.width !== Math.round(data.size.x / data.pixelSize) ||
@@ -148,14 +137,14 @@ export class MapLayerRenderer {
             if (data.layers.length > 0) {
                 if (this.mapLayerRenderWebWorkerAvailable) {
                     this.mapLayerRenderWebWorker.postMessage( {
-                        width: this.width,
-                        height: this.height,
                         mapLayers: data.layers,
                         pixelSize: data.pixelSize,
-                        colors: colorsToUse
+                        width: this.width,
+                        height: this.height,
+                        colorsToUse: colorsToUse
                     });
 
-                    //I'm not 100% sure if this cleanup is necessary but it should prevent eternally stuck promises
+                    //I'm not 100% sure if this cleanup is necessary, but it should prevent eternally stuck promises
                     if (typeof this.pendingCallback === "function") {
                         this.pendingCallback();
                         this.pendingCallback = undefined;
@@ -165,42 +154,13 @@ export class MapLayerRenderer {
                         resolve();
                     };
                 } else { //Fallback if there's no worker for some reason
-                    const imageData = this.ctx.createImageData(this.width,this.height);
-
-                    const colorFinder = new FourColorTheoremSolver(data.layers, data.pixelSize);
-
-                    [...data.layers].sort((a,b) => {
-                        return TYPE_SORT_MAPPING[a.type] - TYPE_SORT_MAPPING[b.type];
-                    }).forEach(layer => {
-                        let color;
-
-                        switch (layer.type) {
-                            case "floor":
-                                color = colorsToUse.floor;
-                                break;
-                            case "wall":
-                                color = colorsToUse.wall;
-                                break;
-                            case "segment":
-                                color = colorsToUse.segments[colorFinder.getColor((layer.metaData.segmentId ?? ""))];
-                                break;
-                        }
-
-                        if (!color) {
-                            //eslint-disable-next-line no-console
-                            console.error(`Missing color for ${layer.type} with segment id '${layer.metaData.segmentId}'.`);
-                            color = {r: 0, g: 0, b: 0};
-                        }
-
-                        for (let i = 0; i < layer.pixels.length; i = i + 2) {
-                            const imgDataOffset = (layer.pixels[i] + layer.pixels[i+1] * this.width) * 4;
-
-                            imageData.data[imgDataOffset] = color.r;
-                            imageData.data[imgDataOffset + 1] = color.g;
-                            imageData.data[imgDataOffset + 2] = color.b;
-                            imageData.data[imgDataOffset + 3] = 255;
-                        }
-                    });
+                    const imageData = RENDER_LAYERS_TO_IMAGEDATA(
+                        data.layers,
+                        data.pixelSize,
+                        this.width,
+                        this.height,
+                        colorsToUse
+                    );
 
                     this.ctx.putImageData(imageData, 0, 0);
                     resolve();
@@ -215,11 +175,4 @@ export class MapLayerRenderer {
         return this.canvas;
     }
 }
-
-// This is important because it determines the draw order
-const TYPE_SORT_MAPPING = {
-    "floor": 14,
-    "segment": 15,
-    "wall": 16
-};
 

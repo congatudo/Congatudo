@@ -1,4 +1,4 @@
-import Map, {MapProps, MapState} from "./Map";
+import Map, {MapProps, MapState, usePendingMapAction} from "./Map";
 import {Capability} from "../api";
 import GoToTargetClientStructure from "./structures/client_structures/GoToTargetClientStructure";
 import LocateAction from "./actions/live_map_actions/LocateAction";
@@ -8,6 +8,7 @@ import SegmentLabelMapStructure from "./structures/map_structures/SegmentLabelMa
 import ZoneActions from "./actions/live_map_actions/ZoneActions";
 import ZoneClientStructure from "./structures/client_structures/ZoneClientStructure";
 import GoToActions from "./actions/live_map_actions/GoToActions";
+import {TapTouchHandlerEvent} from "./utils/touch_handling/events/TapTouchHandlerEvent";
 
 interface LiveMapProps extends MapProps {
     supportedCapabilities: {
@@ -35,20 +36,9 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
     }
 
     protected updateState() : void {
+        super.updateState();
+
         this.setState({
-            selectedSegmentIds: this.structureManager.getMapStructures().filter(s => {
-                if (s.type === SegmentLabelMapStructure.TYPE) {
-                    const label = s as SegmentLabelMapStructure;
-
-                    return label.selected;
-                } else {
-                    return false;
-                }
-            }).map(s => {
-                const label = s as SegmentLabelMapStructure;
-
-                return label.id;
-            }),
             zones: this.structureManager.getClientStructures().filter(s => {
                 return s.type === ZoneClientStructure.TYPE;
             }) as Array<ZoneClientStructure>,
@@ -59,17 +49,13 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
     }
 
 
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected onTap(evt: any): boolean | void {
+    protected onTap(evt: TapTouchHandlerEvent): boolean | void {
         if (super.onTap(evt)) {
             return;
         }
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
 
-        const {x, y} = Map.relativeCoordinates(evt.tappedCoordinates, this.canvas);
-        const tappedPointInMapSpace = this.ctx.transformedPoint(x, y);
+        const {x, y} = this.relativeCoordinatesToCanvas(evt.x0, evt.y0);
+        const tappedPointInMapSpace = this.ctxWrapper.mapPointToCurrentTransform(x, y);
 
 
         if (this.props.supportedCapabilities[Capability.GoToLocation]) {
@@ -85,6 +71,20 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
                 this.updateState();
                 this.draw();
             }
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<MapProps>, prevState: Readonly<MapState>): void {
+        super.componentDidUpdate(prevProps, prevState);
+
+        if (
+            this.state.selectedSegmentIds.length > 0 ||
+            this.state.zones.length > 0 ||
+            this.state.goToTarget !== undefined
+        ) {
+            usePendingMapAction.setState({hasPendingMapAction: true});
+        } else {
+            usePendingMapAction.setState({hasPendingMapAction: false});
         }
     }
 

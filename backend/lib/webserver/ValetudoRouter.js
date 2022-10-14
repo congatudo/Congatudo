@@ -3,7 +3,7 @@ const nestedProperty = require("nested-property");
 const RateLimit = require("express-rate-limit");
 
 const Logger = require("../Logger");
-const Tools = require("../Tools");
+const Tools = require("../utils/Tools");
 const {SSEHub, SSEMiddleware} = require("./middlewares/sse");
 
 class ValetudoRouter {
@@ -21,10 +21,8 @@ class ValetudoRouter {
         this.robot = options.robot;
         this.validator = options.validator;
 
-        //@ts-ignore
-        // noinspection PointlessArithmeticExpressionJS
-        this.limiter = new RateLimit({
-            windowMs: 1*30*1000,
+        this.limiter = RateLimit.rateLimit({
+            windowMs: 30*1000,
             max: 30
         });
 
@@ -36,7 +34,8 @@ class ValetudoRouter {
     initRoutes() {
         this.router.get("/", (req, res) => {
             res.json({
-                embedded: this.config.get("embedded")
+                embedded: this.config.get("embedded"),
+                systemId: Tools.GET_HUMAN_READABLE_SYSTEM_ID()
             });
         });
 
@@ -61,10 +60,10 @@ class ValetudoRouter {
         });
 
         this.router.put("/log/level", this.validator, (req, res) => {
-            if (req.body && req.body.level && typeof req.body.level === "string") {
+            if (typeof req.body.level === "string") {
                 Logger.setLogLevel(req.body.level);
 
-                res.sendStatus(202);
+                res.sendStatus(200);
             } else {
                 res.sendStatus(400);
             }
@@ -83,23 +82,8 @@ class ValetudoRouter {
             res.json(mqttConfig);
         });
 
-        this.router.get("/config/interfaces/mqtt/properties", (req, res) => {
-            //It might make sense to pull this from the mqttController but that would introduce a dependency between the webserver and the mqttController :/
-            res.json({
-                defaults: {
-                    identity: {
-                        friendlyName: this.robot.getModelName() + " " + Tools.GET_HUMAN_READABLE_SYSTEM_ID(),
-                        identifier: Tools.GET_HUMAN_READABLE_SYSTEM_ID()
-                    },
-                    customizations: {
-                        topicPrefix: "valetudo"
-                    }
-                }
-            });
-        });
-
         this.router.put("/config/interfaces/mqtt", this.validator, (req, res) => {
-            let mqttConfig = req.body;
+            let mqttConfig = ValetudoRouter.MAP_MQTT_CONFIG(req.body);
             let oldConfig = this.config.get("mqtt");
 
 
@@ -111,7 +95,7 @@ class ValetudoRouter {
 
             this.config.set("mqtt", mqttConfig);
 
-            res.sendStatus(202);
+            res.sendStatus(200);
         });
 
         this.router.get("/config/interfaces/http/auth/basic", (req, res) => {
@@ -120,7 +104,6 @@ class ValetudoRouter {
 
         this.router.put("/config/interfaces/http/auth/basic", this.validator, (req, res) => {
             if (
-                req.body && typeof req.body === "object" &&
                 typeof req.body.enabled === "boolean" &&
                 typeof req.body.username === "string" &&
                 typeof req.body.password === "string"
@@ -135,15 +118,15 @@ class ValetudoRouter {
 
 
                 if (!options.password && (webserverConfig.basicAuth.enabled === false && options.enabled === true)) {
-                    res.status(400).send("Missing password for basic auth enable. Don't lock yourself out!");
+                    res.sendStatus(400);
                 } else {
                     webserverConfig.basicAuth = options;
 
                     this.config.set("webserver", webserverConfig);
-                    res.sendStatus(201);
+                    res.sendStatus(200);
                 }
             } else {
-                res.status(400).send("bad request body");
+                res.sendStatus(400);
             }
 
         });
@@ -193,6 +176,52 @@ class ValetudoRouter {
         Object.values(this.sseHubs).forEach(hub => {
             hub.shutdown();
         });
+    }
+
+    static MAP_MQTT_CONFIG(obj) {
+        return {
+            enabled: obj.enabled,
+            connection: {
+                host: obj.connection.host,
+                port: obj.connection.port,
+                tls: {
+                    enabled: obj.connection.tls.enabled,
+                    ca: obj.connection.tls.ca
+                },
+                authentication: {
+                    credentials: {
+                        enabled: obj.connection.authentication.credentials.enabled,
+                        username: obj.connection.authentication.credentials.username,
+                        password: obj.connection.authentication.credentials.password
+                    },
+                    clientCertificate: {
+                        enabled: obj.connection.authentication.clientCertificate.enabled,
+                        certificate: obj.connection.authentication.clientCertificate.certificate,
+                        key: obj.connection.authentication.clientCertificate.key
+                    }
+                }
+            },
+            identity: {
+                friendlyName: obj.identity.friendlyName,
+                identifier: obj.identity.identifier
+            },
+            customizations: {
+                topicPrefix: obj.customizations.topicPrefix,
+                provideMapData: obj.customizations.provideMapData
+            },
+            interfaces: {
+                homie: {
+                    enabled: obj.interfaces.homie.enabled,
+                    addICBINVMapProperty: obj.interfaces.homie.addICBINVMapProperty,
+                    cleanAttributesOnShutdown: obj.interfaces.homie.cleanAttributesOnShutdown
+                },
+                homeassistant: {
+                    enabled: obj.interfaces.homeassistant.enabled,
+                    cleanAutoconfOnShutdown: obj.interfaces.homeassistant.cleanAutoconfOnShutdown
+                }
+            },
+            optionalExposedCapabilities: Array.isArray(obj.optionalExposedCapabilities) ? [...new Set(obj.optionalExposedCapabilities)] : []
+        };
     }
 }
 

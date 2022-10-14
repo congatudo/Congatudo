@@ -39,7 +39,11 @@ const ProvisioningPage = (): JSX.Element => {
     const {
         mutate: updateWifiConfiguration,
         isLoading: wifiConfigurationUpdating
-    } = useWifiConfigurationMutation();
+    } = useWifiConfigurationMutation({
+        onSuccess: () => {
+            setFinalDialogOpen(true);
+        }
+    });
 
     const [newSSID, setNewSSID] = React.useState("");
     const [newPSK, setNewPSK] = React.useState("");
@@ -192,7 +196,6 @@ const ProvisioningPage = (): JSX.Element => {
                     setConfirmationDialogOpen(false);
                 }}
                 onAccept={() => {
-                    setFinalDialogOpen(true);
                     updateWifiConfiguration({
                         ssid: newSSID,
                         credentials: {
@@ -206,7 +209,10 @@ const ProvisioningPage = (): JSX.Element => {
                 <DialogContentText>
                     Are you sure you want to apply the Wi-Fi settings?
                     <br/>
-                    <strong>Hint:</strong> You can always revert back to the integrated Wifi Hotspot.
+                    <br/>
+                    <strong>Hint:</strong>
+                    <br/>
+                    You can always revert back to the integrated Wifi Hotspot.
                     Check the documentation supplied with your robot for instructions on how to do so.
                 </DialogContentText>
             </ConfirmationDialog>

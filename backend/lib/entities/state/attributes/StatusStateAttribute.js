@@ -5,6 +5,7 @@ class StatusStateAttribute extends StateAttribute {
      * @param {object} options
      * @param {StatusStateAttributeValue} options.value
      * @param {StatusStateAttributeFlag} [options.flag]
+     * @param {import("../../core/ValetudoRobotError")} [options.error]
      * @param {object} [options.metaData]
      */
     constructor(options) {
@@ -12,6 +13,8 @@ class StatusStateAttribute extends StateAttribute {
 
         this.value = options.value;
         this.flag = options.flag ?? StatusStateAttribute.FLAG.NONE;
+
+        this.error = this.value === StatusStateAttribute.VALUE.ERROR ? options.error : undefined;
     }
 
     get isActiveState() {
@@ -21,20 +24,6 @@ class StatusStateAttribute extends StateAttribute {
             StatusStateAttribute.VALUE.MANUAL_CONTROL,
             StatusStateAttribute.VALUE.MOVING
         ].includes(this.value);
-    }
-
-    /**
-     *
-     * @param {StatusStateAttribute} otherAttribute
-     * @return {boolean}
-     */
-    equals(otherAttribute) {
-        return this.__class === otherAttribute.__class &&
-            this.type === otherAttribute.type &&
-            this.subType === otherAttribute.subType &&
-            this.value === otherAttribute.value &&
-            this.flag === otherAttribute.flag &&
-            JSON.stringify(this.metaData) === JSON.stringify(otherAttribute.metaData); //todo: ugly
     }
 }
 

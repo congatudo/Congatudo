@@ -1,9 +1,6 @@
-const Logger = require("../../Logger");
-
 const CapabilityRouter = require("./CapabilityRouter");
 
 class SimpleToggleCapabilityRouter extends CapabilityRouter {
-
     initRoutes() {
         this.router.get("/", async (req, res) => {
             try {
@@ -11,32 +8,27 @@ class SimpleToggleCapabilityRouter extends CapabilityRouter {
                     enabled: await this.capability.isEnabled()
                 });
             } catch (e) {
-                res.status(500).send(e.message);
+                this.sendErrorResponse(req, res, e);
             }
         });
 
-        this.router.put("/", async (req, res) => {
-            if (req.body) {
-                try {
-                    switch (req.body.action) {
-                        case "enable":
-                            await this.capability.enable();
-                            break;
-                        case "disable":
-                            await this.capability.disable();
-                            break;
-                        default:
-                            // noinspection ExceptionCaughtLocallyJS
-                            throw new Error("Invalid action");
-                    }
-
-                    res.sendStatus(200);
-                } catch (e) {
-                    Logger.warn("Error while toggling simple toggle", e);
-                    res.status(500).json(e.message);
+        this.router.put("/", this.validator, async (req, res) => {
+            try {
+                switch (req.body.action) {
+                    case "enable":
+                        await this.capability.enable();
+                        break;
+                    case "disable":
+                        await this.capability.disable();
+                        break;
+                    default:
+                        // noinspection ExceptionCaughtLocallyJS
+                        throw new Error("Invalid action");
                 }
-            } else {
-                res.status(400).send("Missing parameters in request body");
+
+                res.sendStatus(200);
+            } catch (e) {
+                this.sendErrorResponse(req, res, e);
             }
         });
     }

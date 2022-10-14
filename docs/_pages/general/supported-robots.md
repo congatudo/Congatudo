@@ -1,7 +1,7 @@
 ---
 title: Supported Robots
 category: General
-order: 8
+order: 9
 ---
 
 # Supported Robots
@@ -208,6 +208,7 @@ vSLAM and a small battery, though there are persistent maps and everything seems
   - [MapSegmentEditCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentEditCapability)
   - [MapSegmentRenameCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentRenameCapability)
   - [MapSegmentationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentationCapability)
+  - [PendingMapChangeHandlingCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PendingMapChangeHandlingCapability)
   - [PersistentMapControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PersistentMapControlCapability)
   - [SpeakerTestCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerTestCapability)
   - [SpeakerVolumeControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerVolumeControlCapability)
@@ -252,7 +253,8 @@ aarch64
 
 #### Comment
 
-vSLAM :(
+vSLAM + ToF offers a huge upgrade over only vSLAM, however it is still inferior to Lidar-based mapping.
+On initial root, it might be required to do a factory reset so that the device.conf gets regenerated.
 
 
 
@@ -270,7 +272,6 @@ vSLAM :(
   - [MapSegmentEditCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentEditCapability)
   - [MapSegmentRenameCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentRenameCapability)
   - [MapSegmentationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentationCapability)
-  - [MappingPassCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MappingPassCapability)
   - [PendingMapChangeHandlingCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PendingMapChangeHandlingCapability)
   - [PersistentMapControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PersistentMapControlCapability)
   - [SpeakerTestCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerTestCapability)
@@ -401,6 +402,7 @@ armv7-lowmem
   - [MapSegmentationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentationCapability)
   - [MappingPassCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MappingPassCapability)
   - [PendingMapChangeHandlingCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PendingMapChangeHandlingCapability)
+  - [QuirksCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#QuirksCapability)
   - [SpeakerTestCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerTestCapability)
   - [SpeakerVolumeControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerVolumeControlCapability)
   - [TotalStatisticsCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#TotalStatisticsCapability)
@@ -462,7 +464,6 @@ vSLAM :(
   - [MapSegmentEditCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentEditCapability)
   - [MapSegmentRenameCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentRenameCapability)
   - [MapSegmentationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentationCapability)
-  - [MappingPassCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MappingPassCapability)
   - [PendingMapChangeHandlingCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PendingMapChangeHandlingCapability)
   - [PersistentMapControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PersistentMapControlCapability)
   - [SpeakerTestCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerTestCapability)
@@ -591,7 +592,77 @@ vSLAM :(
   - [MapSegmentEditCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentEditCapability)
   - [MapSegmentRenameCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentRenameCapability)
   - [MapSegmentationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentationCapability)
-  - [MappingPassCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MappingPassCapability)
+  - [PendingMapChangeHandlingCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PendingMapChangeHandlingCapability)
+  - [PersistentMapControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PersistentMapControlCapability)
+  - [SpeakerTestCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerTestCapability)
+  - [SpeakerVolumeControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerVolumeControlCapability)
+  - [TotalStatisticsCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#TotalStatisticsCapability)
+  - [VoicePackManagementCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#VoicePackManagementCapability)
+  - [WaterUsageControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#WaterUsageControlCapability)
+  - [WifiConfigurationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#WifiConfigurationCapability)
+  - [ZoneCleaningCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#ZoneCleaningCapability)
+
+
+### P2148<a id="dreame_p2148"></a>
+
+#### Valetudo Support
+
+good
+
+
+
+#### Developer Support
+
+yes
+
+
+
+#### Tested Working
+
+✔
+
+
+
+#### Recommended
+
+This model is okay but has some issues that keep it from being fully recommendable
+
+
+
+#### Recommended Valetudo binary to use
+
+aarch64
+
+
+
+#### Comment
+
+With its 5.5cm height and 32.3cm diameter, this robot offers a solution for some tricky homes.
+As it is china exclusive, spare parts may be hard to find in the rest of the world.
+
+On initial root, it might be required to do a factory reset so that the device.conf gets regenerated.
+
+There is no reset button on this robot. Instead, press and hold the two buttons for
+- <1s for the UART shell spawn
+- >3s for Wi-Fi reset
+- >5s for full factory reset
+
+
+
+#### This model supports the following capabilities:
+  - [BasicControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#BasicControlCapability)
+  - [CarpetModeControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#CarpetModeControlCapability)
+  - [CombinedVirtualRestrictionsCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#CombinedVirtualRestrictionsCapability)
+  - [ConsumableMonitoringCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#ConsumableMonitoringCapability)
+  - [CurrentStatisticsCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#CurrentStatisticsCapability)
+  - [DoNotDisturbCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#DoNotDisturbCapability)
+  - [FanSpeedControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#FanSpeedControlCapability)
+  - [LocateCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#LocateCapability)
+  - [ManualControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#ManualControlCapability)
+  - [MapResetCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapResetCapability)
+  - [MapSegmentEditCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentEditCapability)
+  - [MapSegmentRenameCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentRenameCapability)
+  - [MapSegmentationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentationCapability)
   - [PendingMapChangeHandlingCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PendingMapChangeHandlingCapability)
   - [PersistentMapControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PersistentMapControlCapability)
   - [SpeakerTestCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerTestCapability)
@@ -1115,72 +1186,10 @@ Unfortunately, this model is lacking basic features such as a persistent map whi
   - [ZoneCleaningCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#ZoneCleaningCapability)
 
 
-## Viomi<a id="viomi"></a>
-
-### V7<a id="viomi_v7"></a>
-
-#### Valetudo Support
-
-meh
-
-
-
-#### Developer Support
-
-none
-
-
-
-#### Tested Working
-
-✔
-
-
-
-#### Recommended
-
-This model has issues and therefore isn't recommended (see comment)
-
-
-
-#### Recommended Valetudo binary to use
-
-armv7
-
-
-
-#### Comment
-
-This model is actually just a White-Label Product with a custom Miio Software stack which is EOL and therefore doesn't receive any meaningful software updates.
-
-Overall, it's just weird and annoying.
-
-
-
-#### This model supports the following capabilities:
-  - [BasicControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#BasicControlCapability)
-  - [CarpetModeControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#CarpetModeControlCapability)
-  - [CombinedVirtualRestrictionsCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#CombinedVirtualRestrictionsCapability)
-  - [ConsumableMonitoringCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#ConsumableMonitoringCapability)
-  - [CurrentStatisticsCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#CurrentStatisticsCapability)
-  - [DoNotDisturbCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#DoNotDisturbCapability)
-  - [FanSpeedControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#FanSpeedControlCapability)
-  - [LocateCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#LocateCapability)
-  - [ManualControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#ManualControlCapability)
-  - [MapResetCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapResetCapability)
-  - [MapSegmentEditCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentEditCapability)
-  - [MapSegmentRenameCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentRenameCapability)
-  - [MapSegmentationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#MapSegmentationCapability)
-  - [PersistentMapControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#PersistentMapControlCapability)
-  - [QuirksCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#QuirksCapability)
-  - [SpeakerTestCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerTestCapability)
-  - [SpeakerVolumeControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#SpeakerVolumeControlCapability)
-  - [VoicePackManagementCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#VoicePackManagementCapability)
-  - [WaterUsageControlCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#WaterUsageControlCapability)
-  - [WifiConfigurationCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#WifiConfigurationCapability)
-  - [ZoneCleaningCapability](https://valetudo.cloud/pages/general/capabilities-overview.html#ZoneCleaningCapability)
-
-
 <br/><br/><br/><br/><br/>
 This page has been autogenerated.<br/>
+<<<<<<< HEAD
+Autogeneration timestamp: 2022-09-04T06:35:31.431Z
+=======
 Autogeneration timestamp: 2022-01-28T11:13:37.930Z
+>>>>>>> master

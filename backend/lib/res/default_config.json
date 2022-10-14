@@ -15,8 +15,6 @@
         },
         "blockExternalAccess": true
     },
-    "zonePresets": {},
-    "goToLocationPresets": {},
     "mqtt": {
         "enabled": false,
         "connection": {
@@ -57,7 +55,8 @@
         "customizations": {
             "topicPrefix": "",
             "provideMapData": true
-        }
+        },
+        "optionalExposedCapabilities": []
     },
     "ntpClient": {
         "enabled": true,
@@ -71,7 +70,7 @@
     "debug": {
         "systemStatInterval" : false,
         "debugHassAnchors": false,
-        "storeRawUploadedMaps": false
+        "storeRawFDSUploads": false
     },
     "networkAdvertisement": {
         "enabled": true

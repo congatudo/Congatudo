@@ -1,11 +1,46 @@
 ---
 title: Rooting instructions
 category: General
-order: 10
+order: 11
 ---
 # Rooting instructions
 
-This page contains an incomplete overview of installation instructions for various robots
+This page contains an incomplete overview of installation instructions for various robots.
+
+## Requirements
+
+### Skills
+
+Rooting robots is an advanced topic the same way working on a car, your electrical installation or any complex machinery is.
+All these things require prior knowledge before attempting to do them or else they may fail catastrophically killing you and/or other people in the process.
+
+While messing up the robot root procedure likely won't harm you, it may still cause a **permanently bricked robot** or
+at least annoy the people supporting other Valetudo users in their free time.
+
+Thus, to safely root your robot and install Valetudo, you will need prior knowledge in:
+- GNU+Linux-based operating systems
+- usage of a text-based shell (the Terminal)
+- an understanding of how networks work, what an IP address is, what a webserver is, etc.
+- and more.
+
+If you don't know these and don't want to research them yourself, consider asking a friend, relative, colleague or your
+nearest computer repair shop for help as teaching these basics is beyond the scope of the Valetudo docs.
+
+It's also not feasible, since different people might start with different knowledge and therefore would require different information.
+We can't mirror half of Wikipedia here.
+
+
+### Software
+
+This guide expects you to run some **GNU+Linux distribution** such as Debian, Fedora, Arch, Ubuntu or similar.
+You don't have to install it. Booting from a live USB/DVD will be sufficient.
+
+If you're running **Windows**, usage of the Windows Subsystem for Linux (WSL) is also often possible. If you haven't heard of that yet,
+I'd strongly suggest researching it. It's basically the best of both worlds.
+
+**MacOS** is not supported and will cause all sorts of trouble during some rooting procedures due to e.g., the `md5sum` command
+behaving differently from the one that you'd find in most linux distributions.
+
 
 ## Dreame
 
@@ -15,8 +50,11 @@ Dreame rooting is currently possible for
 * Dreame Z10 Pro
 * Dreame F9
 * Dreame D9
+* Dreame D9 Pro
 * Xiaomi Vacuum Robot 1C
 * Xiaomi Vacuum Robot 1T
+* Mova Z500
+* Dreame P2148 Xiaomi Mijia Ultra Slim
 
 It has been released with Dennis Giese's DEF CON 29 Talk [Robots with lasers and cameras but no security Liberating your vacuum](https://youtu.be/EWqFxQpRbv8?t=1525).
 For more information, head over to the [Dustbuilder](https://builder.dontvacuum.me/).
@@ -32,7 +70,13 @@ What we're doing is basically just injecting a custom OTA update including hooks
 
 To do this, you'll only need a 3.3V USB to TTL Serial UART Adapter (like CP2102 or Pl2303) and dupont cables. Basic linux knowledge and a pry tool will help as well.
 
-**Note: If this doesn't work on your robot, and it is an 1C, D9, F9 or Z500, your firmware might be too old. In that case, try [this guide](https://gist.github.com/stek29/5c44244ae190f3757a785f432536c22a).**
+<div class="alert alert-tip" role="alert">
+  <p>
+    <strong>Note:</strong><br/>
+    If this doesn't work on your robot, and it is an 1C, D9, F9 or Z500, your firmware might be too old.
+    In that case, try <a href="https://gist.github.com/stek29/5c44244ae190f3757a785f432536c22a" rel="noopener" target="_blank">this guide</a>.
+  </p>
+</div>
 
 ![How to open a Dreame](./img/how_to_open_a_dreame.jpg)
 
@@ -65,88 +109,96 @@ To calculate the password use the full serial number of your robot, which can be
 
 ![Dreame Dustbin Sticker](./img/dreame_dustbin_sticker.jpg)
 
-To get the password, use the following [Calculator](https://gchq.github.io/CyberChef/#recipe=Find_/_Replace(%7B'option':'Regex','string':'(%5C%5Cn%7C%5C%5Cr)'%7D,'',true,false,true,false)MD5()Find_/_Replace(%7B'option':'Regex','string':'$'%7D,'%20%20-%5C%5Cn',false,false,false,false)To_Base64('A-Za-z0-9%2B/%3D')&input=UDIwMDkwMDAwRVUwMDAwMFpN) or enter the full SN (all uppercase) into this command on Linux
-`echo -n "P20290000US00000ZM" | md5sum | base64` or the following commands on Mac 
-````
-echo -n "P20290000US00000ZM" | md5
-echo -n -e "MD5HASHONLY"  -\n" | base64
-````
+To get the password, use the following [Calculator](https://gchq.github.io/CyberChef/#recipe=Find_/_Replace(%7B'option':'Regex','string':'(%5C%5Cn%7C%5C%5Cr)'%7D,'',true,false,true,false)MD5()Find_/_Replace(%7B'option':'Regex','string':'$'%7D,'%20%20-%5C%5Cn',false,false,false,false)To_Base64('A-Za-z0-9%2B/%3D')&input=UDIwMDkwMDAwRVUwMDAwMFpN) 
+or enter the full SN (all uppercase) into this shell command
+`echo -n "P20290000US00000ZM" | md5sum | base64`
 
 Once logged in, build a patched firmware image for manual installation via the [Dustbuilder](https://builder.dontvacuum.me).
-You’ll need to put in your email, serial number and SSH key if you have one. Make sure you settings match these
+**Make sure that both `Prepackage valetudo` and `Patch DNS` are selected before clicking on `Create Job`.**
+You will receive an email once it's built. Download the `tar.gz` file from the link in that mail to your laptop.
 
-✅Patch DNS (requirement for valetudo deployment, disables real cloud!!)
+With the `tar.gz` downloaded, head over to <a href="https://github.com/Hypfer/valetudo-helper-httpbridge" rel="noopener" target="_blank">https://github.com/Hypfer/valetudo-helper-httpbridge</a>
+and download a matching binary for your laptops operating system.
 
-✅Prepackage valetudo (only valid for manual install fw)
-
-✅Preinstall Nano texteditor, curl, wget, htop, hexdump 
-
-✅Build for manual installation (requires SSH to install)
-
-Then accept at the bottom and `Create Job`. This will send your build to your email once it’s built. Download the `tar.gz` file to your laptop.
-
-While you are waiting for that email, now is a good time to backup you calibration and identity data before rooting (**as you promised to do in Dustbuilder** ).
-Copy and paste the output of the following commands in CLI into a text file somewhere besides your robot:
-````
-grep "" /mnt/private/ULI/factory/* 
-grep "" /mnt/misc/*.json 
-grep "" /mnt/misc/*.yaml 
-cat /mnt/misc/*.txt 
-hexdump /mnt/misc/*.bin
-````
-
-To get the new build file over to the robot, you'll need to spin up a temporary webserver (e.g. by using `python3 -m http.server`) in the directory where you downloaded your firmware image to,
-connect the laptop to the robots WiFi access point and download the firmware image to the robot via e.g. `wget http://<your-laptop-ip>/dreame.vacuum.pxxxx_fw.tar.gz`.
-
-Note: If you can't see the robots Wi-Fi AP to connect to, it might have disabled itself because 30 minutes passed since the last boot.
+Now, connect the laptop to the Wi-Fi Access Point of the robot. If you can't see the robots Wi-Fi AP to connect to, it might have disabled itself because 30 minutes passed since the last boot.
 In that case, press and hold the two outer buttons until it starts talking to you.
 
-After the successful download, make sure that the robot is docked, untar (`tar -xvzf dreame.vacuum.pxxxx_fw.tar.gz`) it and execute the `./install.sh` script.
-The robot will then reboot on its own and greet you with a shell mentioning the Dustbuilder in the MOTD on successful root.
+The next step is to start the utility webserver. On Windows, a simple double-click on the exe should do the trick. **Don't close that window until you're done.**
+The server will create a new `www` directory right next to itself as well as print out a few sample commands explaining how to download from and upload to it.
 
-Switch to the tmp folder `cd /tmp` and repeat the previous steps (from wget to install.sh) to also install the firmware on the second partition which you are now booted to.
+Make sure that it is listening on an IP in the range of `192.168.5.0/24` and then copy the downloaded `tar.gz` to the newly created `www` folder.
 
-````
-cd /tmp 
-wget http://<your-laptop-ip>/dreame.vacuum.pxxxx_fw.tar.gz
-tar -xzvf dreame.vacuum.pxxxx_fw.tar.gz
-./install.sh
-````
+<div markdown="1" class="emphasis-box">
+<div class="alert alert-important" role="alert">
+  <p>
+    <strong>Important:</strong><br/>
+    Before you continue with the rooting procedure of your robot, please make sure to create a backup of your calibration and identity data to allow for disaster recovery.
+</p>
+</div>
 
-The robot will reboot automatically after it has installed the update. Make sure that it is docked during this procedure
-as otherwise the update might fail.
+The easiest way of doing this is by creating a tar archive of everything important and then uploading it to your laptop,
+which at this point should be connected to the robots Wi-Fi AP.
 
+To do that, head back to the UART shell and create a tar file of all the required files like so: 
+
+```
+tar cvf /tmp/backup.tar /mnt/private/ /mnt/misc/ /etc/OTA_Key_pub.pem /etc/publickey.pem
+```
+
+Then, look at the output of the `valetudo-helper-httpbridge` instance you've started previously.
+It contains an example curl command usable for uploading that should look similar to this one:
+
+```
+curl -X POST http://192.168.5.101:33671/upload -F 'file=@./file.tar'
+```
+
+Change the file parameter to `file=@/tmp/backup.tar`, execute the command and verify that the upload to your laptop
+was successful. If everything worked out correctly, you should now see a backup.tar with a non-zero size in `www/uploads`.
+
+If you're experiencing issues, make sure that you've specified the correct port.
+
+</div>
+
+🦆 - *this will be important later*
+
+After uploading the backup and storing it in a safe place, you can now download the firmware image file that you've
+previously put in the `www` directory. `valetudo-helper-httpbridge` will tell you the correct command, which should look
+similar to this: 
+
+```
+wget http://192.168.5.101:33671/file.tar
+```
+The `file.tar` part will of course be different.
+
+After downloading the firmware image tar to your working directory (`/tmp`), it should be untared: `tar -xvzf dreame.vacuum.pxxxx_fw.tar.gz`.
+Now, make sure that the robot is docked and then run the newly extracted installation script: `./install.sh`.
+
+The robot will install the rooted firmware image and then reboot **on its own**. Please be patient.
+
+After the robot has finished the installation, you should see a new MOTD (message of the day) on your UART shell.
+It should look similar to this:
+
+```
+build with dustbuilder (https://builder.dontvacuum.me)
+Fri 04 Feb 2022 10:08:21 PM UTC
+1099
+```
+
+If you see that MOTD, the rooting procedure was successful.
+**However**, you're not done yet!
+
+The dreame robots rooted by this guide actually have two rootfs partitions.
+It's a similar setup to the A/B System Partitions that enable seamless Android OS updates on recent (~2017 and newer) Android phones.
+
+To ensure that you'll have a rooted system even in the unlikely event of a boot failure of the currently active partition,
+you should flash both root partitions with a rooted firmware images. 
+To do that, simply scroll back up to the duck emoji 🦆 and continue from there a second time.
+
+
+All done? Good.
 You now have a rooted Dreame vacuum robot running Valetudo.
 
-Now, continue with the [getting started guide](https://valetudo.cloud/pages/general/getting-started.html#joining_wifi).
-
-**Important note:**
-
-Another way of backing up the calibration and identity data is by creating a tar like so: `cd / ; tar cvf /tmp/backup.tar /mnt/private/ /mnt/misc/`.
-Since you need a temporary webserver to download the new firmware anyway, you can use the [python module uploadserver](https://pypi.org/project/uploadserver/) and upload the file backup.tar with curl.
-
-On your laptop run
-
-````
-python3 -m pip install --user uploadserver
-````
-
-to install the module and start the server with
-
-````
-python3 -m uploadserver
-````
-
-in the directory where you have downloaded your new firmware.
-On the robot use curl to upload the backup.tar:
-
-````
-curl -X POST http://<your-laptop-ip>>:8000/upload -F 'files=@/tmp/backup.tar'
-````
-
-If successful you will find the backup.tar on your laptop in the directory where you started the webserver.
-
-You can also create the tar after rooting and use `scp root@<robot-ip>:/tmp/backup.tar .` to copy it to a safe location that isn't the robot.
+Now continue with the [getting started guide](https://valetudo.cloud/pages/general/getting-started.html#joining_wifi).
 
 ## Roborock
 
@@ -214,20 +266,3 @@ This method applies to the following robots:
 * Roborock S5 Max
 * Roborock S6 Pure
 * Roborock S4 Max
-
-## Viomi
-
-3irobotix is the manufacturer of vacuum robots sold under various brand names including
-- Viomi 
-- Cecotec
-- Prosenic
-- Kyvol
-- Neabot
-
-For now, only one vacuum robot is supported (WIP):
-* Mijia STYJ02YM **viomi.vacuum.v7**
-
-To install Valetudo on your Viomi V7, follow the instructions found [here](https://valetudo.cloud/pages/installation/viomi.html).
-
-We're currently looking into the possibility of reflashing other brands to Viomi so that they work with Valetudo without
-any additional code.

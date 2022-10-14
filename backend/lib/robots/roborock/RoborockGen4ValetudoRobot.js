@@ -90,6 +90,7 @@ class RoborockGen4ValetudoRobot extends RoborockValetudoRobot {
      * @param {object} options
      * @param {import("../../Configuration")} options.config
      * @param {import("../../ValetudoEventStore")} options.valetudoEventStore
+     * @param {Array<import("../../entities/state/attributes/AttachmentStateAttribute").AttachmentStateAttributeType>} [options.supportedAttachments]
      */
     constructor(options) {
         super(Object.assign({}, options, {fanSpeeds: FAN_SPEEDS}));
@@ -111,8 +112,8 @@ class RoborockGen4ValetudoRobot extends RoborockValetudoRobot {
         }));
     }
 
-    onMessage(msg) {
-        if (super.onMessage(msg) === true) {
+    onIncomingCloudMessage(msg) {
+        if (super.onIncomingCloudMessage(msg) === true) {
             return true;
         }
 
@@ -170,10 +171,12 @@ class RoborockGen4ValetudoRobot extends RoborockValetudoRobot {
                 switch (msg.piid) {
                     // error event
                     case MIOT_SERVICES.VACUUM_2.PROPERTIES.ERROR_CODE.PIID:
-                        this.parseAndUpdateState({
-                            state: 12, // error value
-                            error_code: msg.value
-                        });
+                        if (msg.value !== 0) {
+                            this.parseAndUpdateState({
+                                state: 12, // error value
+                                error_code: msg.value
+                            });
+                        }
                         return;
                     case MIOT_SERVICES.VACUUM_2.PROPERTIES.CONSUMABLE_ID.PIID: // consumable reminder event
                     case MIOT_SERVICES.VACUUM_2.PROPERTIES.FAILED_REASON.PIID: // schedule cancled event
@@ -195,7 +198,7 @@ class RoborockGen4ValetudoRobot extends RoborockValetudoRobot {
                 // the consumables only reports percent through this property, ignore
                 return;
         }
-        Logger.info("Unknown property change message received:", JSON.stringify(msg));
+        Logger.info("Unknown property change message received:", msg);
     }
 }
 

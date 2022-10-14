@@ -1,10 +1,10 @@
 module.exports = {
     ValetudoDNDConfiguration: require("./ValetudoDNDConfiguration"),
     ValetudoDataPoint: require("./ValetudoDataPoint"),
-    ValetudoGoToLocation: require("./ValetudoGoToLocation"),
     ValetudoMapSegment: require("./ValetudoMapSegment"),
     ValetudoMapSnapshot: require("./ValetudoMapSnapshot"),
     ValetudoRestrictedZone: require("./ValetudoRestrictedZone"),
+    ValetudoRobotError: require("./ValetudoRobotError"),
     ValetudoSelectionPreset: require("./ValetudoSelectionPreset"),
     ValetudoSensor: require("./ValetudoSensor"),
     ValetudoTimer: require("./ValetudoTimer"),
@@ -15,6 +15,5 @@ module.exports = {
     ValetudoWifiNetwork: require("./ValetudoWifiNetwork"),
     ValetudoWifiStatus: require("./ValetudoWifiStatus"),
     ValetudoZone: require("./ValetudoZone"),
-    ValetudoZonePreset: require("./ValetudoZonePreset"),
     ntpClient: require("./ntpClient")
 };

@@ -1,21 +1,17 @@
-const Logger = require("../../Logger");
-
 const CapabilityRouter = require("./CapabilityRouter");
 
 class AutoEmptyDockManualTriggerCapabilityRouter extends CapabilityRouter {
-
     initRoutes() {
-        this.router.put("/", async (req, res) => {
-            if (req.body && req.body.action === "trigger") {
+        this.router.put("/", this.validator, async (req, res) => {
+            if (req.body.action === "trigger") {
                 try {
                     await this.capability.triggerAutoEmpty();
                     res.sendStatus(200);
                 } catch (e) {
-                    Logger.warn("Error while triggering auto empty", e);
-                    res.status(500).json(e.message);
+                    this.sendErrorResponse(req, res, e);
                 }
             } else {
-                res.status(400).send("Missing or invalid request body");
+                res.sendStatus(400);
             }
         });
     }

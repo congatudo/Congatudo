@@ -1,10 +1,10 @@
 {
   "name": "valetudo",
-  "version": "2022.02.0-conga.0",
+  "version": "2022.09.0-conga.0",
   "description": "Self-contained control webinterface for vacuum robots",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "author": "",
   "workspaces": [
@@ -18,23 +18,28 @@
     "build_docs": "node ./util/generate_robot_docs.js && node ./util/generate_mqtt_docs.js",
     "upx": "node ./util/upx_compress_valetudo.js",
     "build_openapi_schema": "node util/build_openapi_schema.mjs",
-    "build_release_manifest": "node util/build_release_manifest.js"
+    "build_release_manifest": "node util/build_release_manifest.js",
+    "check_dependencies_for_update": "npx check-outdated --ignore-pre-releases --ignore-packages react-router-dom",
+    "generate_changelog": "npx auto-changelog --commit-limit false --tag-pattern .+ --handlebars-setup ./util/res/auto_changelog_handlebars_helpers.js --template ./util/res/auto_changelog_template.hbs --output ./build/changelog.md",
+    "generate_nightly_changelog": "npx auto-changelog --commit-limit false --tag-pattern .+ --unreleased-only --handlebars-setup ./util/res/auto_changelog_handlebars_helpers.js --template ./util/res/auto_changelog_template.hbs --output ./build/changelog_nightly.md",
+    "generate_eslintrc_flavors": "node util/generate_eslintrc_flavors.js"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "5.4.0",
-    "@typescript-eslint/parser": "5.4.0",
-    "@typescript-eslint/experimental-utils": "5.4.0",
-    "eslint": "7.32.0",
-    "eslint-plugin-react": "7.27.1",
-    "eslint-plugin-react-hooks": "4.3.0",
-    "eslint-plugin-jsdoc": "37.0.3",
+    "@typescript-eslint/eslint-plugin": "5.40.0",
+    "@typescript-eslint/experimental-utils": "5.40.0",
+    "@typescript-eslint/parser": "5.40.0",
+    "auto-changelog": "2.4.0",
+    "eslint": "8.25.0",
+    "eslint-plugin-jsdoc": "39.3.6",
     "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-regexp": "1.5.1",
-    "eslint-plugin-sort-keys-fix": "^1.1.1",
+    "eslint-plugin-react": "7.31.10",
+    "eslint-plugin-react-hooks": "4.6.0",
+    "eslint-plugin-regexp": "1.9.0",
+    "eslint-plugin-sort-keys-fix": "1.1.2",
     "eslint-plugin-sort-requires": "git+https://npm@github.com/Hypfer/eslint-plugin-sort-requires.git#2.1.1",
     "swagger-jsdoc": "git+https://npm@github.com/Hypfer/swagger-jsdoc.git#7.0.0-rc.6-noyaml-monorepo-fix",
-    "swagger-parser": "^10.0.2",
-    "typescript": "4.5.2",
-    "upx": "git+https://npm@github.com/Hypfer/upx#v1.0.7"
+    "swagger-parser": "10.0.3",
+    "typescript": "4.8.4",
+    "upx": "git+https://npm@github.com/Hypfer/upx#1.0.11"
   }
 }

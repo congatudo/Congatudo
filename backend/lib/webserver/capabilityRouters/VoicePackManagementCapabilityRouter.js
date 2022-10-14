@@ -1,17 +1,20 @@
 const CapabilityRouter = require("./CapabilityRouter");
 
 class VoicePackManagementCapabilityRouter extends CapabilityRouter {
-
     initRoutes() {
         this.router.get("/", async (req, res) => {
-            res.json({
-                "currentLanguage": await this.capability.getCurrentVoiceLanguage(),
-                "operationStatus": await this.capability.getVoicePackOperationStatus()
-            });
+            try {
+                res.json({
+                    "currentLanguage": await this.capability.getCurrentVoiceLanguage(),
+                    "operationStatus": await this.capability.getVoicePackOperationStatus()
+                });
+            } catch (e) {
+                this.sendErrorResponse(req, res, e);
+            }
         });
 
-        this.router.put("/", async (req, res) => {
-            if (req.body && req.body.action === "download" && req.body.url) {
+        this.router.put("/", this.validator, async (req, res) => {
+            if (req.body.action === "download" && req.body.url) {
                 try {
                     await this.capability.downloadVoicePack({
                         url: req.body.url,
@@ -20,10 +23,10 @@ class VoicePackManagementCapabilityRouter extends CapabilityRouter {
                     });
                     res.sendStatus(200);
                 } catch (e) {
-                    res.status(500).send(e.message);
+                    this.sendErrorResponse(req, res, e);
                 }
             } else {
-                res.status(400).send("Invalid request");
+                res.sendStatus(400);
             }
         });
     }

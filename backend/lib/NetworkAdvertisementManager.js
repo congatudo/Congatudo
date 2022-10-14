@@ -1,14 +1,14 @@
 const Logger = require("./Logger");
-const Tools = require("./Tools");
+const Tools = require("./utils/Tools");
 
 const Bonjour = require("bonjour-service");
-const nodessdp = require("node-ssdp");
+const SSDPServer = require("./utils/SSDPServer");
 
 const NETWORK_STATE_CHECK_INTERVAL = 30 * 1000;
 
 class NetworkAdvertisementManager {
     /**
-     * This class handles advertisement via both SSDP (UPnP) as well as zeroconf/mdns/bonjour
+     * This class handles advertisement via both SSDP (UPnP) and zeroconf/mdns/bonjour
      *
      * @param {object} options
      * @param {import("./Configuration")} options.config
@@ -23,7 +23,26 @@ class NetworkAdvertisementManager {
         this.networkStateCheckTimeout = undefined;
         this.ipAddresses = "";
 
+        this.config.onUpdate((key) => {
+            if (key === "networkAdvertisement") {
+                this.restart().catch((err) => {
+                    Logger.warn("Error while restarting NetworkAdvertisementManager due to config change", err);
+                });
+            }
+        });
+
         this.setUp();
+    }
+
+    /**
+     * @public
+     * @return {{port: number, zeroconfHostname: string}}
+     */
+    getProperties() {
+        return {
+            port: this.webserverPort,
+            zeroconfHostname: Tools.GET_ZEROCONF_HOSTNAME()
+        };
     }
 
     /**
@@ -32,41 +51,34 @@ class NetworkAdvertisementManager {
     setUp() {
         const networkAdvertisementConfig = this.config.get("networkAdvertisement");
 
-        if (networkAdvertisementConfig.enabled === true && this.config.get("embedded") === true) {
-            this.setUpSSDP();
-            this.setUpBonjour();
+        if (this.config.get("embedded") === true) {
+            if (networkAdvertisementConfig.enabled === true) {
+                this.setUpSSDP();
+                this.setUpBonjour();
 
-            this.ipAddresses = Tools.GET_CURRENT_HOST_IP_ADDRESSES().sort().join();
-            this.networkStateCheckTimeout = setTimeout(() => {
-                this.checkNetworkStateAndReschedule();
-            }, NETWORK_STATE_CHECK_INTERVAL);
+                this.ipAddresses = Tools.GET_CURRENT_HOST_IP_ADDRESSES().sort().join();
+                this.networkStateCheckTimeout = setTimeout(() => {
+                    this.checkNetworkStateAndReschedule();
+                }, NETWORK_STATE_CHECK_INTERVAL);
+            }
+        } else {
+            Logger.info("Not starting NetworkAdvertisementManager because we're not in embedded mode");
         }
+
     }
 
     /**
      * @private
      */
     setUpSSDP() {
-        this.ssdpServer = new nodessdp.Server({
-            location: {
-                port: this.webserverPort,
-                path: "/_ssdp/valetudo.xml"
-            }
+        this.ssdpServer = new SSDPServer({
+            port: this.webserverPort
         });
 
-        this.ssdpServer.addUSN("upnp:rootdevice");
-        this.ssdpServer.addUSN("uuid:" + Tools.GET_SYSTEM_ID() + "::upnp:rootdevice");
-
         try {
-            this.ssdpServer.start(err => {
-                if (err) {
-                    Logger.warn("Error while starting SSDP/UPnP advertisement", err);
-                } else {
-                    Logger.info("SSDP/UPnP advertisement started");
-                }
-            });
+            this.ssdpServer.start();
         } catch (e) {
-            Logger.warn("Exception while starting SSDP/UPnP advertisement", e);
+            Logger.warn("Error while starting SSDP/UPnP advertisement", e);
         }
     }
 
@@ -77,8 +89,8 @@ class NetworkAdvertisementManager {
         this.bonjourServer = new Bonjour.Bonjour(undefined, (err) => {
             Logger.warn("Error while responding to mDNS query:", err);
 
-            this.restart().then(() => {/*intentional*/}).catch(err => {
-                this.shutdown().then(() => {/*intentional*/}).catch(err => {
+            this.restart().catch(err => {
+                this.shutdown().catch(err => {
                     throw err;
                 });
             });
@@ -86,8 +98,8 @@ class NetworkAdvertisementManager {
 
         Logger.info("Valetudo can be reached via: " + Tools.GET_ZEROCONF_HOSTNAME());
 
-        this.publishBonjourService("Valetudo " + this.robot.getModelName() + " Web", "http");
-        this.publishBonjourService("Valetudo " + this.robot.getModelName(), "valetudo");
+        this.publishBonjourService(`Valetudo ${Tools.GET_HUMAN_READABLE_SYSTEM_ID()} Web`, "http");
+        this.publishBonjourService(`Valetudo ${Tools.GET_HUMAN_READABLE_SYSTEM_ID()}`, "valetudo");
     }
 
     /**

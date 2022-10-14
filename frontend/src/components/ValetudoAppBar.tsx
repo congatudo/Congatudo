@@ -29,7 +29,6 @@ import {
     Power as PowerIcon,
     SystemUpdateAlt as UpdaterIcon,
     SettingsRemote as SettingsRemoteIcon,
-    Elderly as OldFrontendIcon,
     GitHub as GithubIcon,
     Favorite as DonateIcon,
     MenuBook as DocsIcon,
@@ -123,9 +122,9 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
     {
         kind: "MenuEntry",
         routeMatch: "/settings/map_management",
-        title: "Map Management",
+        title: "Map",
         menuIcon: MapManagementIcon,
-        menuText: "Map Management",
+        menuText: "Map",
         requiredCapabilities: {
             capabilities: [
                 Capability.PersistentMapControl,
@@ -153,6 +152,12 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
         parentRoute: "/settings/map_management"
     },
     {
+        kind: "MenuSubEntry",
+        routeMatch: "/settings/map_management/robot_coverage",
+        title: "Robot Coverage Map",
+        parentRoute: "/settings/map_management"
+    },
+    {
         kind: "MenuEntry",
         routeMatch: "/settings/connectivity",
         title: "Connectivity",
@@ -169,6 +174,12 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
         kind: "MenuSubEntry",
         routeMatch: "/settings/connectivity/mqtt",
         title: "MQTT Connectivity",
+        parentRoute: "/settings/connectivity"
+    },
+    {
+        kind: "MenuSubEntry",
+        routeMatch: "/settings/connectivity/networkadvertisement",
+        title: "Network Advertisement",
         parentRoute: "/settings/connectivity"
     },
     {
@@ -388,22 +399,12 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                         component="a"
                         href="./swagger/"
                         target="_blank"
+                        rel="noopener"
                     >
                         <ListItemIcon>
                             <SwaggerUIIcon/>
                         </ListItemIcon>
                         <ListItemText primary="Swagger UI"/>
-                    </ListItem>
-                    <ListItem
-                        button
-                        component="a"
-                        href="./old_frontend/"
-                        target="_blank"
-                    >
-                        <ListItemIcon>
-                            <OldFrontendIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Old Frontend"/>
                     </ListItem>
                     <Divider/>
                     <ListItem
@@ -411,6 +412,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                         component="a"
                         href="https://valetudo.cloud"
                         target="_blank"
+                        rel="noopener"
                     >
                         <ListItemIcon>
                             <DocsIcon/>
@@ -433,6 +435,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                         component="a"
                         href="https://github.com/Hypfer/Valetudo"
                         target="_blank"
+                        rel="noopener"
                     >
                         <ListItemIcon>
                             <GithubIcon/>
@@ -444,6 +447,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                         component="a"
                         href="https://github.com/sponsors/Hypfer"
                         target="_blank"
+                        rel="noopener"
                     >
                         <ListItemIcon>
                             <DonateIcon/>

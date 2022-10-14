@@ -79,7 +79,7 @@ class ValetudoRobot {
     }
 
     /**
-     * @private
+     * @protected
      */
     initInternalSubscriptions() {
         this.state.subscribe(
@@ -112,12 +112,23 @@ class ValetudoRobot {
                     )
                 ) {
                     this.valetudoEventStore.raise(new ErrorStateValetudoEvent({
-                        message: status?.metaData?.error_description ?? "Unknown Error"
+                        //@ts-ignore
+                        message: status.error?.message ?? "Unknown Error"
                     }));
                 }
             }),
             {attributeClass: StatusStateAttribute.name}
         );
+    }
+
+    /**
+     * This function allows us to inject custom routes into the main webserver
+     * Usually, this should never be used unless there are _very_ important reasons to do so
+     *
+     * @param {any} app The expressjs app instance
+     */
+    initModelSpecificWebserverRoutes(app) {
+        //intentional
     }
 
 
@@ -134,10 +145,26 @@ class ValetudoRobot {
     }
 
     /**
+     * @typedef {object} ModelDetails
+     * @property {Array<import("../entities/state/attributes/AttachmentStateAttribute").AttachmentStateAttributeType>} supportedAttachments
+     */
+
+    /**
+     * This method may be overridden to return model-specific details
+     * such as which types of attachments to expect in the state
+     *
+     * @returns {ModelDetails}
+     */
+    getModelDetails() {
+        return {
+            supportedAttachments: []
+        };
+    }
+
+    /**
      * This method may be overridden to return robot-specific well-known properties
      * such as the firmware version
      *
-     * @abstract
      * @returns {object}
      */
     getProperties() {
@@ -220,7 +247,7 @@ ValetudoRobot.EVENTS = {
 ValetudoRobot.DEFAULT_MAP = require("../res/default_map");
 
 ValetudoRobot.WELL_KNOWN_PROPERTIES = {
-    FIRMWARE_VERSION: "firmware_version"
+    FIRMWARE_VERSION: "firmwareVersion"
 };
 
 module.exports = ValetudoRobot;

@@ -10,7 +10,7 @@ const ValetudoMapSegment = require("../core/ValetudoMapSegment");
  *
  * Everything is int. Coordinates and size are in cm
  *
- * The origin is found on the top-left corner
+ * The origin is found in the top-left corner
  *
  */
 class ValetudoMap extends SerializableEntity { //TODO: Current, Historic, Etc.
@@ -107,10 +107,6 @@ class ValetudoMap extends SerializableEntity { //TODO: Current, Historic, Etc.
                     name: e.metaData.name
                 });
             });
-    }
-
-    getIntersectingLayers(point) {
-        //TODO
     }
 }
 

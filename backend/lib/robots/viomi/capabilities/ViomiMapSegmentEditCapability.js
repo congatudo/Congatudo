@@ -1,4 +1,5 @@
 const MapSegmentEditCapability = require("../../../core/capabilities/MapSegmentEditCapability");
+const RobotFirmwareError = require("../../../core/RobotFirmwareError");
 const ViomiMapParser = require("../ViomiMapParser");
 
 /**
@@ -51,13 +52,13 @@ class ViomiMapSegmentEditCapability extends MapSegmentEditCapability {
             const result = await this.robot.sendCommand("arrange_room", {
                 lang: this.lang,
                 mapId: this.robot.state.map.metaData.vendorMapId,
-                roomArr: [[segmentA.id, segmentB.id]],
+                roomArr: [[parseInt(segmentA.id), parseInt(segmentB.id)]],
                 type: this.mapActions.JOIN_SEGMENT_TYPE
             }, {
                 timeout: 5000
             });
             if (Array.isArray(result) && result.length === 1 && result[0] === "fail") {
-                throw new Error("Segments must be adjacent!");
+                throw new RobotFirmwareError("Segments must be adjacent!");
             }
         } finally {
             this.robot.pollMap();
@@ -88,13 +89,13 @@ class ViomiMapSegmentEditCapability extends MapSegmentEditCapability {
                     this.pointToViomiString(ViomiMapParser.positionToViomi(pA.x, pA.y)),
                     this.pointToViomiString(ViomiMapParser.positionToViomi(pB.x, pB.y))
                 ]],
-                roomId: segment.id,
+                roomId: parseInt(segment.id),
                 type: this.mapActions.SPLIT_SEGMENT_TYPE
             }, {
                 timeout: 5000
             });
             if (Array.isArray(result) && result.length === 1 && result[0] === "fail") {
-                throw new Error("Split segment is too small!");
+                throw new RobotFirmwareError("Split segment is too small!");
             }
         } finally {
             this.robot.pollMap();

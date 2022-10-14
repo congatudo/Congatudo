@@ -1,7 +1,7 @@
 ---
 title: Other Noteworthy Projects
 category: Companion Apps
-order: 20
+order: 21
 ---
 # Other Noteworthy Projects
 
@@ -12,7 +12,7 @@ This page lists things that aren't necessarily Valetudo Companion services but m
 
 These things apply to roborock only
 
-### Rockbin
+### Rockbin (Archived)
 
 A Go-based microservice, which publishes the dustbin state to mqtt.
 

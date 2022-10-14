@@ -1,7 +1,7 @@
 const StateAttribute = require("./StateAttribute");
 
 /**
- * This may at some point also provide it's current capacity/fill level
+ * This may at some point also provide its current capacity/fill level
  */
 
 class AttachmentStateAttribute extends StateAttribute {
@@ -16,18 +16,6 @@ class AttachmentStateAttribute extends StateAttribute {
 
         this.type = options.type;
         this.attached = options.attached;
-    }
-
-    /**
-     *
-     * @param {AttachmentStateAttribute} otherAttribute
-     * @return {boolean}
-     */
-    equals(otherAttribute) {
-        return this.__class === otherAttribute.__class &&
-            this.type === otherAttribute.type &&
-            this.subType === otherAttribute.subType &&
-            this.attached === otherAttribute.attached;
     }
 }
 

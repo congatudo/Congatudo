@@ -1,4 +1,5 @@
 import axios from "axios";
+import { JSEncrypt } from "jsencrypt";
 import { RawMapData } from "./RawMapData";
 import { PresetSelectionState, RobotAttribute } from "./RawRobotState";
 import {
@@ -8,7 +9,6 @@ import {
     ConsumableId,
     ConsumableState,
     DoNotDisturbConfiguration,
-    GoToLocation,
     HTTPBasicAuthConfiguration,
     LogLevelResponse,
     ManualControlInteraction,
@@ -20,11 +20,15 @@ import {
     MapSegmentRenameRequestParameters,
     MQTTConfiguration,
     MQTTProperties,
+    MQTTStatus,
+    NetworkAdvertisementConfiguration,
+    NetworkAdvertisementProperties,
     NTPClientConfiguration,
     NTPClientState,
     Point,
     Quirk,
     RobotInformation,
+    RobotProperties,
     Segment,
     SetLogLevelRequest,
     SetQuirkValueCommand,
@@ -44,14 +48,15 @@ import {
     ValetudoVersion,
     VoicePackManagementCommand,
     VoicePackManagementStatus,
-    WifiConfiguration,
+    WifiConfiguration, WifiConfigurationProperties,
+    WifiProvisioningEncryptionKey,
     WifiStatus,
     Zone,
-    ZonePreset,
     ZoneProperties,
 } from "./types";
 import { floorObject } from "./utils";
 import {preprocessMap} from "./mapUtils";
+import ReconnectingEventSource from "reconnecting-eventsource";
 
 export const valetudoAPI = axios.create({
     baseURL: "./api/v2",
@@ -105,8 +110,9 @@ const subscribeToSSE = <T>(
         return tracker();
     }
 
-    const source = new EventSource(valetudoAPI.defaults.baseURL + endpoint, {
+    const source = new ReconnectingEventSource(valetudoAPI.defaults.baseURL + endpoint, {
         withCredentials: true,
+        max_retry_time: 30000
     });
 
     source.addEventListener(event, (event: any) => {
@@ -180,7 +186,7 @@ export const subscribeToStateAttributes = (
 };
 
 export const fetchPresetSelections = async (
-    capability: Capability.FanSpeedControl | Capability.WaterUsageControl
+    capability: Capability.FanSpeedControl | Capability.WaterUsageControl | Capability.OperationModeControl
 ): Promise<PresetSelectionState["value"][]> => {
     return valetudoAPI
         .get<PresetSelectionState["value"][]>(
@@ -192,7 +198,7 @@ export const fetchPresetSelections = async (
 };
 
 export const updatePresetSelection = async (
-    capability: Capability.FanSpeedControl | Capability.WaterUsageControl,
+    capability: Capability.FanSpeedControl | Capability.WaterUsageControl | Capability.OperationModeControl,
     level: PresetSelectionState["value"]
 ): Promise<void> => {
     await valetudoAPI.put(`/robot/capabilities/${capability}/preset`, {
@@ -222,16 +228,6 @@ export const sendGoToCommand = async (point: Point): Promise<void> => {
     );
 };
 
-export const fetchZonePresets = async (): Promise<ZonePreset[]> => {
-    return valetudoAPI
-        .get<Record<string, ZonePreset>>(
-            `/robot/capabilities/${Capability.ZoneCleaning}/presets`
-        )
-        .then(({data}) => {
-            return Object.values(data);
-        });
-};
-
 export const fetchZoneProperties = async (): Promise<ZoneProperties> => {
     return valetudoAPI
         .get<ZoneProperties>(
@@ -240,15 +236,6 @@ export const fetchZoneProperties = async (): Promise<ZoneProperties> => {
         .then(({data}) => {
             return data;
         });
-};
-
-export const sendCleanZonePresetCommand = async (id: string): Promise<void> => {
-    await valetudoAPI.put(
-        `/robot/capabilities/${Capability.ZoneCleaning}/presets/${id}`,
-        {
-            action: "clean",
-        }
-    );
 };
 
 export const sendCleanTemporaryZonesCommand = async (
@@ -331,27 +318,6 @@ export const sendRenameSegmentCommand = async (
             action: "rename_segment",
             segment_id: parameters.segment_id,
             name: parameters.name
-        }
-    );
-};
-
-export const fetchGoToLocationPresets = async (): Promise<Segment[]> => {
-    return valetudoAPI
-        .get<Record<string, GoToLocation>>(
-            `/robot/capabilities/${Capability.GoToLocation}/presets`
-        )
-        .then(({data}) => {
-            return Object.values(data);
-        });
-};
-
-export const sendGoToLocationPresetCommand = async (
-    id: string
-): Promise<void> => {
-    await valetudoAPI.put(
-        `/robot/capabilities/${Capability.GoToLocation}/presets/${id}`,
-        {
-            action: "goto",
         }
     );
 };
@@ -445,7 +411,7 @@ export const sendValetudoLogLevel = async (logLevel: SetLogLevelRequest): Promis
     await valetudoAPI
         .put("/valetudo/log/level", logLevel)
         .then(({ status }) => {
-            if (status !== 202) {
+            if (status !== 200) {
                 throw new Error("Could not set new log level");
             }
         });
@@ -479,15 +445,23 @@ export const sendMQTTConfiguration = async (mqttConfiguration: MQTTConfiguration
     return valetudoAPI
         .put("/valetudo/config/interfaces/mqtt", mqttConfiguration)
         .then(({status}) => {
-            if (status !== 202) {
+            if (status !== 200) {
                 throw new Error("Could not update MQTT configuration");
             }
         });
 };
 
+export const fetchMQTTStatus = async (): Promise<MQTTStatus> => {
+    return valetudoAPI
+        .get<MQTTStatus>("/mqtt/status")
+        .then(({data}) => {
+            return data;
+        });
+};
+
 export const fetchMQTTProperties = async (): Promise<MQTTProperties> => {
     return valetudoAPI
-        .get<MQTTProperties>("/valetudo/config/interfaces/mqtt/properties")
+        .get<MQTTProperties>("/mqtt/properties")
         .then(({data}) => {
             return data;
         });
@@ -505,9 +479,35 @@ export const sendHTTPBasicAuthConfiguration = async (configuration: HTTPBasicAut
     return valetudoAPI
         .put("/valetudo/config/interfaces/http/auth/basic", configuration)
         .then(({status}) => {
-            if (status !== 201) {
+            if (status !== 200) {
                 throw new Error("Could not update HTTP basic auth configuration");
             }
+        });
+};
+
+export const fetchNetworkAdvertisementConfiguration = async (): Promise<NetworkAdvertisementConfiguration> => {
+    return valetudoAPI
+        .get<NetworkAdvertisementConfiguration>("/networkadvertisement/config")
+        .then(({data}) => {
+            return data;
+        });
+};
+
+export const sendNetworkAdvertisementConfiguration = async (configuration: NetworkAdvertisementConfiguration): Promise<void> => {
+    return valetudoAPI
+        .put("/networkadvertisement/config", configuration)
+        .then(({status}) => {
+            if (status !== 200) {
+                throw new Error("Could not update NetworkAdvertisement configuration");
+            }
+        });
+};
+
+export const fetchNetworkAdvertisementProperties = async (): Promise<NetworkAdvertisementProperties> => {
+    return valetudoAPI
+        .get<NetworkAdvertisementProperties>("/networkadvertisement/properties")
+        .then(({data}) => {
+            return data;
         });
 };
 
@@ -531,7 +531,7 @@ export const sendNTPClientConfiguration = async (configuration: NTPClientConfigu
     return valetudoAPI
         .put("/ntpclient/config", configuration)
         .then(({status}) => {
-            if (status !== 202) {
+            if (status !== 200) {
                 throw new Error("Could not update NTP client configuration");
             }
         });
@@ -549,7 +549,7 @@ export const deleteTimer = async (id: string): Promise<void> => {
 
 export const sendTimerCreation = async (timerData: Timer): Promise<void> => {
     await valetudoAPI.post("/timers", timerData).then(({ status }) => {
-        if (status !== 201) {
+        if (status !== 200) {
             throw new Error("Could not create timer");
         }
     });
@@ -557,7 +557,7 @@ export const sendTimerCreation = async (timerData: Timer): Promise<void> => {
 
 export const sendTimerUpdate = async (timerData: Timer): Promise<void> => {
     await valetudoAPI
-        .post(`/timers/${timerData.id}`, timerData)
+        .put(`/timers/${timerData.id}`, timerData)
         .then(({ status }) => {
             if (status !== 200) {
                 throw new Error("Could not update timer");
@@ -746,13 +746,44 @@ export const fetchWifiStatus = async (): Promise<WifiStatus> => {
         });
 };
 
+export const fetchWifiConfigurationProperties = async (): Promise<WifiConfigurationProperties> => {
+    return valetudoAPI
+        .get<WifiConfigurationProperties>(`/robot/capabilities/${Capability.WifiConfiguration}/properties`)
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+
 export const sendWifiConfiguration = async (configuration: WifiConfiguration): Promise<void> => {
+    const encryptionKey = await fetchWifiProvisioningEncryptionKey();
+
+    const cipher = new JSEncrypt();
+    cipher.setPublicKey(encryptionKey.publicKey);
+
+    const encryptedPayload = cipher.encrypt(JSON.stringify(configuration));
+
+    if (!encryptedPayload) {
+        throw new Error("Failed to encrypt Wi-Fi credentials");
+    }
+
     await valetudoAPI
-        .put(`/robot/capabilities/${Capability.WifiConfiguration}`, configuration)
+        .put(`/robot/capabilities/${Capability.WifiConfiguration}`, {
+            encryption: "rsa",
+            payload: encryptedPayload
+        })
         .then(({ status }) => {
             if (status !== 200) {
                 throw new Error("Could not set Wifi configuration");
             }
+        });
+};
+
+export const fetchWifiProvisioningEncryptionKey = async (): Promise<WifiProvisioningEncryptionKey> => {
+    return valetudoAPI
+        .get<WifiProvisioningEncryptionKey>(`/robot/capabilities/${Capability.WifiConfiguration}/getPublicKeyForProvisioning`)
+        .then(({ data }) => {
+            return data;
         });
 };
 
@@ -866,6 +897,38 @@ export const sendSetQuirkValueCommand = async (command: SetQuirkValueCommand): P
         {
             "id": command.id,
             "value": command.value
+        }
+    );
+};
+
+export const fetchRobotProperties = async (): Promise<RobotProperties> => {
+    return valetudoAPI
+        .get<RobotProperties>("/robot/properties")
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export type MopDockCleanManualTriggerCommand = "start" | "stop";
+export const sendMopDockCleanManualTriggerCommand = async (
+    command: MopDockCleanManualTriggerCommand
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MopDockCleanManualTrigger}`,
+        {
+            action: command,
+        }
+    );
+};
+
+export type MopDockDryManualTriggerCommand = "start" | "stop";
+export const sendMopDockDryManualTriggerCommand = async (
+    command: MopDockDryManualTriggerCommand
+): Promise<void> => {
+    await valetudoAPI.put(
+        `/robot/capabilities/${Capability.MopDockDryManualTrigger}`,
+        {
+            action: command,
         }
     );
 };

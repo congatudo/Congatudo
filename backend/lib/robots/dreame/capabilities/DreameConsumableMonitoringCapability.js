@@ -1,4 +1,5 @@
 const ConsumableMonitoringCapability = require("../../../core/capabilities/ConsumableMonitoringCapability");
+const RobotFirmwareError = require("../../../core/RobotFirmwareError");
 
 const ConsumableStateAttribute = require("../../../entities/state/attributes/ConsumableStateAttribute");
 
@@ -30,6 +31,18 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
      * @param {number} options.miot_actions.reset_sensor.siid
      * @param {number} options.miot_actions.reset_sensor.aiid
      *
+     * @param {object} [options.miot_actions.reset_mop]
+     * @param {number} options.miot_actions.reset_mop.siid
+     * @param {number} options.miot_actions.reset_mop.aiid
+     * 
+     * @param {object} [options.miot_actions.reset_secondary_filter]
+     * @param {number} options.miot_actions.reset_secondary_filter.siid
+     * @param {number} options.miot_actions.reset_secondary_filter.aiid
+     * 
+     * @param {object} [options.miot_actions.reset_detergent]
+     * @param {number} options.miot_actions.reset_detergent.siid
+     * @param {number} options.miot_actions.reset_detergent.aiid
+     *
      *
      * @param {object} options.miot_properties
      * @param {object} options.miot_properties.main_brush
@@ -47,6 +60,18 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
      * @param {object} [options.miot_properties.sensor]
      * @param {number} options.miot_properties.sensor.siid
      * @param {number} options.miot_properties.sensor.piid
+     *
+     * @param {object} [options.miot_properties.mop]
+     * @param {number} options.miot_properties.mop.siid
+     * @param {number} options.miot_properties.mop.piid
+     * 
+     * @param {object} [options.miot_properties.secondary_filter]
+     * @param {number} options.miot_properties.secondary_filter.siid
+     * @param {number} options.miot_properties.secondary_filter.piid
+     * 
+     * @param {object} [options.miot_properties.detergent]
+     * @param {number} options.miot_properties.detergent.siid
+     * @param {number} options.miot_properties.detergent.piid
      */
     constructor(options) {
         super(options);
@@ -71,6 +96,18 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
 
         if (this.miot_properties.sensor) {
             props.push(this.miot_properties.sensor);
+        }
+
+        if (this.miot_properties.mop) {
+            props.push(this.miot_properties.mop);
+        }
+
+        if (this.miot_properties.secondary_filter) {
+            props.push(this.miot_properties.secondary_filter);
+        }
+
+        if (this.miot_properties.detergent) {
+            props.push(this.miot_properties.detergent);
         }
 
 
@@ -117,6 +154,9 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
                     case ConsumableStateAttribute.SUB_TYPE.MAIN:
                         payload = this.miot_actions.reset_filter;
                         break;
+                    case ConsumableStateAttribute.SUB_TYPE.SECONDARY:
+                        payload = this.miot_actions.reset_secondary_filter;
+                        break;
                 }
                 break;
             case ConsumableStateAttribute.TYPE.SENSOR:
@@ -128,7 +168,24 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
                     }
                 }
                 break;
-
+            case ConsumableStateAttribute.TYPE.MOP:
+                if (this.miot_actions.reset_mop) {
+                    switch (subType) {
+                        case ConsumableStateAttribute.SUB_TYPE.ALL:
+                            payload = this.miot_actions.reset_mop;
+                            break;
+                    }
+                }
+                break;
+            case ConsumableStateAttribute.TYPE.DETERGENT:
+                if (this.miot_actions.reset_detergent) {
+                    switch (subType) {
+                        case ConsumableStateAttribute.SUB_TYPE.MAIN:
+                            payload = this.miot_actions.reset_detergent;
+                            break;
+                    }
+                }
+                break;
         }
 
         if (payload) {
@@ -141,7 +198,7 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
                 }
             ).then(res => {
                 if (res.code !== 0) {
-                    throw new Error("Error code " + res.code + " while resetting consumable.");
+                    throw new RobotFirmwareError("Error code " + res.code + " while resetting consumable.");
                 }
 
                 this.markEventsAsProcessed(type, subType);
@@ -203,14 +260,59 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
             }
 
             default:
-                if (this.miot_properties.sensor) {
-                    if (msg.siid === this.miot_properties.sensor.siid && msg.piid === this.miot_properties.sensor.piid) {
+                if (
+                    this.miot_properties.sensor &&
+                    msg.siid === this.miot_properties.sensor.siid
+                ) {
+                    if (msg.piid === this.miot_properties.sensor.piid) {
                         consumable = new ConsumableStateAttribute({
                             type: ConsumableStateAttribute.TYPE.SENSOR,
                             subType: ConsumableStateAttribute.SUB_TYPE.ALL,
                             remaining: {
                                 value: Math.round(Math.max(0, msg.value * 60)),
                                 unit: ConsumableStateAttribute.UNITS.MINUTES
+                            }
+                        });
+                    }
+                } else if (
+                    this.miot_properties.mop &&
+                    msg.siid === this.miot_properties.mop.siid
+                ) {
+                    if (msg.piid === this.miot_properties.mop.piid) {
+                        consumable = new ConsumableStateAttribute({
+                            type: ConsumableStateAttribute.TYPE.MOP,
+                            subType: ConsumableStateAttribute.SUB_TYPE.ALL,
+                            remaining: {
+                                value: Math.round(Math.max(0, msg.value * 60)),
+                                unit: ConsumableStateAttribute.UNITS.MINUTES
+                            }
+                        });
+                    }
+                } else if (
+                    this.miot_properties.secondary_filter &&
+                    msg.siid === this.miot_properties.secondary_filter.siid
+                ) {
+                    if (msg.piid === this.miot_properties.secondary_filter.piid) {
+                        consumable = new ConsumableStateAttribute({
+                            type: ConsumableStateAttribute.TYPE.FILTER,
+                            subType: ConsumableStateAttribute.SUB_TYPE.SECONDARY,
+                            remaining: {
+                                value: Math.round(Math.max(0, msg.value * 60)),
+                                unit: ConsumableStateAttribute.UNITS.MINUTES
+                            }
+                        });
+                    }
+                } else if (
+                    this.miot_properties.detergent &&
+                    msg.siid === this.miot_properties.detergent.siid
+                ) {
+                    if (msg.piid === this.miot_properties.detergent.piid) {
+                        consumable = new ConsumableStateAttribute({
+                            type: ConsumableStateAttribute.TYPE.DETERGENT,
+                            subType: ConsumableStateAttribute.SUB_TYPE.NONE,
+                            remaining: {
+                                value: Math.max(0, msg.value),
+                                unit: ConsumableStateAttribute.UNITS.PERCENT
                             }
                         });
                     }
@@ -251,6 +353,36 @@ class DreameConsumableMonitoringCapability extends ConsumableMonitoringCapabilit
                     type: ConsumableStateAttribute.TYPE.SENSOR,
                     subType: ConsumableStateAttribute.SUB_TYPE.ALL,
                     unit: ConsumableStateAttribute.UNITS.MINUTES
+                }
+            );
+        }
+
+        if (this.miot_properties.mop) {
+            availableConsumables.push(
+                {
+                    type: ConsumableStateAttribute.TYPE.MOP,
+                    subType: ConsumableStateAttribute.SUB_TYPE.ALL,
+                    unit: ConsumableStateAttribute.UNITS.MINUTES
+                }
+            );
+        }
+
+        if (this.miot_properties.secondary_filter) {
+            availableConsumables.push(
+                {
+                    type: ConsumableStateAttribute.TYPE.FILTER,
+                    subType: ConsumableStateAttribute.SUB_TYPE.SECONDARY,
+                    unit: ConsumableStateAttribute.UNITS.MINUTES
+                }
+            );
+        }
+
+        if (this.miot_properties.detergent) {
+            availableConsumables.push(
+                {
+                    type: ConsumableStateAttribute.TYPE.DETERGENT,
+                    subType: ConsumableStateAttribute.SUB_TYPE.NONE,
+                    unit: ConsumableStateAttribute.UNITS.PERCENT
                 }
             );
         }

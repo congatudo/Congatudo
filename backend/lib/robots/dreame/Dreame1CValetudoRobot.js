@@ -5,6 +5,7 @@ const DreameValetudoRobot = require("./DreameValetudoRobot");
 const entities = require("../../entities");
 const Logger = require("../../Logger");
 const MiioValetudoRobot = require("../MiioValetudoRobot");
+const ValetudoRestrictedZone = require("../../entities/core/ValetudoRestrictedZone");
 const ValetudoSelectionPreset = require("../../entities/core/ValetudoSelectionPreset");
 
 const stateAttrs = entities.state.attributes;
@@ -123,11 +124,15 @@ class Dreame1CValetudoRobot extends DreameValetudoRobot {
             },
             segmentCleaningModeId: 18,
             iterationsSupported: 1,
-            customOrderSupported: false
+            customOrderSupported: true
         }));
 
         this.registerCapability(new capabilities.DreameCombinedVirtualRestrictionsCapability({
             robot: this,
+            supportedRestrictedZoneTypes: [
+                ValetudoRestrictedZone.TYPE.REGULAR,
+                ValetudoRestrictedZone.TYPE.MOP
+            ],
             miot_actions: {
                 map_edit: {
                     siid: MIOT_SERVICES.MAP.SIID,
@@ -310,10 +315,28 @@ class Dreame1CValetudoRobot extends DreameValetudoRobot {
                 }
             }
         }));
+
+        this.registerCapability(new capabilities.DreamePendingMapChangeHandlingCapability({
+            robot: this,
+            miot_actions: {
+                map_edit: {
+                    siid: MIOT_SERVICES.MAP.SIID,
+                    aiid: MIOT_SERVICES.MAP.ACTIONS.EDIT.AIID
+                }
+            },
+            miot_properties: {
+                mapDetails: {
+                    piid: MIOT_SERVICES.MAP.PROPERTIES.MAP_DETAILS.PIID
+                },
+                actionResult: {
+                    piid: MIOT_SERVICES.MAP.PROPERTIES.ACTION_RESULT.PIID
+                }
+            }
+        }));
     }
 
-    onMessage(msg) {
-        if (super.onMessage(msg) === true) {
+    onIncomingCloudMessage(msg) {
+        if (super.onIncomingCloudMessage(msg) === true) {
             return true;
         }
 
@@ -510,6 +533,7 @@ class Dreame1CValetudoRobot extends DreameValetudoRobot {
                         case 12:
                         case 19:
                         case 22:
+                        case 27: //disable map uploads
                             //ignored for now
                             break;
 
@@ -527,11 +551,12 @@ class Dreame1CValetudoRobot extends DreameValetudoRobot {
                             break;
                         case MIOT_SERVICES.BATTERY.PROPERTIES.CHARGING.PIID:
                             /*
-                                1 = On Charger
+                                1 = On Charger and charging
                                 2 = Not on Charger
+                                4 = On Charger and fully charged
                                 5 = Returning to Charger
                              */
-                            this.isCharging = elem.value === 1;
+                            this.isCharging = elem.value === 4 || elem.value === 1;
                             this.stateNeedsUpdate = true;
                             break;
                     }
@@ -555,6 +580,7 @@ class Dreame1CValetudoRobot extends DreameValetudoRobot {
             let newState;
             let statusValue;
             let statusFlag;
+            let statusError;
             let statusMetaData = {};
 
             if (this.errorCode === "0" || this.errorCode === "" || this.errorCode === 0 || this.errorCode === undefined) {
@@ -573,14 +599,14 @@ class Dreame1CValetudoRobot extends DreameValetudoRobot {
             } else {
                 statusValue = stateAttrs.StatusStateAttribute.VALUE.ERROR;
 
-                statusMetaData.error_code = this.errorCode;
-                statusMetaData.error_description = DreameValetudoRobot.GET_ERROR_CODE_DESCRIPTION(this.errorCode);
+                statusError = DreameValetudoRobot.MAP_ERROR_CODE(this.errorCode);
             }
 
             newState = new stateAttrs.StatusStateAttribute({
                 value: statusValue,
                 flag: statusFlag,
-                metaData: statusMetaData
+                metaData: statusMetaData,
+                error: statusError
             });
 
             this.state.upsertFirstMatchingAttribute(newState);

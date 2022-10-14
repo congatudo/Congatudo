@@ -2,21 +2,40 @@ import React, {createRef} from "react";
 import {RawMapData, RawMapEntityType} from "../api";
 import {MapLayerRenderer} from "./MapLayerRenderer";
 import {PathDrawer} from "./PathDrawer";
-import {trackTransforms} from "./utils/tracked-canvas.js";
-import {TouchHandler} from "./utils/touch-handling.js";
+import {TouchHandler} from "./utils/touch_handling/TouchHandler";
 import StructureManager from "./StructureManager";
 import {Box, styled, Theme} from "@mui/material";
 import SegmentLabelMapStructure from "./structures/map_structures/SegmentLabelMapStructure";
 import semaphore from "semaphore";
+import {convertNumberToRoman} from "../utils";
+import {Canvas2DContextTrackingWrapper} from "./utils/Canvas2DContextTrackingWrapper";
+import {TapTouchHandlerEvent} from "./utils/touch_handling/events/TapTouchHandlerEvent";
+import {PanStartTouchHandlerEvent} from "./utils/touch_handling/events/PanStartTouchHandlerEvent";
+import {PanMoveTouchHandlerEvent} from "./utils/touch_handling/events/PanMoveTouchHandlerEvent";
+import {PanEndTouchHandlerEvent} from "./utils/touch_handling/events/PanEndTouchHandlerEvent";
+import {PinchStartTouchHandlerEvent} from "./utils/touch_handling/events/PinchStartTouchHandlerEvent";
+import {PinchMoveTouchHandlerEvent} from "./utils/touch_handling/events/PinchMoveTouchHandlerEvent";
+import {PinchEndTouchHandlerEvent} from "./utils/touch_handling/events/PinchEndTouchHandlerEvent";
+import {PointCoordinates} from "./utils/types";
+import create from "zustand";
 
 export interface MapProps {
     rawMap: RawMapData;
     theme: Theme;
+    trackSegmentSelectionOrder?: boolean;
 }
 
 export interface MapState {
     selectedSegmentIds: Array<string>
 }
+
+export const usePendingMapAction = create<{
+    hasPendingMapAction: boolean
+}>()(() => {
+    return {
+        hasPendingMapAction: false
+    };
+});
 
 const Container = styled(Box)({
     position: "relative",
@@ -34,8 +53,8 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     protected readonly canvasRef: React.RefObject<HTMLCanvasElement>;
     protected structureManager: StructureManager;
     protected mapLayerRenderer: MapLayerRenderer;
-    protected ctx: any;
-    protected canvas: HTMLCanvasElement | null;
+    protected canvas!: HTMLCanvasElement;
+    protected ctxWrapper!: Canvas2DContextTrackingWrapper;
     protected readonly resizeListener: () => void;
     protected readonly visibilityStateChangeListener: () => void;
 
@@ -74,114 +93,105 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
             // Save the current transformation and recreate it
             // as the transformation state is lost when changing canvas size
             // https://stackoverflow.com/questions/48044951/canvas-state-lost-after-changing-size
-            if (this.ctx !== null && this.canvas !== null) {
-                const {a, b, c, d, e, f} = this.ctx.getTransform();
+            const {a, b, c, d, e, f} = this.ctxWrapper.getTransform();
 
-                //Ignore weirdness related to the URL bar on Firefox mobile
-                if (this.canvas.clientWidth === 0 || this.canvas.clientHeight === 0) {
-                    return;
-                }
-
-                this.canvas.height = this.canvas.clientHeight;
-                this.canvas.width = this.canvas.clientWidth;
-
-                this.ctx.setTransform(a, b, c, d, e, f);
-                this.ctx.imageSmoothingEnabled = false;
+            //Ignore weirdness related to the URL bar on Firefox mobile
+            if (this.canvas.clientWidth === 0 || this.canvas.clientHeight === 0) {
+                return;
             }
+
+            this.canvas.height = this.canvas.clientHeight;
+            this.canvas.width = this.canvas.clientWidth;
+
+            this.ctxWrapper.setTransform(a, b, c, d, e, f);
 
 
             this.draw();
         };
 
         this.visibilityStateChangeListener = () => {
-            if (document.visibilityState === "visible") {
-                this.draw();
+            if (this.pendingInternalDrawableStateUpdate && document.visibilityState === "visible") {
+                this.pendingInternalDrawableStateUpdate = false;
+
+                this.updateInternalDrawableState();
             }
         };
-
-        this.canvas = null;
-        this.ctx = null;
     }
 
     componentDidMount(): void {
-        if (this.canvasRef.current !== null) {
-            this.canvas = this.canvasRef.current;
-            this.canvas.height = this.canvas.clientHeight;
-            this.canvas.width = this.canvas.clientWidth;
+        this.canvas = this.canvasRef.current!;
+        this.canvas.height = this.canvas.clientHeight;
+        this.canvas.width = this.canvas.clientWidth;
 
-            this.ctx = this.canvasRef.current.getContext("2d");
+        this.ctxWrapper = new Canvas2DContextTrackingWrapper(this.canvas.getContext("2d")!);
 
-            if (this.ctx === null) {
-                return;
+        this.registerCanvasInteractionHandlers();
+        window.addEventListener("resize", this.resizeListener);
+        document.addEventListener("visibilitychange", this.visibilityStateChangeListener);
+
+        const boundingBox = {
+            minX: this.props.rawMap.size.x / this.props.rawMap.pixelSize,
+            minY: this.props.rawMap.size.y / this.props.rawMap.pixelSize,
+            maxX: 0,
+            maxY: 0
+        };
+
+        this.props.rawMap.layers.forEach(l => {
+            if (l.dimensions.x.min < boundingBox.minX) {
+                boundingBox.minX = l.dimensions.x.min;
             }
-            trackTransforms(this.ctx);
-            this.registerCanvasInteractionHandlers();
-            window.addEventListener("resize", this.resizeListener);
-            document.addEventListener("visibilitychange", this.visibilityStateChangeListener);
-
-            this.ctx.imageSmoothingEnabled = false;
-
-            const boundingBox = {
-                minX: this.props.rawMap.size.x / this.props.rawMap.pixelSize,
-                minY: this.props.rawMap.size.y / this.props.rawMap.pixelSize,
-                maxX: 0,
-                maxY: 0
-            };
-
-            this.props.rawMap.layers.forEach(l => {
-                if (l.dimensions.x.min < boundingBox.minX) {
-                    boundingBox.minX = l.dimensions.x.min;
-                }
-                if (l.dimensions.y.min < boundingBox.minY) {
-                    boundingBox.minY = l.dimensions.y.min;
-                }
-                if (l.dimensions.x.max > boundingBox.maxX) {
-                    boundingBox.maxX = l.dimensions.x.max;
-                }
-                if (l.dimensions.y.max > boundingBox.maxY) {
-                    boundingBox.maxY = l.dimensions.y.max;
-                }
-            });
+            if (l.dimensions.y.min < boundingBox.minY) {
+                boundingBox.minY = l.dimensions.y.min;
+            }
+            if (l.dimensions.x.max > boundingBox.maxX) {
+                boundingBox.maxX = l.dimensions.x.max;
+            }
+            if (l.dimensions.y.max > boundingBox.maxY) {
+                boundingBox.maxY = l.dimensions.y.max;
+            }
+        });
 
 
-            const initialScalingFactor = Math.min(
-                this.canvas.width / ((boundingBox.maxX - boundingBox.minX)*1.1),
-                this.canvas.height / ((boundingBox.maxY - boundingBox.minY)*1.1)
-            );
+        const initialScalingFactor = Math.min(
+            this.canvas.width / ((boundingBox.maxX - boundingBox.minX)*1.1),
+            this.canvas.height / ((boundingBox.maxY - boundingBox.minY)*1.1)
+        );
 
-            const initialxOffset = (this.canvas.width - (boundingBox.maxX - boundingBox.minX)*initialScalingFactor) / 2;
-            const initialyOffset = (this.canvas.height - (boundingBox.maxY - boundingBox.minY)*initialScalingFactor) / 2;
-            this.ctx.translate(initialxOffset, initialyOffset);
-
-
-            this.currentScaleFactor = initialScalingFactor;
-
-            this.ctx.scale(initialScalingFactor, initialScalingFactor);
-            this.ctx.translate(-boundingBox.minX, -boundingBox.minY);
+        const initialxOffset = (this.canvas.width - (boundingBox.maxX - boundingBox.minX)*initialScalingFactor) / 2;
+        const initialyOffset = (this.canvas.height - (boundingBox.maxY - boundingBox.minY)*initialScalingFactor) / 2;
+        this.ctxWrapper.translate(initialxOffset, initialyOffset);
 
 
-            this.updateDrawableComponents().then(() => {
-                this.draw();
-            });
-        }
+        this.currentScaleFactor = initialScalingFactor;
+
+        this.ctxWrapper.scale(initialScalingFactor, initialScalingFactor);
+        this.ctxWrapper.translate(-boundingBox.minX, -boundingBox.minY);
+
+
+        this.updateInternalDrawableState();
+
+        usePendingMapAction.setState({hasPendingMapAction: false});
     }
 
     componentDidUpdate(prevProps: Readonly<MapProps>, prevState: Readonly<MapState>): void {
-        //As react-query refreshes the data when switching back to a previously invisible tab anyways,
-        //we can just ignore all updates while minimized/in the background to 🌈 conserve energy 🌈
-        if (document.visibilityState === "visible") {
-            if (prevProps.rawMap.metaData.nonce !== this.props.rawMap.metaData.nonce) {
-                this.onMapUpdate();
+        if (prevProps.rawMap.metaData.nonce !== this.props.rawMap.metaData.nonce) {
+            this.onMapUpdate();
 
-                //Postpone data update if the map is currently being interacted with to avoid jank
-                if (this.activeTouchEvent || this.activeScrollEvent) {
-                    this.pendingInternalDrawableStateUpdate = true;
-                } else {
-                    this.updateInternalDrawableState();
-                }
-            } else if (this.props.theme.palette.mode !== prevProps.theme.palette.mode) {
+            /**
+             * If we're not visible, we do not need to render map updates as no one would see those anyway
+             * We also cannot update the map data while someone interacts with it as that causes jank
+             */
+            if (
+                document.visibilityState !== "visible" ||
+                this.activeTouchEvent ||
+                this.activeScrollEvent
+            ) {
+                this.pendingInternalDrawableStateUpdate = true;
+            } else {
                 this.updateInternalDrawableState();
             }
+        } else if (this.props.theme.palette.mode !== prevProps.theme.palette.mode) {
+            this.updateInternalDrawableState();
         }
     }
 
@@ -192,6 +202,8 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     componentWillUnmount(): void {
         window.removeEventListener("resize", this.resizeListener);
         document.removeEventListener("visibilitychange", this.visibilityStateChangeListener);
+
+        usePendingMapAction.setState({hasPendingMapAction: false});
     }
 
     protected updateInternalDrawableState() : void {
@@ -205,7 +217,14 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     render(): JSX.Element {
         return (
             <Container style={{overflow: "hidden"}}>
-                <canvas ref={this.canvasRef} style={{width: "100%", height: "100%"}}/>
+                <canvas
+                    ref={this.canvasRef}
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        imageRendering: "crisp-edges"
+                    }}
+                />
                 {this.renderAdditionalElements()}
             </Container>
         );
@@ -223,15 +242,15 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
                 await this.mapLayerRenderer.draw(this.props.rawMap, this.props.theme);
                 this.drawableComponents.push(this.mapLayerRenderer.getCanvas());
 
-                const pathsImage = await PathDrawer.drawPaths(
-                    this.props.rawMap.entities.filter(e => {
+                const pathsImage = await PathDrawer.drawPaths( {
+                    paths: this.props.rawMap.entities.filter(e => {
                         return e.type === RawMapEntityType.Path || e.type === RawMapEntityType.PredictedPath;
                     }),
-                    this.props.rawMap.size.x,
-                    this.props.rawMap.size.y,
-                    this.props.rawMap.pixelSize,
-                    this.props.theme
-                );
+                    mapWidth: this.props.rawMap.size.x,
+                    mapHeight: this.props.rawMap.size.y,
+                    pixelSize: this.props.rawMap.pixelSize,
+                    paletteMode: this.props.theme.palette.mode,
+                });
 
                 this.drawableComponents.push(pathsImage);
 
@@ -244,24 +263,44 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
                 resolve();
             });
         });
-
     }
 
     protected updateState() : void {
-        this.setState({
-            selectedSegmentIds: this.structureManager.getMapStructures().filter(s => {
-                if (s.type === SegmentLabelMapStructure.TYPE) {
-                    const label = s as SegmentLabelMapStructure;
+        const currentSegmentLabelStructures = this.structureManager.getMapStructures().filter(s => {
+            return s.type === SegmentLabelMapStructure.TYPE;
+        }) as Array<SegmentLabelMapStructure>;
 
-                    return label.selected;
-                } else {
-                    return false;
-                }
-            }).map(s => {
-                const label = s as SegmentLabelMapStructure;
+        const previouslySelectedSegmentIds = this.state.selectedSegmentIds;
+        const currentlySelectedSegmentIds = currentSegmentLabelStructures.filter(s => {
+            return s.selected;
+        }).map(s => {
+            return s.id;
+        });
 
-                return label.id;
+        // This ensures that we keep the order in which segments were selected by the user
+        const updatedSelectedSegmentIds = [
+            ...previouslySelectedSegmentIds.filter(id => { //Take existing ones excluding those, which aren't selected anymore
+                return currentlySelectedSegmentIds.includes(id);
+            }),
+            ...currentlySelectedSegmentIds.filter(id => { //Append all IDs that weren't part of the previous array
+                return !previouslySelectedSegmentIds.includes(id);
             })
+        ];
+
+        if (this.props.trackSegmentSelectionOrder === true) {
+            currentSegmentLabelStructures.forEach(s => {
+                const idx = updatedSelectedSegmentIds.indexOf(s.id);
+
+                if (idx >= 0) {
+                    s.topLabel = convertNumberToRoman(idx + 1);
+                } else {
+                    s.topLabel = undefined;
+                }
+            });
+        }
+
+        this.setState({
+            selectedSegmentIds: updatedSelectedSegmentIds,
         } as S & MapState);
     }
 
@@ -269,19 +308,21 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     protected draw() : void {
         window.requestAnimationFrame(() => {
             this.drawableComponentsMutex.take(() => {
-                if (!this.ctx || !this.canvas) {
-                    this.drawableComponentsMutex.leave();
-                    return;
-                }
+                const ctx = this.ctxWrapper.getContext();
 
-                this.ctx.save();
-                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.restore();
+                this.ctxWrapper.save();
+                this.ctxWrapper.setTransform(1, 0, 0, 1, 0, 0);
+                ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctxWrapper.restore();
+
+
+                ctx.imageSmoothingEnabled = false;
 
                 this.drawableComponents.forEach(c => {
-                    this.ctx.drawImage(c, 0, 0);
+                    ctx.drawImage(c, 0, 0);
                 });
+
+                ctx.imageSmoothingEnabled = true;
 
 
                 /**
@@ -290,13 +331,13 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
                  * This allows for drawing equally thick lines no matter what the zoomlevel of the canvas currently is.
                  *
                  */
-                const transformationMatrixToScreenSpace = this.ctx.getTransform();
-                this.ctx.save();
-                this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+                const transformationMatrixToScreenSpace = this.ctxWrapper.getTransform();
+                this.ctxWrapper.save();
+                this.ctxWrapper.setTransform(1, 0, 0, 1, 0, 0);
 
                 this.structureManager.getMapStructures().forEach(s => {
                     s.draw(
-                        this.ctx,
+                        this.ctxWrapper,
                         transformationMatrixToScreenSpace,
                         this.currentScaleFactor,
                         this.structureManager.getPixelSize()
@@ -305,41 +346,28 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
 
                 this.structureManager.getClientStructures().forEach(s => {
                     s.draw(
-                        this.ctx,
+                        this.ctxWrapper,
                         transformationMatrixToScreenSpace,
                         this.currentScaleFactor,
                         this.structureManager.getPixelSize()
                     );
                 });
 
-                this.ctx.restore();
+                this.ctxWrapper.restore();
                 this.drawableComponentsMutex.leave();
             });
         });
     }
 
-    protected getCurrentViewportCenterCoordinatesInPixelSpace() : {x: number, y: number} {
-        if (this.canvas === null) {
-            // This will actually never happen, but typescript thinks that this.canvas can be null, so..
-            return {
-                x: (this.props.rawMap.size.x / this.props.rawMap.pixelSize) /2,
-                y: (this.props.rawMap.size.y / this.props.rawMap.pixelSize) /2
-            };
-        } else {
-            return this.ctx.transformedPoint(this.canvas.width/2, this.canvas.height/2);
-        }
+    protected getCurrentViewportCenterCoordinatesInPixelSpace() : PointCoordinates {
+        return this.ctxWrapper.mapPointToCurrentTransform(this.canvas.width/2, this.canvas.height/2);
     }
 
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected onTap(evt: any) : boolean | void {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
+    protected onTap(evt: TapTouchHandlerEvent) : boolean | void {
+        const currentTransform = this.ctxWrapper.getTransform();
 
-        const currentTransform = this.ctx.getTransform();
-
-        const {x, y} = Map.relativeCoordinates(evt.tappedCoordinates, this.canvas);
-        const tappedPointInMapSpace = this.ctx.transformedPoint(x, y);
+        const {x, y} = this.relativeCoordinatesToCanvas(evt.x0, evt.y0);
+        const tappedPointInMapSpace = this.ctxWrapper.mapPointToCurrentTransform(x, y);
         const tappedPointInScreenSpace = new DOMPoint(tappedPointInMapSpace.x, tappedPointInMapSpace.y).matrixTransform(currentTransform);
         let drawRequested = false;
 
@@ -412,10 +440,6 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     }
 
     protected onScroll(evt: WheelEvent) : void {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
-
         this.activeScrollEvent = true;
         if (this.scrollTimeout) {
             clearTimeout(this.scrollTimeout);
@@ -433,7 +457,7 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
         const fullStep = evt.deltaY < 0 ? SCROLL_PARAMETERS.ZOOM_IN_MULTIPLIER : SCROLL_PARAMETERS.ZOOM_OUT_MULTIPLIER;
         const factor = 1 - (fullStep * (evt.deltaY / SCROLL_PARAMETERS.PIXELS_PER_FULL_STEP));
 
-        const currentScaleFactor = this.ctx.getScaleFactor2d()[0];
+        const { scaleX: currentScaleFactor } = this.ctxWrapper.getScaleFactor();
 
         if (
             (factor * currentScaleFactor < 0.4 && factor < 1) ||
@@ -442,12 +466,12 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
             return;
         }
 
-        const pt = this.ctx.transformedPoint(evt.offsetX, evt.offsetY);
-        this.ctx.translate(pt.x, pt.y);
-        this.ctx.scale(factor, factor);
-        this.ctx.translate(-pt.x, -pt.y);
+        const pt = this.ctxWrapper.mapPointToCurrentTransform(evt.offsetX, evt.offsetY);
+        this.ctxWrapper.translate(pt.x, pt.y);
+        this.ctxWrapper.scale(factor, factor);
+        this.ctxWrapper.translate(-pt.x, -pt.y);
 
-        const [scaleX] = this.ctx.getScaleFactor2d();
+        const { scaleX } = this.ctxWrapper.getScaleFactor();
         this.currentScaleFactor = scaleX;
 
         this.draw();
@@ -455,26 +479,17 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
         return evt.preventDefault();
     }
 
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected startTranslate(evt: any) : void {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
 
-        const {x, y} = Map.relativeCoordinates(evt.coordinates, this.canvas);
+    protected startTranslate(evt: PanStartTouchHandlerEvent) : void {
+        const {x, y} = this.relativeCoordinatesToCanvas(evt.x0, evt.y0);
         this.touchHandlingState.lastX = x;
         this.touchHandlingState.lastY = y;
-        this.touchHandlingState.dragStart = this.ctx.transformedPoint(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
+        this.touchHandlingState.dragStart = this.ctxWrapper.mapPointToCurrentTransform(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
         this.activeTouchEvent = true;
     }
 
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected moveTranslate(evt: any) : void {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
-
-        const {x, y} = Map.relativeCoordinates(evt.currentCoordinates, this.canvas);
+    protected moveTranslate(evt: PanMoveTouchHandlerEvent) : void {
+        const {x, y} = this.relativeCoordinatesToCanvas(evt.x1,evt.y1);
         const oldX = this.touchHandlingState.lastX;
         const oldY = this.touchHandlingState.lastY;
         this.touchHandlingState.lastX = x;
@@ -482,9 +497,9 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
 
         if (this.touchHandlingState.dragStart) {
 
-            const currentTransform = this.ctx.getTransform();
+            const currentTransform = this.ctxWrapper.getTransform();
             const currentPixelSize = this.structureManager.getPixelSize();
-            const invertedCurrentTransform = DOMMatrix.fromMatrix(this.ctx.getTransform()).invertSelf();
+            const invertedCurrentTransform = DOMMatrix.fromMatrix(this.ctxWrapper.getTransform()).invertSelf();
 
             const wasHandled = this.structureManager.getClientStructures().some(structure => {
                 const result = structure.translate(
@@ -516,14 +531,13 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
             }
 
             // If no location stopped event handling -> pan the whole map
-            const pt = this.ctx.transformedPoint(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
-            this.ctx.translate(pt.x - this.touchHandlingState.dragStart.x, pt.y - this.touchHandlingState.dragStart.y);
+            const pt = this.ctxWrapper.mapPointToCurrentTransform(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
+            this.ctxWrapper.translate(pt.x - this.touchHandlingState.dragStart.x, pt.y - this.touchHandlingState.dragStart.y);
             this.draw();
         }
     }
 
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected endTranslate(evt: any) : void {
+    protected endTranslate(evt: PanEndTouchHandlerEvent | PinchEndTouchHandlerEvent) : void {
         this.activeTouchEvent = false;
         this.touchHandlingState.dragStart = null;
 
@@ -545,39 +559,19 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
         }
     }
 
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected startPinch(evt: any) : void {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
+    protected startPinch(evt: PinchStartTouchHandlerEvent) : void {
         this.touchHandlingState.lastScaleFactor = 1;
 
         // translate
-        const {x, y} = Map.relativeCoordinates(evt.center, this.canvas);
+        const {x, y} = this.relativeCoordinatesToCanvas(evt.x0, evt.y0);
         this.touchHandlingState.lastX = x;
         this.touchHandlingState.lastY = y;
-        this.touchHandlingState.dragStart = this.ctx.transformedPoint(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
+        this.touchHandlingState.dragStart = this.ctxWrapper.mapPointToCurrentTransform(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
         this.activeTouchEvent = true;
     }
 
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected endPinch(evt: any) : void {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
-
-        const [scaleX] = this.ctx.getScaleFactor2d();
-        this.currentScaleFactor = scaleX;
-        this.endTranslate(evt);
-    }
-
-    //eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-    protected scalePinch(evt: any) : any {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
-
-        const currentScaleFactor = this.ctx.getScaleFactor2d()[0];
+    protected scalePinch(evt: PinchMoveTouchHandlerEvent) : any {
+        const { scaleX: currentScaleFactor } = this.ctxWrapper.getScaleFactor();
         const factor = evt.scale / this.touchHandlingState.lastScaleFactor;
 
         if (factor * currentScaleFactor < 0.4 && factor < 1) {
@@ -588,40 +582,57 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
 
         this.touchHandlingState.lastScaleFactor = evt.scale;
 
-        const pt = this.ctx.transformedPoint(evt.center.x, evt.center.y);
-        this.ctx.translate(pt.x, pt.y);
-        this.ctx.scale(factor, factor);
-        this.ctx.translate(-pt.x, -pt.y);
+        const pt = this.ctxWrapper.mapPointToCurrentTransform(evt.x0, evt.y0);
+        this.ctxWrapper.translate(pt.x, pt.y);
+        this.ctxWrapper.scale(factor, factor);
+        this.ctxWrapper.translate(-pt.x, -pt.y);
 
         // translate
-        const {x, y} = Map.relativeCoordinates(evt.center, this.canvas);
+        const {x, y} = this.relativeCoordinatesToCanvas(evt.x0, evt.y0);
         this.touchHandlingState.lastX = x;
         this.touchHandlingState.lastY = y;
-        const p = this.ctx.transformedPoint(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
-        this.ctx.translate(p.x - this.touchHandlingState.dragStart.x, p.y - this.touchHandlingState.dragStart.y);
+        const p = this.ctxWrapper.mapPointToCurrentTransform(this.touchHandlingState.lastX, this.touchHandlingState.lastY);
+        this.ctxWrapper.translate(p.x - this.touchHandlingState.dragStart.x, p.y - this.touchHandlingState.dragStart.y);
 
         this.draw();
     }
 
-    protected registerCanvasInteractionHandlers(): void {
-        if (this.canvas === null || this.ctx === null) {
-            return;
-        }
+    protected endPinch(evt: PinchEndTouchHandlerEvent) : void {
+        const { scaleX } = this.ctxWrapper.getScaleFactor();
+        this.currentScaleFactor = scaleX;
+        this.endTranslate(evt);
+    }
 
-        const touchHandler = new TouchHandler();
-        touchHandler.registerListeners(this.canvas);
+    protected registerCanvasInteractionHandlers(): void {
+        const touchHandler = new TouchHandler(this.canvas);
 
         this.touchHandlingState.lastX = this.canvas.width / 2;
         this.touchHandlingState.lastY = this.canvas.height / 2;
 
 
-        this.canvas.addEventListener("tap", this.onTap.bind(this));
-        this.canvas.addEventListener("panstart", this.startTranslate.bind(this));
-        this.canvas.addEventListener("panmove", this.moveTranslate.bind(this));
-        this.canvas.addEventListener("panend", this.endTranslate.bind(this));
-        this.canvas.addEventListener("pinchstart", this.startPinch.bind(this));
-        this.canvas.addEventListener("pinchmove", this.scalePinch.bind(this));
-        this.canvas.addEventListener("pinchend", this.endPinch.bind(this));
+        touchHandler.addEventListener(TapTouchHandlerEvent.TYPE, evt => {
+            this.onTap(evt as TapTouchHandlerEvent);
+        });
+
+        touchHandler.addEventListener(PanStartTouchHandlerEvent.TYPE, evt => {
+            this.startTranslate(evt as PanStartTouchHandlerEvent);
+        });
+        touchHandler.addEventListener(PanMoveTouchHandlerEvent.TYPE, evt => {
+            this.moveTranslate(evt as PanMoveTouchHandlerEvent);
+        });
+        touchHandler.addEventListener(PanEndTouchHandlerEvent.TYPE, evt => {
+            this.endTranslate(evt as PanEndTouchHandlerEvent);
+        });
+
+        touchHandler.addEventListener(PinchStartTouchHandlerEvent.TYPE, evt => {
+            this.startPinch(evt as PinchStartTouchHandlerEvent);
+        });
+        touchHandler.addEventListener(PinchMoveTouchHandlerEvent.TYPE, evt => {
+            this.scalePinch(evt as PinchMoveTouchHandlerEvent);
+        });
+        touchHandler.addEventListener(PinchEndTouchHandlerEvent.TYPE, evt => {
+            this.endPinch(evt as PinchEndTouchHandlerEvent);
+        });
 
         //Order might be important here but I've never tested that
         this.canvas.addEventListener("wheel", this.onScroll.bind(this), false);
@@ -630,13 +641,13 @@ class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     /**
      * Helper function for calculating coordinates relative to an HTML Element
      *
-     * @param {{x: number, y: number}} "{x, y}" - the absolute screen coordinates (clicked)
-     * @param {*} referenceElement - the element (e.g. a canvas) to which
-     * relative coordinates should be calculated
-     * @returns {{x: number, y: number}} coordinates relative to the referenceElement
+     * @param {number} x absolute screen coordinates x
+     * @param {number} y absolute screen coordinates y
+     * 
+     * @returns {{x: number, y: number}} coordinates relative to the canvas element
      */
-    protected static relativeCoordinates({x, y}: {x: number, y:number}, referenceElement: HTMLElement) : {x: number, y: number} {
-        const rect = referenceElement.getBoundingClientRect();
+    protected relativeCoordinatesToCanvas(x: number, y:number) : PointCoordinates {
+        const rect = this.canvas.getBoundingClientRect();
         return {
             x: x - rect.left,
             y: y - rect.top

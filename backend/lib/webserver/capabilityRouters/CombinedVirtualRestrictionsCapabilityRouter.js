@@ -1,46 +1,68 @@
 const CapabilityRouter = require("./CapabilityRouter");
-const Logger = require("../../Logger");
-
 const ValetudoRestrictedZone = require("../../entities/core/ValetudoRestrictedZone");
 const ValetudoVirtualRestrictions = require("../../entities/core/ValetudoVirtualRestrictions");
 const ValetudoVirtualWall = require("../../entities/core/ValetudoVirtualWall");
 
 class CombinedVirtualRestrictionsCapabilityRouter extends CapabilityRouter {
-
     initRoutes() {
         this.router.get("/", async (req, res) => {
-            res.json(await this.capability.getVirtualRestrictions());
+            try {
+                res.json(await this.capability.getVirtualRestrictions());
+            } catch (e) {
+                this.sendErrorResponse(req, res, e);
+            }
         });
 
-        this.router.put("/", async (req, res) => {
-            if (req.body) {
-                if (Array.isArray(req.body.virtualWalls) && Array.isArray(req.body.restrictedZones)) {
-                    const virtualRestrictions = new ValetudoVirtualRestrictions({
-                        virtualWalls: req.body.virtualWalls.map(requestWall => {
-                            return new ValetudoVirtualWall({
-                                points: requestWall.points
-                            });
-                        }),
-                        restrictedZones: req.body.restrictedZones.map(requestZone => {
-                            return new ValetudoRestrictedZone({
-                                points: requestZone.points,
-                                type: requestZone.type
-                            });
-                        })
-                    });
+        this.router.put("/", this.validator, async (req, res) => {
+            if (Array.isArray(req.body.virtualWalls) && Array.isArray(req.body.restrictedZones)) {
+                const virtualRestrictions = new ValetudoVirtualRestrictions({
+                    virtualWalls: req.body.virtualWalls.map(requestWall => {
+                        return new ValetudoVirtualWall({
+                            points: {
+                                pA: {
+                                    x: requestWall.points.pA.x,
+                                    y: requestWall.points.pA.y
+                                },
+                                pB: {
+                                    x: requestWall.points.pB.x,
+                                    y: requestWall.points.pB.y
+                                }
+                            }
+                        });
+                    }),
+                    restrictedZones: req.body.restrictedZones.map(requestZone => {
+                        return new ValetudoRestrictedZone({
+                            points: {
+                                pA: {
+                                    x: requestZone.points.pA.x,
+                                    y: requestZone.points.pA.y
+                                },
+                                pB: {
+                                    x: requestZone.points.pB.x,
+                                    y: requestZone.points.pB.y
+                                },
+                                pC: {
+                                    x: requestZone.points.pC.x,
+                                    y: requestZone.points.pC.y
+                                },
+                                pD: {
+                                    x: requestZone.points.pD.x,
+                                    y: requestZone.points.pD.y
+                                }
+                            },
+                            type: requestZone.type
+                        });
+                    })
+                });
 
-                    try {
-                        await this.capability.setVirtualRestrictions(virtualRestrictions);
-                        res.sendStatus(200);
-                    } catch (e) {
-                        Logger.warn("Error while saving virtual restrictions", e);
-                        res.status(500).json(e.message);
-                    }
-                } else {
-                    res.status(400).send("Missing virtualWalls or restrictedZones property in request body");
+                try {
+                    await this.capability.setVirtualRestrictions(virtualRestrictions);
+                    res.sendStatus(200);
+                } catch (e) {
+                    this.sendErrorResponse(req, res, e);
                 }
             } else {
-                res.status(400).send("Missing request body");
+                res.sendStatus(400);
             }
         });
     }
