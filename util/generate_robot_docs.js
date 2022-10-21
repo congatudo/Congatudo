@@ -183,7 +183,10 @@ const ModelDescriptions = {
             developerSupport: DEVELOPER_SUPPORT_GRADES.YES,
             testedWorking: true,
             recommended: BUY_GRADES.OKAY,
-            comment: "The mopping feature is pretty great, however the missing obstacle avoidance is a bit annoying considering the pricetag",
+            comment: [
+                "The mopping feature is absolutely fantastic with very impressive results.",
+                "Unfortunately though, the current (2022-10-17) firmware sometimes during turns forgets that the robot isn't round.",
+            ].join("\n"),
             architecture: VALETUDO_ARCHITECTURES.ARM_LOWMEM,
         }
     },
@@ -382,6 +385,7 @@ const HIDDEN_IMPLEMENTATIONS = [
     "RoborockS7ValetudoRobot",
     "DreameP2149ValetudoRobot",
     "DreameL10SUltraValetudoRobot",
+    "DreameD9ProPlusValetudoRobot",
 ];
 
 const vendors = {};
