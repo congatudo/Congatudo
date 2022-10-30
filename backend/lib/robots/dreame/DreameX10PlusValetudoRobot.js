@@ -11,7 +11,7 @@ const ValetudoSelectionPreset = require("../../entities/core/ValetudoSelectionPr
 
 const stateAttrs = entities.state.attributes;
 
-class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
+class DreameX10PlusValetudoRobot extends DreameGen2LidarValetudoRobot {
 
     /**
      *
@@ -95,10 +95,6 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
                 mop: {
                     siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.SIID,
                     piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.PROPERTIES.TIME_LEFT.PIID
-                },
-                detergent: {
-                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.DETERGENT.SIID,
-                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.DETERGENT.PROPERTIES.PERCENT_LEFT.PIID
                 }
             },
             miot_actions: {
@@ -121,10 +117,6 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
                 reset_mop: {
                     siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.SIID,
                     aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.ACTIONS.RESET.AIID
-                },
-                reset_detergent: {
-                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.DETERGENT.SIID,
-                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.DETERGENT.ACTIONS.RESET.AIID
                 }
             },
         }));
@@ -145,25 +137,6 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
             robot: this,
             siid: DreameGen2ValetudoRobot.MIOT_SERVICES.AUTO_EMPTY_DOCK.SIID,
             aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.AUTO_EMPTY_DOCK.ACTIONS.EMPTY_DUSTBIN.AIID
-        }));
-
-        this.registerCapability(new capabilities.DreameAICameraGoToLocationCapability({
-            robot: this,
-            miot_actions: {
-                start: {
-                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.SIID,
-                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.ACTIONS.START.AIID
-                }
-            },
-            miot_properties: {
-                mode: {
-                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.PROPERTIES.MODE.PIID
-                },
-                additionalCleanupParameters: {
-                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.PROPERTIES.ADDITIONAL_CLEANUP_PROPERTIES.PIID
-                }
-            },
-            goToModeId: 23
         }));
 
         this.registerCapability(new capabilities.DreameMopDockCleanManualTriggerCapability({
@@ -201,9 +174,7 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
                 QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.CARPET_DETECTION_SENSOR),
                 QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.MOP_LIFT_CARPET_BEHAVIOUR),
                 QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.MOP_DOCK_MOP_CLEANING_FREQUENCY),
-                QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.MOP_DRYING_TIME),
                 QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.BASIC_AI_CAMERA_SETTINGS),
-                QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.MOP_DOCK_DETERGENT),
                 QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.MOP_DOCK_WET_DRY_SWITCH),
             ]
         }));
@@ -236,7 +207,7 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
 
 
     getModelName() {
-        return "L10S Ultra";
+        return "X10+";
     }
 
     getCloudSecretFromFS() {
@@ -259,9 +230,9 @@ class DreameL10SUltraValetudoRobot extends DreameGen2LidarValetudoRobot {
     static IMPLEMENTATION_AUTO_DETECTION_HANDLER() {
         const deviceConf = MiioValetudoRobot.READ_DEVICE_CONF(DreameValetudoRobot.DEVICE_CONF_PATH);
 
-        return !!(deviceConf && deviceConf.model === "dreame.vacuum.r2228o");
+        return !!(deviceConf && deviceConf.model === "dreame.vacuum.p2114a");
     }
 }
 
 
-module.exports = DreameL10SUltraValetudoRobot;
+module.exports = DreameX10PlusValetudoRobot;

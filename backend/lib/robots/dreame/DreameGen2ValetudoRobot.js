@@ -23,6 +23,7 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
      *
      * @param {object} options
      * @param {object} options.operationModes
+     * @param {boolean} [options.detailedAttachmentReport]
      * @param {import("../../Configuration")} options.config
      * @param {import("../../ValetudoEventStore")} options.valetudoEventStore
      */
@@ -39,6 +40,8 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                 options,
             )
         );
+
+        this.detailedAttachmentReport = options.detailedAttachmentReport === true;
 
         /** @type {Array<{siid: number, piid: number, did: number}>} */
         this.statePropertiesToPoll = this.getStatePropertiesToPoll().map(e => {
@@ -91,25 +94,6 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
             robot: this,
             siid: MIOT_SERVICES.AUDIO.SIID,
             aiid: MIOT_SERVICES.AUDIO.ACTIONS.LOCATE.AIID
-        }));
-
-        this.registerCapability(new capabilities.DreameZoneCleaningCapability({
-            robot: this,
-            miot_actions: {
-                start: {
-                    siid: MIOT_SERVICES.VACUUM_2.SIID,
-                    aiid: MIOT_SERVICES.VACUUM_2.ACTIONS.START.AIID
-                }
-            },
-            miot_properties: {
-                mode: {
-                    piid: MIOT_SERVICES.VACUUM_2.PROPERTIES.MODE.PIID
-                },
-                additionalCleanupParameters: {
-                    piid: MIOT_SERVICES.VACUUM_2.PROPERTIES.ADDITIONAL_CLEANUP_PROPERTIES.PIID
-                }
-            },
-            zoneCleaningModeId: 19
         }));
 
         this.registerCapability(new capabilities.DreameMapSegmentationCapability({
@@ -525,18 +509,28 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                         }
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.WATER_TANK_ATTACHMENT.PIID: {
                             const supportedAttachments = this.getModelDetails().supportedAttachments;
+                            const parsedAttachmentStates = {
+                                [stateAttrs.AttachmentStateAttribute.TYPE.WATERTANK]: elem.value !== 0,
+                                [stateAttrs.AttachmentStateAttribute.TYPE.MOP]: elem.value !== 0,
+                            };
+
+                            if (this.detailedAttachmentReport) {
+                                parsedAttachmentStates[stateAttrs.AttachmentStateAttribute.TYPE.WATERTANK] = !!(elem.value & 0b01);
+                                parsedAttachmentStates[stateAttrs.AttachmentStateAttribute.TYPE.MOP] = !!(elem.value & 0b10);
+                            }
+
 
                             if (supportedAttachments.includes(stateAttrs.AttachmentStateAttribute.TYPE.WATERTANK)) {
                                 this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
-                                    type: entities.state.attributes.AttachmentStateAttribute.TYPE.WATERTANK,
-                                    attached: elem.value === 1
+                                    type: stateAttrs.AttachmentStateAttribute.TYPE.WATERTANK,
+                                    attached: parsedAttachmentStates[stateAttrs.AttachmentStateAttribute.TYPE.WATERTANK]
                                 }));
                             }
 
                             if (supportedAttachments.includes(stateAttrs.AttachmentStateAttribute.TYPE.MOP)) {
                                 this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
-                                    type: entities.state.attributes.AttachmentStateAttribute.TYPE.MOP,
-                                    attached: elem.value === 1
+                                    type: stateAttrs.AttachmentStateAttribute.TYPE.MOP,
+                                    attached: parsedAttachmentStates[stateAttrs.AttachmentStateAttribute.TYPE.MOP]
                                 }));
                             }
 
@@ -571,6 +565,7 @@ class DreameGen2ValetudoRobot extends DreameValetudoRobot {
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.KEY_LOCK.PIID:
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.OBSTACLE_AVOIDANCE.PIID:
                         case MIOT_SERVICES.VACUUM_2.PROPERTIES.POST_CHARGE_CONTINUE.PIID:
+                        case MIOT_SERVICES.VACUUM_2.PROPERTIES.AI_CAMERA_SETTINGS.PIID:
                             //ignored for now
                             break;
                         case 38:

@@ -4,11 +4,15 @@ const DreameGen2ValetudoRobot = require("./DreameGen2ValetudoRobot");
 const DreameQuirkFactory = require("./DreameQuirkFactory");
 const DreameValetudoRobot = require("./DreameValetudoRobot");
 const entities = require("../../entities");
+const fs = require("fs");
 const MiioValetudoRobot = require("../MiioValetudoRobot");
 const QuirksCapability = require("../../core/capabilities/QuirksCapability");
 const ValetudoSelectionPreset = require("../../entities/core/ValetudoSelectionPreset");
 
-class DreameD9ValetudoRobot extends DreameGen2LidarValetudoRobot {
+const stateAttrs = entities.state.attributes;
+
+class DreameL10SProValetudoRobot extends DreameGen2LidarValetudoRobot {
+
     /**
      *
      * @param {object} options
@@ -16,7 +20,20 @@ class DreameD9ValetudoRobot extends DreameGen2LidarValetudoRobot {
      * @param {import("../../ValetudoEventStore")} options.valetudoEventStore
      */
     constructor(options) {
-        super(options);
+        super(
+            Object.assign(
+                {},
+                {
+                    operationModes: Object.freeze({
+                        [stateAttrs.PresetSelectionStateAttribute.MODE.VACUUM_AND_MOP]: 0,
+                        [stateAttrs.PresetSelectionStateAttribute.MODE.MOP]: 1,
+                        [stateAttrs.PresetSelectionStateAttribute.MODE.VACUUM]: 2,
+                    }),
+                    detailedAttachmentReport: true,
+                },
+                options,
+            )
+        );
 
         const QuirkFactory = new DreameQuirkFactory({
             robot: this
@@ -53,7 +70,8 @@ class DreameD9ValetudoRobot extends DreameGen2LidarValetudoRobot {
                     piid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.PROPERTIES.ADDITIONAL_CLEANUP_PROPERTIES.PIID
                 }
             },
-            zoneCleaningModeId: 19
+            zoneCleaningModeId: 19,
+            maxZoneCount: 4
         }));
 
         this.registerCapability(new capabilities.DreameConsumableMonitoringCapability({
@@ -74,6 +92,10 @@ class DreameD9ValetudoRobot extends DreameGen2LidarValetudoRobot {
                 sensor: {
                     siid: DreameGen2ValetudoRobot.MIOT_SERVICES.SENSOR.SIID,
                     piid: DreameGen2ValetudoRobot.MIOT_SERVICES.SENSOR.PROPERTIES.TIME_LEFT.PIID
+                },
+                mop: {
+                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.SIID,
+                    piid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.PROPERTIES.TIME_LEFT.PIID
                 }
             },
             miot_actions: {
@@ -93,34 +115,81 @@ class DreameD9ValetudoRobot extends DreameGen2LidarValetudoRobot {
                     siid: DreameGen2ValetudoRobot.MIOT_SERVICES.SENSOR.SIID,
                     aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.SENSOR.ACTIONS.RESET.AIID
                 },
+                reset_mop: {
+                    siid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.SIID,
+                    aiid: DreameGen2ValetudoRobot.MIOT_SERVICES.MOP.ACTIONS.RESET.AIID
+                }
             },
         }));
 
-        this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
-            type: entities.state.attributes.AttachmentStateAttribute.TYPE.WATERTANK,
-            attached: false
+        this.registerCapability(new capabilities.DreameKeyLockCapability({
+            robot: this,
+            siid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.SIID,
+            piid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.PROPERTIES.KEY_LOCK.PIID
+        }));
+
+        this.registerCapability(new capabilities.DreameOperationModeControlCapability({
+            robot: this,
+            presets: Object.keys(this.operationModes).map(k => {
+                return new ValetudoSelectionPreset({name: k, value: this.operationModes[k]});
+            }),
+            siid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.SIID,
+            piid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.PROPERTIES.MOP_DOCK_SETTINGS.PIID
         }));
 
         this.registerCapability(new QuirksCapability({
             robot: this,
             quirks: [
                 QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.CARPET_MODE_SENSITIVITY),
-                QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.TIGHT_MOP_PATTERN)
+                QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.TIGHT_MOP_PATTERN),
+                QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.OBSTACLE_AVOIDANCE),
+                QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.CARPET_DETECTION_SENSOR),
+                QuirkFactory.getQuirk(DreameQuirkFactory.KNOWN_QUIRKS.MOP_LIFT_CARPET_BEHAVIOUR),
             ]
         }));
 
+        this.state.upsertFirstMatchingAttribute(new entities.state.attributes.DockStatusStateAttribute({
+            value: entities.state.attributes.DockStatusStateAttribute.VALUE.IDLE
+        }));
+
+        this.state.upsertFirstMatchingAttribute(new entities.state.attributes.AttachmentStateAttribute({
+            type: entities.state.attributes.AttachmentStateAttribute.TYPE.MOP,
+            attached: false
+        }));
     }
 
-    getModelName() {
-        return "D9";
+    getStatePropertiesToPoll() {
+        const superProps = super.getStatePropertiesToPoll();
+
+        return [
+            ...superProps,
+            {
+                siid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.SIID,
+                piid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.PROPERTIES.MOP_DOCK_STATUS.PIID
+            },
+            {
+                siid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.SIID,
+                piid: DreameGen2ValetudoRobot.MIOT_SERVICES.VACUUM_2.PROPERTIES.MOP_DOCK_SETTINGS.PIID
+            }
+        ];
     }
+
+
+    getModelName() {
+        return "L10S Pro";
+    }
+
+    getCloudSecretFromFS() {
+        return fs.readFileSync("/mnt/private/ULI/factory/key.txt");
+    }
+
 
     static IMPLEMENTATION_AUTO_DETECTION_HANDLER() {
         const deviceConf = MiioValetudoRobot.READ_DEVICE_CONF(DreameValetudoRobot.DEVICE_CONF_PATH);
 
-        return !!(deviceConf && deviceConf.model === "dreame.vacuum.p2009");
+        return !!(deviceConf && deviceConf.model === "dreame.vacuum.r2216o");
     }
 }
 
 
-module.exports = DreameD9ValetudoRobot;
+module.exports = DreameL10SProValetudoRobot;

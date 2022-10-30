@@ -14,6 +14,7 @@ import NoGoAreaClientStructure from "./structures/client_structures/NoGoAreaClie
 import NoMopAreaClientStructure from "./structures/client_structures/NoMopAreaClientStructure";
 import HelpDialog from "../components/HelpDialog";
 import HelpAction from "./actions/edit_map_actions/HelpAction";
+import {ProviderContext} from "notistack";
 
 export type mode = "segments" | "virtual_restrictions";
 
@@ -26,7 +27,8 @@ interface EditMapProps extends MapProps {
     }
     mode: mode,
     helpText: string,
-    robotStatus: StatusState
+    robotStatus: StatusState,
+    enqueueSnackbar: ProviderContext["enqueueSnackbar"]
 }
 
 interface EditMapState extends MapState {
@@ -66,8 +68,8 @@ class EditMap extends Map<EditMapProps, EditMapState> {
             this.drawableComponentsMutex.take(async () => {
                 this.drawableComponents = [];
 
-                await this.mapLayerRenderer.draw(this.props.rawMap, this.props.theme);
-                this.drawableComponents.push(this.mapLayerRenderer.getCanvas());
+                await this.mapLayerManager.draw(this.props.rawMap, this.props.theme);
+                this.drawableComponents.push(this.mapLayerManager.getCanvas());
 
                 this.updateStructures(this.props.mode);
 
@@ -226,7 +228,7 @@ class EditMap extends Map<EditMapProps, EditMapState> {
 
         this.updateState();
 
-        this.draw();
+        this.redrawLayers();
     }
 
     protected onMapUpdate() : void {
@@ -242,7 +244,43 @@ class EditMap extends Map<EditMapProps, EditMapState> {
     protected onTap(evt: any): boolean | void {
         // Only allow map interaction while the robot is docked
         if (this.props.robotStatus.value === "docked") {
-            return super.onTap(evt);
+            if (super.onTap(evt)) {
+                return true;
+            }
+
+            if (
+                this.props.mode === "segments" &&
+                this.state.cuttingLine === undefined
+            ) {
+                const {x, y} = this.relativeCoordinatesToCanvas(evt.x0, evt.y0);
+                const tappedPointInMapSpace = this.ctxWrapper.mapPointToCurrentTransform(x, y);
+
+                const intersectingSegmentId = this.mapLayerManager.getIntersectingSegment(tappedPointInMapSpace.x, tappedPointInMapSpace.y);
+
+                if (intersectingSegmentId) {
+                    const segmentLabels = this.structureManager.getMapStructures().filter(s => {
+                        return s.type === SegmentLabelMapStructure.TYPE;
+                    }) as Array<SegmentLabelMapStructure>;
+
+                    const matchedSegmentLabel = segmentLabels.find(l => {
+                        return l.id === intersectingSegmentId;
+                    });
+
+                    if (
+                        this.state.selectedSegmentIds.length < 2 ||
+                        this.state.selectedSegmentIds.includes(intersectingSegmentId)
+                    ) {
+                        if (matchedSegmentLabel) {
+                            matchedSegmentLabel.onTap();
+
+                            this.updateState();
+                            this.redrawLayers();
+
+                            return true;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -413,6 +451,13 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                         }}
                         onSave={() => {
                             this.pendingVirtualRestrictionsStructuresUpdate = true;
+
+                            this.props.enqueueSnackbar("Saved successfully", {
+                                preventDuplicate: true,
+                                key: "virtual_restrictions_saved",
+                                variant: "info",
+                                autoHideDuration: 1000,
+                            });
                         }}
                     />
                 }
