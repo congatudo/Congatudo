@@ -458,7 +458,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
                 type: MapLayer.TYPE.SEGMENT,
                 pixels: pixels.flat(),
                 metaData: {
-                    segmentId: room.id.value,
+                    segmentId: room.id.value.toString(),
                     active: room.isEnabled,
                     name: room.name,
                 },
