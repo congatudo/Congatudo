@@ -7,7 +7,7 @@ import gfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import style from "./About.module.css";
 import {AboutText} from "./res/AboutText";
-import {ReactComponent as Logo} from "../assets/icons/congatudo_logo_with_name.png";
+import {ReactComponent as Logo} from "../assets/icons/congatudo_logo_with_name.svg";
 
 const About = (): JSX.Element => {
     return (
