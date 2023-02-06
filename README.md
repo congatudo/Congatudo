@@ -27,9 +27,9 @@ the open-source smarthome software of your choice.
 **Work in progress**
 
 ~~For more information, check out the [getting started guide](https://valetudo.cloud/pages/general/getting-started.html) 
-and also the docs in general at [https://valetudo.cloud](https://valetudo.cloud)
+and also the docs in general at [https://valetudo.cloud](https://valetudo.cloud)~~
 
-There, you will also find a list of [supported robots](https://valetudo.cloud/pages/general/supported-robots.html).~~
+~~There, you will also find a list of [supported robots](https://valetudo.cloud/pages/general/supported-robots.html).~~
 
 ## Screenshots
 
