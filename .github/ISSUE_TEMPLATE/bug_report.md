@@ -26,10 +26,10 @@ Steps to reproduce the behavior:
 <!--If applicable, add screenshots to help explain your problem.-->
 
 ### Vacuum Model
-<!-- e.g. Roborock S5/Dreame D9/etc -->
+<!-- e.g. Conga 3490/Conga 4090/etc -->
 
-### Valetudo Version
-<!-- e.g. 2021.1.1 -->
+### Congatudo Version
+<!-- e.g. 2023.2.1 -->
 
 ## Expected behavior
 <!--
