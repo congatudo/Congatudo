@@ -7,7 +7,7 @@ import gfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import style from "./About.module.css";
 import {AboutText} from "./res/AboutText";
-import {ReactComponent as Logo} from "../assets/icons/valetudo_logo_with_name.svg";
+import {ReactComponent as Logo} from "../assets/icons/congatudo_logo_with_name.png";
 
 const About = (): JSX.Element => {
     return (
@@ -20,7 +20,7 @@ const About = (): JSX.Element => {
                                 <AboutIcon/>
                             </Grid>
                             <Grid item>
-                                <Typography>About Valetudo</Typography>
+                                <Typography>About Congatudo</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
