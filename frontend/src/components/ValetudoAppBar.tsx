@@ -255,9 +255,9 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
     {
         kind: "MenuEntry",
         routeMatch: "/valetudo/about",
-        title: "About Valetudo",
+        title: "About Congatudo",
         menuIcon: AboutIcon,
-        menuText: "About Valetudo"
+        menuText: "About Congatudo"
     },
 ];
 
@@ -410,7 +410,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                     <ListItem
                         button
                         component="a"
-                        href="https://valetudo.cloud"
+                        href="https://congatudo.cloud"
                         target="_blank"
                         rel="noopener"
                     >
@@ -422,30 +422,30 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                     <ListItem
                         button
                         component="a"
-                        href="https://github.com/congatudo/Valetudo"
+                        href="https://github.com/congatudo/Congatudo"
                         target="_blank"
                     >
                         <ListItemIcon>
                             <GithubIcon/>
                         </ListItemIcon>
-                        <ListItemText primary="congatudo/Valetudo"/>
+                        <ListItemText primary="congatudo/Congatudo"/>
                     </ListItem>
                     <ListItem
                         button
                         component="a"
-                        href="https://github.com/Hypfer/Valetudo"
+                        href="https://github.com/sponsors/elraro"
                         target="_blank"
                         rel="noopener"
                     >
                         <ListItemIcon>
-                            <GithubIcon/>
+                            <DonateIcon/>
                         </ListItemIcon>
-                        <ListItemText primary="Hypfer/Valetudo"/>
+                        <ListItemText primary="Donate"/>
                     </ListItem>
                     <ListItem
                         button
                         component="a"
-                        href="https://github.com/sponsors/Hypfer"
+                        href="https://congatudo.cloud/donate"
                         target="_blank"
                         rel="noopener"
                     >
