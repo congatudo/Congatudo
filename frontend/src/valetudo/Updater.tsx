@@ -170,7 +170,7 @@ const UpdaterStateComponent : React.FunctionComponent<{ state: UpdaterState | un
                 case "ValetudoUpdaterDownloadingState":
                     return (
                         <>
-                            <Typography>Valetudo is currently downloading release {state.version}</Typography>
+                            <Typography>Congatudo is currently downloading release {state.version}</Typography>
                             <br/>
                             <Typography>Please be patient...</Typography>
                         </>
@@ -181,7 +181,7 @@ const UpdaterStateComponent : React.FunctionComponent<{ state: UpdaterState | un
                             defaultExpanded={true}
                         >
                             <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                                <Typography>Changelog for Valetudo {state.version}</Typography>
+                                <Typography>Changelog for Congatudo {state.version}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Box style={{width:"100%", paddingLeft: "1rem", paddingRight:"1rem"}}>
@@ -199,8 +199,8 @@ const UpdaterStateComponent : React.FunctionComponent<{ state: UpdaterState | un
                 case "ValetudoUpdaterIdleState":
                     return (
                         <Typography>
-                            You are currently running Valetudo {state.currentVersion}.<br/>
-                            There may be newer versions of Valetudo available.
+                            You are currently running Congatudo {state.currentVersion}.<br/>
+                            There may be newer versions of Congatudo available.
                         </Typography>
                     );
                 case "ValetudoUpdaterApplyPendingState":
@@ -209,7 +209,7 @@ const UpdaterStateComponent : React.FunctionComponent<{ state: UpdaterState | un
                     );
                 case "ValetudoUpdaterDisabledState":
                     return (
-                        <Typography>The Updater was disabled in the Valetudo config.</Typography>
+                        <Typography>The Updater was disabled in the Congatudo config.</Typography>
                     );
                 case "ValetudoUpdaterNoUpdateRequiredState":
                     return (
@@ -217,7 +217,7 @@ const UpdaterStateComponent : React.FunctionComponent<{ state: UpdaterState | un
                             <Typography
                                 sx={{textAlign:"center", paddingBottom: "2rem"}}
                             >
-                                You are already running the latest version of Valetudo ({state.currentVersion})
+                                You are already running the latest version of Congatudo ({state.currentVersion})
                             </Typography>
                             {
                                 state.changelog &&
@@ -225,7 +225,7 @@ const UpdaterStateComponent : React.FunctionComponent<{ state: UpdaterState | un
                                     defaultExpanded={false}
                                 >
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                                        <Typography>Changelog for Valetudo {state.currentVersion}</Typography>
+                                        <Typography>Changelog for Congatudo {state.currentVersion}</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <Box style={{width:"100%", paddingLeft: "1rem", paddingRight:"1rem"}}>
@@ -333,7 +333,7 @@ const StartUpdateControls: React.FunctionComponent<{
             </LoadingButton>
             <ConfirmationDialog
                 title="Check for Updates?"
-                text="Do you want to check for a new version of Valetudo?"
+                text="Do you want to check for a new version of Congatudo?"
                 open={dialogOpen}
                 onClose={() => {
                     setDialogOpen(false);
@@ -371,7 +371,7 @@ const DownloadUpdateControls: React.FunctionComponent<{
                 title="Download Update?"
                 text={(
                     <>
-                        Do you want to download the displayed Valetudo update?<br/>
+                        Do you want to download the displayed Congatudo update?<br/>
                         Please make sure to fully read the provided changelog as it may contain breaking changes as well as other relevant information.
                     </>
                 )}
