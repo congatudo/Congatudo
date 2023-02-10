@@ -1,4 +1,4 @@
-name: docker
+name: Docker build
 on:
   workflow_dispatch:
   release:
@@ -13,7 +13,7 @@ jobs:
       version: ${{ steps.vars.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: congatudo/Congatudo
           fetch-depth: 0
@@ -28,7 +28,7 @@ jobs:
       matrix: ${{ steps.vars.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up variables
         id: vars
         run: |
@@ -41,24 +41,24 @@ jobs:
       matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     steps:
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2.1.0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2.4.1
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3.2.5
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ matrix.image_name }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-${{ matrix.image_name }}-
       - name: Log in to the Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v2.1.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4.0.0
         with:
           push: false
           load: true
@@ -97,7 +97,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Log in to the Container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v2.1.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
