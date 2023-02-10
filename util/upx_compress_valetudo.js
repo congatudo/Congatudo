@@ -4,7 +4,7 @@ const UPX = require("upx");
 
 const binaries = {
     armv7: {
-        base: "./build_dependencies/pkg/v3.4/built-v18.1.0-linuxstatic-armv7",
+        base: "./build_dependencies/pkg/v3.4/built-v18.5.0-linuxstatic-armv7",
         built: "./build/armv7/valetudo",
         out: "./build/armv7/valetudo.upx",
         upx: UPX({
@@ -16,7 +16,7 @@ const binaries = {
         })
     },
     armv7_lowmem: {
-        base: "./build_dependencies/pkg/v3.4/built-v18.1.0-linuxstatic-armv7",
+        base: "./build_dependencies/pkg/v3.4/built-v18.5.0-linuxstatic-armv7",
         built: "./build/armv7/valetudo-lowmem",
         out: "./build/armv7/valetudo-lowmem.upx",
         upx: UPX({
@@ -28,7 +28,7 @@ const binaries = {
         })
     },
     aarch64: {
-        base: "./build_dependencies/pkg/v3.4/built-v18.1.0-linuxstatic-arm64",
+        base: "./build_dependencies/pkg/v3.4/built-v18.5.0-linuxstatic-arm64",
         built: "./build/aarch64/valetudo",
         out: "./build/aarch64/valetudo.upx",
         upx: UPX({
@@ -57,8 +57,8 @@ Object.values(binaries).forEach(async (b,i) => {
     const baseSize = fs.readFileSync(b.base).length;
     const built = fs.readFileSync(b.built);
 
-    const runtime = built.slice(0, baseSize);
-    const payload = built.slice(baseSize);
+    const runtime = built.subarray(0, baseSize);
+    const payload = built.subarray(baseSize);
 
     // UPX will reject files without the executable bit on linux. Also, default mode is 666
     fs.writeFileSync(b.out + "_runtime", runtime, {mode: 0o777});

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { JSEncrypt } from "jsencrypt";
 import { RawMapData } from "./RawMapData";
 import { PresetSelectionState, RobotAttribute } from "./RawRobotState";
 import {
@@ -7,6 +6,7 @@ import {
     CombinedVirtualRestrictionsProperties,
     CombinedVirtualRestrictionsUpdateRequestParameters,
     ConsumableId,
+    ConsumableProperties,
     ConsumableState,
     DoNotDisturbConfiguration,
     HTTPBasicAuthConfiguration,
@@ -40,16 +40,19 @@ import {
     Timer,
     TimerInformation,
     TimerProperties,
+    UpdaterConfiguration,
     UpdaterState,
+    ValetudoCustomizations,
     ValetudoDataPoint,
     ValetudoEvent,
     ValetudoEventInteractionContext,
     ValetudoInformation,
     ValetudoVersion,
+    ValetudoWifiNetwork,
     VoicePackManagementCommand,
     VoicePackManagementStatus,
-    WifiConfiguration, WifiConfigurationProperties,
-    WifiProvisioningEncryptionKey,
+    WifiConfiguration,
+    WifiConfigurationProperties,
     WifiStatus,
     Zone,
     ZoneProperties,
@@ -83,7 +86,7 @@ valetudoAPI.interceptors.response.use(response => {
             } else {
                 /*
                     While we could display a textbox informing the user that the backend changed,
-                    there wouldn't be any benefit to that as the refresh is mandatory anyways
+                    there wouldn't be any benefit to that as the refresh is mandatory anyway
 
                     By just calling location.reload() here, we avoid having to somehow inject the currentCommitId
                     value from this mostly stateless api layer into the React application state
@@ -358,6 +361,16 @@ export const sendConsumableReset = async (parameters: ConsumableId): Promise<voi
         });
 };
 
+export const fetchConsumableProperties = async (): Promise<ConsumableProperties> => {
+    return valetudoAPI
+        .get<ConsumableProperties>(
+            `/robot/capabilities/${Capability.ConsumableMonitoring}/properties`
+        )
+        .then(({data}) => {
+            return data;
+        });
+};
+
 export const fetchRobotInformation = async (): Promise<RobotInformation> => {
     return valetudoAPI.get<RobotInformation>("/robot").then(({data}) => {
         return data;
@@ -368,6 +381,26 @@ export const fetchValetudoInformation = async (): Promise<ValetudoInformation> =
     return valetudoAPI.get<ValetudoInformation>("/valetudo").then(({data}) => {
         return data;
     });
+};
+
+export const sendDismissWelcomeDialogAction = async (): Promise<void> => {
+    await valetudoAPI
+        .put("/valetudo/action", {"action": "dismissWelcomeDialog"})
+        .then(({ status }) => {
+            if (status !== 200) {
+                throw new Error("Could not dismiss welcome dialog");
+            }
+        });
+};
+
+export const sendRestoreDefaultConfigurationAction = async (): Promise<void> => {
+    await valetudoAPI
+        .put("/valetudo/action", {"action": "restoreDefaultConfiguration"})
+        .then(({ status }) => {
+            if (status !== 200) {
+                throw new Error("Could not restore default configuration.");
+            }
+        });
 };
 
 export const fetchValetudoVersionInformation = async (): Promise<ValetudoVersion> => {
@@ -756,22 +789,8 @@ export const fetchWifiConfigurationProperties = async (): Promise<WifiConfigurat
 
 
 export const sendWifiConfiguration = async (configuration: WifiConfiguration): Promise<void> => {
-    const encryptionKey = await fetchWifiProvisioningEncryptionKey();
-
-    const cipher = new JSEncrypt();
-    cipher.setPublicKey(encryptionKey.publicKey);
-
-    const encryptedPayload = cipher.encrypt(JSON.stringify(configuration));
-
-    if (!encryptedPayload) {
-        throw new Error("Failed to encrypt Wi-Fi credentials");
-    }
-
     await valetudoAPI
-        .put(`/robot/capabilities/${Capability.WifiConfiguration}`, {
-            encryption: "rsa",
-            payload: encryptedPayload
-        })
+        .put(`/robot/capabilities/${Capability.WifiConfiguration}`, configuration)
         .then(({ status }) => {
             if (status !== 200) {
                 throw new Error("Could not set Wifi configuration");
@@ -779,9 +798,9 @@ export const sendWifiConfiguration = async (configuration: WifiConfiguration): P
         });
 };
 
-export const fetchWifiProvisioningEncryptionKey = async (): Promise<WifiProvisioningEncryptionKey> => {
+export const fetchWifiScan = async (): Promise<Array<ValetudoWifiNetwork>> => {
     return valetudoAPI
-        .get<WifiProvisioningEncryptionKey>(`/robot/capabilities/${Capability.WifiConfiguration}/getPublicKeyForProvisioning`)
+        .get<Array<ValetudoWifiNetwork>>(`/robot/capabilities/${Capability.WifiScan}`)
         .then(({ data }) => {
             return data;
         });
@@ -830,6 +849,24 @@ export const sendCombinedVirtualRestrictionsUpdate = async (
         `/robot/capabilities/${Capability.CombinedVirtualRestrictions}`,
         parameters
     );
+};
+
+export const fetchUpdaterConfiguration = async (): Promise<UpdaterConfiguration> => {
+    return valetudoAPI
+        .get<UpdaterConfiguration>("/updater/config")
+        .then(({data}) => {
+            return data;
+        });
+};
+
+export const sendUpdaterConfiguration = async (configuration: UpdaterConfiguration): Promise<void> => {
+    return valetudoAPI
+        .put("/updater/config", configuration)
+        .then(({status}) => {
+            if (status !== 200) {
+                throw new Error("Could not update updater configuration");
+            }
+        });
 };
 
 export const fetchUpdaterState = async (): Promise<UpdaterState> => {
@@ -931,4 +968,22 @@ export const sendMopDockDryManualTriggerCommand = async (
             action: command,
         }
     );
+};
+
+export const fetchValetudoCustomizations = async (): Promise<ValetudoCustomizations> => {
+    return valetudoAPI
+        .get<ValetudoCustomizations>("/valetudo/config/customizations")
+        .then(({data}) => {
+            return data;
+        });
+};
+
+export const sendValetudoCustomizations = async (customizations: ValetudoCustomizations): Promise<void> => {
+    return valetudoAPI
+        .put("/valetudo/config/customizations", customizations)
+        .then(({status}) => {
+            if (status !== 200) {
+                throw new Error("Could not update ValetudoCustomizations");
+            }
+        });
 };

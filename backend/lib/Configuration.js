@@ -15,7 +15,7 @@ class Configuration {
     constructor() {
         /** @private */
         this.eventEmitter = new EventEmitter();
-        this.settings = DEFAULT_SETTINGS;
+        this.settings = structuredClone(DEFAULT_SETTINGS);
 
         this.location = process.env.VALETUDO_CONFIG_PATH ?? path.join(os.tmpdir(), "valetudo_config.json");
 
@@ -38,7 +38,7 @@ class Configuration {
      * @param {string} key
      * @param {string|object} val
      */
-    set(key, val) { //TODO: set nested
+    set(key, val) {
         this.settings[key] = val;
 
         this.persist();
@@ -51,7 +51,7 @@ class Configuration {
 
     /**
      * @public
-     * @param {(key) => void} listener
+     * @param {(key: string) => void} listener
      */
     onUpdate(listener) {
         this.eventEmitter.on(CONFIG_UPDATE_EVENT, listener);
@@ -112,6 +112,20 @@ class Configuration {
 
             this.persist();
         }
+    }
+
+    /**
+     * @public
+     */
+    reset() {
+        Logger.info("Restoring config to default settings.");
+
+        this.settings = structuredClone(DEFAULT_SETTINGS);
+        this.persist();
+
+        Object.keys(this.settings).forEach(key => {
+            this.eventEmitter.emit(CONFIG_UPDATE_EVENT, key);
+        });
     }
 
     /**

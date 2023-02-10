@@ -18,11 +18,73 @@
                   },
                   "systemId": {
                     "type": "string"
+                  },
+                  "welcomeDialogDismissed": {
+                    "type": "boolean"
                   }
                 }
               }
             }
           }
+        }
+      }
+    }
+  },
+  "/api/v2/valetudo/action": {
+    "put": {
+      "tags": [
+        "Valetudo"
+      ],
+      "summary": "Interact with Valetudo",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "enum": [
+                    "dismissWelcomeDialog",
+                    "restoreDefaultConfiguration"
+                  ]
+                }
+              }
+            },
+            "examples": {
+              "dismiss_welcome_dialog": {
+                "description": "Dismiss the OOBE welcome dialog",
+                "value": {
+                  "action": "dismissWelcomeDialog"
+                }
+              },
+              "restore_default_configuration": {
+                "description": "Restore the default configuration",
+                "value": {
+                  "action": "restoreDefaultConfiguration"
+                }
+              }
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "500": {
+          "$ref": "#/components/responses/500"
+        },
+        "404": {
+          "$ref": "#/components/responses/404"
         }
       }
     }
@@ -230,6 +292,49 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/BasicAuthConfigDTO"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "$ref": "#/components/responses/200"
+        },
+        "400": {
+          "$ref": "#/components/responses/400"
+        }
+      }
+    }
+  },
+  "/api/v2/valetudo/config/customizations": {
+    "get": {
+      "tags": [
+        "Valetudo"
+      ],
+      "summary": "Get Valetudo customizations",
+      "responses": {
+        "200": {
+          "description": "Ok",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValetudoCustomizationsDTO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "tags": [
+        "Valetudo"
+      ],
+      "summary": "Update Valetudo customizations",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValetudoCustomizationsDTO"
             }
           }
         }

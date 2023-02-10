@@ -2,9 +2,9 @@ import React from "react";
 import {PaletteMode} from "@mui/material";
 import {Capability, useValetudoInformationQuery, useWifiStatusQuery} from "./api";
 import {useCapabilitiesSupported} from "./CapabilitiesProvider";
-import AppRouter from "./AppRouter";
 import ProvisioningPage from "./ProvisioningPage";
 import ValetudoSplash from "./components/ValetudoSplash";
+import {MainApp} from "./MainApp";
 
 //This is either just an artifact of how React works or I'm doing something wrong
 const RouterChoiceStageTwo: React.FunctionComponent<{
@@ -18,10 +18,10 @@ const RouterChoiceStageTwo: React.FunctionComponent<{
 }): JSX.Element => {
     const {
         data: wifiConfiguration,
-        isFetching: wifiConfigurationFetching,
+        isLoading: wifiConfigurationLoading,
     } = useWifiStatusQuery();
 
-    if (wifiConfigurationFetching) {
+    if (wifiConfigurationLoading) {
         return <ValetudoSplash/>;
     }
 
@@ -35,7 +35,7 @@ const RouterChoiceStageTwo: React.FunctionComponent<{
     }
 
     return (
-        <AppRouter paletteMode={paletteMode} setPaletteMode={setPaletteMode}/>
+        <MainApp paletteMode={paletteMode} setPaletteMode={setPaletteMode}/>
     );
 };
 
@@ -53,19 +53,18 @@ const RouterChoice: React.FunctionComponent<{
         isLoading: valetudoInformationLoading
     } = useValetudoInformationQuery();
 
-    if (!bypassProvisioning && wifiConfigSupported) {
-        if (valetudoInformationLoading) {
-            return <ValetudoSplash/>;
-        }
+    if (valetudoInformationLoading || !valetudoInformation) {
+        return <ValetudoSplash/>;
+    }
 
-        if (valetudoInformation && valetudoInformation.embedded) {
+    if (!bypassProvisioning && wifiConfigSupported) {
+        if (valetudoInformation.embedded) {
             return <RouterChoiceStageTwo paletteMode={paletteMode} setPaletteMode={setPaletteMode} setBypassProvisioning={setBypassProvisioning}/>;
         }
     }
 
-
     return (
-        <AppRouter paletteMode={paletteMode} setPaletteMode={setPaletteMode}/>
+        <MainApp paletteMode={paletteMode} setPaletteMode={setPaletteMode}/>
     );
 };
 

@@ -94,7 +94,17 @@ import {
     sendNetworkAdvertisementConfiguration,
     sendMopDockDryManualTriggerCommand,
     sendMopDockCleanManualTriggerCommand,
-    MopDockCleanManualTriggerCommand, MopDockDryManualTriggerCommand, fetchWifiConfigurationProperties,
+    MopDockCleanManualTriggerCommand,
+    MopDockDryManualTriggerCommand,
+    fetchWifiConfigurationProperties,
+    fetchWifiScan,
+    sendDismissWelcomeDialogAction,
+    sendRestoreDefaultConfigurationAction,
+    fetchUpdaterConfiguration,
+    sendUpdaterConfiguration,
+    fetchValetudoCustomizations,
+    sendValetudoCustomizations,
+    fetchConsumableProperties,
 } from "./client";
 import {
     PresetSelectionState,
@@ -121,7 +131,10 @@ import {
     Point,
     SetLogLevelRequest,
     Timer,
+    UpdaterConfiguration,
+    ValetudoCustomizations,
     ValetudoEventInteractionContext,
+    ValetudoInformation,
     VoicePackManagementCommand,
     WifiConfiguration,
     Zone,
@@ -132,6 +145,7 @@ enum CacheKey {
     Capabilities = "capabilities",
     Map = "map",
     Consumables = "consumables",
+    ConsumableProperties = "consumable_properties",
     Attributes = "attributes",
     PresetSelections = "preset_selections",
     ZoneProperties = "zone_properties",
@@ -164,16 +178,19 @@ enum CacheKey {
     DoNotDisturb = "do_not_disturb",
     WifiStatus = "wifi_status",
     WifiConfigurationProperties = "wifi_configuration_properties",
+    WifiScan = "wifi_scan",
     ManualControl = "manual_control",
     ManualControlProperties = "manual_control_properties",
     CombinedVirtualRestrictionsProperties = "combined_virtual_restrictions_properties",
+    UpdaterConfiguration = "updater_configuration",
     UpdaterState = "updater_state",
     CurrentStatistics = "current_statistics",
     CurrentStatisticsProperties = "current_statistics_properties",
     TotalStatistics = "total_statistics",
     TotalStatisticsProperties = "total_statistics_properties",
     Quirks = "quirks",
-    RobotProperties = "robot_properties"
+    RobotProperties = "robot_properties",
+    ValetudoCustomizations = "valetudo_customizations"
 }
 
 const useOnCommandError = (capability: Capability | string): ((error: unknown) => void) => {
@@ -527,7 +544,10 @@ export const useLocateMutation = () => {
 };
 
 export const useConsumableStateQuery = () => {
-    return useQuery(CacheKey.Consumables, fetchConsumableStateInformation);
+    return useQuery(CacheKey.Consumables, fetchConsumableStateInformation, {
+        staleTime: 300_000,
+        refetchInterval: 300_000
+    });
 };
 
 const useValetudoFetchingMutation = <TData, TVariables>(onError: ((error: unknown) => void), cacheKey: CacheKey, mutationFn: MutationFunction<TData, TVariables>) => {
@@ -544,6 +564,12 @@ const useValetudoFetchingMutation = <TData, TVariables>(onError: ((error: unknow
             onError
         }
     );
+};
+
+export const useConsumablePropertiesQuery = () => {
+    return useQuery(CacheKey.ConsumableProperties, fetchConsumableProperties, {
+        staleTime: Infinity
+    });
 };
 
 export const useConsumableResetMutation = () => {
@@ -572,6 +598,42 @@ export const useValetudoInformationQuery = () => {
     return useQuery(CacheKey.ValetudoInformation, fetchValetudoInformation, {
         staleTime: Infinity,
     });
+};
+
+export const useDismissWelcomeDialogMutation = () => {
+    const queryClient = useQueryClient();
+    const onError = useOnSettingsChangeError("Welcome Dialog");
+
+    return useMutation(
+        () => {
+            return sendDismissWelcomeDialogAction().then(fetchValetudoInformation).then((state) => {
+                queryClient.setQueryData<ValetudoInformation>(CacheKey.ValetudoInformation, state, {
+                    updatedAt: Date.now(),
+                });
+            });
+        },
+        {
+            onError
+        }
+    );
+};
+
+export const useRestoreDefaultConfigurationMutation = () => {
+    const queryClient = useQueryClient();
+    const onError = useOnSettingsChangeError("Config Restore");
+
+    return useMutation(
+        () => {
+            return sendRestoreDefaultConfigurationAction().then(() => {
+                queryClient.refetchQueries().catch(() => {
+                    /*intentional*/
+                });
+            });
+        },
+        {
+            onError
+        }
+    );
 };
 
 export const useValetudoVersionQuery = () => {
@@ -948,6 +1010,13 @@ export const useWifiConfigurationMutation = (
     );
 };
 
+export const useWifiScanQuery = () => {
+    return useQuery(CacheKey.WifiScan, fetchWifiScan, {
+        staleTime: Infinity,
+    });
+};
+
+
 export const useManualControlStateQuery = () => {
     return useQuery(CacheKey.ManualControl, fetchManualControlState, {
         staleTime: 10_000,
@@ -996,6 +1065,22 @@ export const useCombinedVirtualRestrictionsMutation = (
                 });
                 await options?.onSuccess?.(data, ...args);
             },
+        }
+    );
+};
+
+export const useUpdaterConfigurationQuery = () => {
+    return useQuery(CacheKey.UpdaterConfiguration, fetchUpdaterConfiguration, {
+        staleTime: Infinity,
+    });
+};
+
+export const useUpdaterConfigurationMutation = () => {
+    return useValetudoFetchingMutation(
+        useOnSettingsChangeError("Updater"),
+        CacheKey.UpdaterConfiguration,
+        (updaterConfiguration: UpdaterConfiguration) => {
+            return sendUpdaterConfiguration(updaterConfiguration).then(fetchUpdaterConfiguration);
         }
     );
 };
@@ -1109,6 +1194,22 @@ export const useMopDockDryManualTriggerMutation = () => {
                     updatedAt: Date.now(),
                 });
             },
+        }
+    );
+};
+
+export const useValetudoCustomizationsQuery = () => {
+    return useQuery(CacheKey.ValetudoCustomizations, fetchValetudoCustomizations, {
+        staleTime: Infinity,
+    });
+};
+
+export const useValetudoCustomizationsMutation = () => {
+    return useValetudoFetchingMutation(
+        useOnSettingsChangeError("Valetudo Customizations"),
+        CacheKey.ValetudoCustomizations,
+        (configuration: ValetudoCustomizations) => {
+            return sendValetudoCustomizations(configuration).then(fetchValetudoCustomizations);
         }
     );
 };

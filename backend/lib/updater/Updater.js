@@ -18,14 +18,33 @@ class Updater {
         this.config = options.config;
         this.robot = options.robot;
 
-        this.updaterConfig = this.config.get("updater");
-
         /** @type {import("../entities/core/updater/ValetudoUpdaterState")} */
         this.state = undefined;
         /** @type {import("./lib/update_provider/ValetudoUpdateProvider")} */
         this.updateProvider = undefined;
 
-        if (this.updaterConfig.enabled === true) {
+        this.config.onUpdate((key) => {
+            if (key === "updater") {
+                this.reconfigure();
+            }
+        });
+
+        this.cleanupHandler = () => {};
+        this.pendingCleanupTimeout = undefined;
+
+        this.reconfigure();
+    }
+
+    /**
+     * @private
+     */
+    reconfigure() {
+        const updaterConfig = this.config.get("updater");
+
+        clearTimeout(this.pendingCleanupTimeout);
+        this.cleanupHandler();
+
+        if (updaterConfig.enabled === true) {
             this.state = new States.ValetudoUpdaterIdleState({
                 currentVersion: Tools.GET_VALETUDO_VERSION()
             });
@@ -34,7 +53,7 @@ class Updater {
         }
 
 
-        switch (this.updaterConfig.updateProvider.type) {
+        switch (updaterConfig.updateProvider.type) {
             case GithubValetudoUpdateProvider.TYPE:
                 this.updateProvider = new GithubValetudoUpdateProvider();
                 break;
@@ -42,7 +61,7 @@ class Updater {
                 this.updateProvider = new GithubValetudoNightlyUpdateProvider();
                 break;
             default:
-                throw new Error(`Invalid UpdateProvider ${this.updaterConfig.updateProvider.type}`);
+                throw new Error(`Invalid UpdateProvider ${updaterConfig.updateProvider.type}`);
         }
     }
 
@@ -115,13 +134,20 @@ class Updater {
         step.execute().then((state) => {
             this.state = state;
 
-            setTimeout(() => {
-                Logger.warn("Updater: User confirmation timeout.");
+            this.cleanupHandler = () => {
                 fs.unlinkSync(downloadPath);
 
                 this.state = new States.ValetudoUpdaterIdleState({
                     currentVersion: Tools.GET_VALETUDO_VERSION()
                 });
+
+                this.cleanupHandler = () => {};
+            };
+
+            this.pendingCleanupTimeout = setTimeout(() => {
+                Logger.warn("Updater: User confirmation timeout.");
+
+                this.cleanupHandler();
             }, 10 * 60 * 1000); // 10 minutes
         }).catch(err => {
             this.state = new States.ValetudoUpdaterErrorState({

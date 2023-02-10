@@ -38,7 +38,6 @@
             }
         },
         "identity": {
-            "friendlyName": "",
             "identifier": ""
         },
         "interfaces": {
@@ -68,7 +67,6 @@
     "timers": {},
     "logLevel": "info",
     "debug": {
-        "systemStatInterval" : false,
         "debugHassAnchors": false,
         "storeRawFDSUploads": false
     },
@@ -80,6 +78,14 @@
         "updateProvider": {
             "type": "github",
             "implementationSpecificConfig": {}
+        }
+    },
+    "oobe": {
+        "welcomeDialogDismissed": false
+    },
+    "valetudo": {
+        "customizations": {
+            "friendlyName": ""
         }
     }
 }

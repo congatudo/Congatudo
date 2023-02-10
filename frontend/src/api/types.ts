@@ -30,6 +30,7 @@ export enum Capability {
     VoicePackManagement = "VoicePackManagementCapability",
     WaterUsageControl = "WaterUsageControlCapability",
     WifiConfiguration = "WifiConfigurationCapability",
+    WifiScan = "WifiScanCapability",
     ZoneCleaning = "ZoneCleaningCapability",
     Quirks = "QuirksCapability",
 }
@@ -85,6 +86,7 @@ export interface RobotInformation {
 export interface ValetudoInformation {
     embedded: boolean;
     systemId: string;
+    welcomeDialogDismissed: boolean;
 }
 
 export interface ValetudoVersion {
@@ -143,18 +145,32 @@ export interface MapSegmentRenameRequestParameters {
     name: string;
 }
 
+export type ConsumableType = "filter" | "brush" | "sensor" | "mop" | "detergent";
+export type ConsumableSubType = "none" | "all" | "main" | "secondary" | "side_left" | "side_right";
+export type ConsumableUnit = "minutes" | "percent";
+
 export interface ConsumableState {
-    type: string;
-    subType?: string;
+    type: ConsumableType;
+    subType?: ConsumableSubType;
     remaining: {
         value: number;
-        unit: "percent" | "minutes";
+        unit: ConsumableUnit;
     }
 }
 
 export interface ConsumableId {
-    type: string;
-    subType?: string;
+    type: ConsumableType;
+    subType?: ConsumableSubType;
+}
+
+export interface ConsumableMeta {
+    type: ConsumableType,
+    subType: ConsumableSubType,
+    unit: ConsumableUnit
+}
+
+export interface ConsumableProperties {
+    availableConsumables: Array<ConsumableMeta>
 }
 
 export interface Timer {
@@ -200,7 +216,6 @@ export interface MQTTConfiguration {
         };
     };
     identity: {
-        friendlyName: string;
         identifier: string;
     };
     customizations: {
@@ -246,7 +261,6 @@ export interface MQTTStatus {
 export interface MQTTProperties {
     defaults: {
         identity: {
-            friendlyName: string;
             identifier: string;
         };
         customizations: {
@@ -391,9 +405,12 @@ export interface WifiConfigurationProperties {
     provisionedReconfigurationSupported: boolean;
 }
 
-export interface WifiProvisioningEncryptionKey {
-    type: "rsa";
-    publicKey: string;
+export interface ValetudoWifiNetwork {
+    bssid: string,
+    details: {
+        ssid?: string,
+        signal?: number
+    }
 }
 
 export type ManualControlAction = "enable" | "disable" | "move";
@@ -438,6 +455,10 @@ export interface CombinedVirtualRestrictionsProperties {
     supportedRestrictedZoneTypes: Array<ValetudoRestrictedZoneType>
 }
 
+export interface UpdaterConfiguration {
+    updateProvider: "github" | "github_nightly";
+}
+
 export interface UpdaterState {
     __class: "ValetudoUpdaterIdleState" | "ValetudoUpdaterErrorState" | "ValetudoUpdaterApprovalPendingState" | "ValetudoUpdaterDownloadingState" | "ValetudoUpdaterApplyPendingState" | "ValetudoUpdaterDisabledState" | "ValetudoUpdaterNoUpdateRequiredState";
     timestamp: string;
@@ -480,4 +501,8 @@ export interface SetQuirkValueCommand {
 
 export interface RobotProperties {
     firmwareVersion: string
+}
+
+export interface ValetudoCustomizations {
+    friendlyName: string;
 }
