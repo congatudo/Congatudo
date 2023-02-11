@@ -17,10 +17,10 @@ jobs:
         with:
           repository: congatudo/Congatudo
           fetch-depth: 0
+          token: ${{ github.token }}
       - name: Set up variables
         id: vars
-        run: |
-          echo "::set-output name=version::$(git describe --abbrev=0 --tags HEAD)"
+        run: echo "version=$(git describe --abbrev=0 --tags HEAD)" >> $GITHUB_OUTPUT
   matrix:
     runs-on: ubuntu-latest
     name: Get matrix from json
@@ -31,8 +31,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up variables
         id: vars
-        run: |
-          echo "::set-output name=matrix::$(jq -c . matrix.json)"
+        run: echo "matrix=$(jq -c . matrix.json)" >> $GITHUB_OUTPUT
   build:
     runs-on: ubuntu-latest
     name: Build for ${{ matrix.image_name }}
