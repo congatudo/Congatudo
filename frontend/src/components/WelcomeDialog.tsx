@@ -64,7 +64,7 @@ const WelcomeDialog: FunctionComponent<{open: boolean, hide: () => void}> = ({
             open={open}
         >
             <DialogTitle>
-                Welcome to Valetudo
+                Welcome to Congatudo
             </DialogTitle>
             <DialogContent>
                 <DialogContentText
@@ -74,15 +74,12 @@ const WelcomeDialog: FunctionComponent<{open: boolean, hide: () => void}> = ({
                     component="span"
                 >
                     <Typography>
-                        It looks like it might the first time that you&apos;re using Valetudo on this robot.
+                        It looks like it might the first time that you&apos;re using Congatudo on this robot.
                     </Typography>
                     <br/>
                     <Typography>
                         The first step is usually to let the robot create a new map of your home.
                         Depending on your firmware, the map will allow you to clean specific rooms, add virtual walls and more.
-                        <br/><br/>
-                        There are some variations in the map creation process based on the model of robot.
-                        For example, some robots might require you to enable map persistence first, whereas others might offer a dedicated Mapping Pass.
                     </Typography>
                     <br/>
                     <Typography component="span">
@@ -137,10 +134,12 @@ const WelcomeDialog: FunctionComponent<{open: boolean, hide: () => void}> = ({
                     }
                     <br/>
                     <Typography>
-                        While watching your robot zip around, you might want to <Link href="https://github.com/sponsors/Hypfer" target="_blank" rel="noopener">consider donating</Link>.
+                        While watching your robot zip around, you might want to <Link href="https://github.com/sponsors/elraro" target="_blank" rel="noopener">consider donating</Link>.
                         If you&apos;d rather decide later, the donation link can also be found hiding unobtrusively at the bottom of the sidebar menu.
                         <br/><br/>
                         Now, please enjoy your cloud-free robot :)
+                        <br/><br/>
+                        Congatudo is based on <Link href="https://valetudo.cloud" target="_blank" rel="noopener">Valetudo</Link>. Please, consider donate to <Link href="https://github.com/sponsors/Hypfer" target="_blank" rel="noopener">Valetudo project</Link>.
                     </Typography>
                 </DialogContentText>
             </DialogContent>

@@ -1,5 +1,5 @@
 {
-  "name": "valetudo-frontend",
+  "name": "congatudo-frontend",
   "homepage": ".",
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
