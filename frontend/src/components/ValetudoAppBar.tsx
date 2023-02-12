@@ -443,18 +443,6 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                     <ListItem
                         button
                         component="a"
-                        href="https://github.com/sponsors/elraro"
-                        target="_blank"
-                        rel="noopener"
-                    >
-                        <ListItemIcon>
-                            <DonateIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary="Donate"/>
-                    </ListItem>
-                    <ListItem
-                        button
-                        component="a"
                         href="https://congatudo.cloud/donate"
                         target="_blank"
                         rel="noopener"

@@ -4,7 +4,7 @@ const path = require("path");
 
 const Robots = require("../backend/lib/robots");
 const Configuration = require("../backend/lib/Configuration");
-const ValetudoEventStore = require("valetudo-backend/lib/ValetudoEventStore");
+const ValetudoEventStore = require("congatudo-backend/lib/ValetudoEventStore");
 
 function generateAnchor(str) {
   return str.replace(/[^0-9a-z-A-Z]/g, "").toLowerCase();

@@ -21,7 +21,7 @@ const StatusStateAttribute = require("../backend/lib/entities/state/attributes/S
 const PresetSelectionStateAttribute = require("../backend/lib/entities/state/attributes/PresetSelectionStateAttribute");
 const Unit = require("../backend/lib/mqtt/common/Unit");
 const HomieCommonAttributes = require("../backend/lib/mqtt/homie/HomieCommonAttributes");
-const ValetudoEventStore = require("valetudo-backend/lib/ValetudoEventStore");
+const ValetudoEventStore = require("congatudo-backend/lib/ValetudoEventStore");
 
 
 function jekyllAlert(type, content) {
