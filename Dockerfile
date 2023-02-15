@@ -36,7 +36,7 @@ RUN npm run build_openapi_schema
 RUN npm run build --workspace=frontend
 
 # Build args
-ARG PKG_TARGET=node16-linuxstatic-x64
+ARG PKG_TARGET=node18-linuxstatic-x64
 ARG PKG_OPTIONS=expose-gc,max-heap-size=64
 
 # Build binary
