@@ -3,7 +3,7 @@
     {
       "build_from": "arm32v7/alpine:3.16",
       "image_name": "alpine-armv7",
-      "pkg_options": "expose-gc,max-heap-size=38",
+      "pkg_options": "expose-gc,max-heap-size=48",
       "pkg_target": "node18-linuxstatic-armv7"
     },
     {
@@ -27,13 +27,13 @@
     {
       "build_from": "homeassistant/armhf-base:3.16",
       "image_name": "homeassistant-armhf",
-      "pkg_options": "expose-gc,max-heap-size=38",
+      "pkg_options": "expose-gc,max-heap-size=48",
       "pkg_target": "node18-linuxstatic-armv7"
     },
     {
       "build_from": "homeassistant/armv7-base:3.16",
       "image_name": "homeassistant-armv7",
-      "pkg_options": "expose-gc,max-heap-size=38",
+      "pkg_options": "expose-gc,max-heap-size=48",
       "pkg_target": "node18-linuxstatic-armv7"
     },
     {
