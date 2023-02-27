@@ -34,8 +34,7 @@ class MapLayer extends SerializableEntity {
         this.type = options.type;
         this.pixels = [];
         this.metaData = options.metaData ?? {};
-
-        this.congaPixels = Object.assign([], options.pixels)
+        this.congaPixels = Object.assign([], options.pixels);
 
         this.calculateDimensions(options.pixels);
         this.compressPixels(options.pixels);
