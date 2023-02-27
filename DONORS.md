@@ -19,6 +19,8 @@ in addition to having a "Donor" rank in telegram.
     Agustin Marziani
     Emilio Morales Fernandez
     Valentín K
+    Manuel Jesús Beltrán Rodríguez
+    Javier Mateos
 
 If you have made a donation and you want your website to appear, you don't want to be displayed or anything else, don't hesitate to contact us.
 
