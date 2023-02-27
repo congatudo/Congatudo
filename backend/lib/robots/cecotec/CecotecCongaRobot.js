@@ -496,21 +496,18 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         let maxX = fullMap.length;
         let maxY = fullMap[0].length;
         let pixels = []
+        fullMap[x][y] = layer.metaData.segmentId;
+        /*if(fullMap[x][y] == 255 ) {
+            fullMap[x][y] = layer.metaData.segmentId;
+        }*/
+        if (layer.metaData.segmentId == 12)  {
+            console.error("errrr")
+        }
         pixels.push(x, y)
         while(pixels.length != 0) {
-            x = pixels.pop()
-            y = pixels.pop()
-            //console.error(x)
-            //console.error(y)
+            x = pixels.shift()
+            y = pixels.shift()
 
-            /*if (fullMap[x][y] != 1 && fullMap[x][y] != 255) {
-                console.error("piso segmento")
-            }*/
-
-            if(fullMap[x][y] == 255 ) {
-                fullMap[x][y] = layer.metaData.segmentId;
-                //layer.congaPixels.push(x, y);
-            }
             if (x + 1 <= maxX && fullMap[x+1][y] == 255) {
                 pixels.push(x + 1, y);
                 fullMap[x+1][y] = layer.metaData.segmentId;
@@ -531,7 +528,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
                 fullMap[x][y-1] = layer.metaData.segmentId;
                 layer.congaPixels.push(x, y-1);
             }
-            if (x - 1 >= 0 && y - 1 >= 0 && fullMap[x-1][y-1] == 255) {
+            /* if (x - 1 >= 0 && y - 1 >= 0 && fullMap[x-1][y-1] == 255) {
                 pixels.push(x-1, y - 1)
                 fullMap[x-1][y-1] = layer.metaData.segmentId;
                 layer.congaPixels.push(x-1, y-1);
@@ -550,36 +547,8 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
                 pixels.push(x+1, y + 1)
                 fullMap[x+1][y+1] = layer.metaData.segmentId;
                 layer.congaPixels.push(x+1, y+1);
-            }
+            } */
         }
-        /* if(fullMap[x][y] == 255 ) {
-            fullMap[x][y] = layer.metaData.segmentId;
-            layer.congaPixels.push(x, y);
-            if (x + 1 <= maxX) {
-                this.boundaryFill8(x + 1, y, fullMap, layer);
-            }
-            if (y + 1 <= maxY) {
-                this.boundaryFill8(x, y + 1, fullMap, layer);
-            }
-            if (x - 1 >= 0) {
-                this.boundaryFill8(x - 1, y, fullMap, layer);
-            }
-            if (y - 1 >= 0) {
-                this.boundaryFill8(x, y - 1, fullMap, layer);
-            }
-            if (x - 1 >= 0 && y - 1 >= 0) {
-                this.boundaryFill8(x - 1, y - 1, fullMap, layer);
-            }
-            if (x - 1 >= 0 && y + 1 <= maxY) {
-                this.boundaryFill8(x - 1, y + 1, fullMap, layer);
-            }
-            if (x + 1 <= maxX && y - 1 >= 0) {
-                this.boundaryFill8(x + 1, y - 1, fullMap, layer);
-            }
-            if (x + 1 <= maxX && y + 1 <= maxY) {
-                this.boundaryFill8(x + 1, y + 1, fullMap, layer);
-            }
-        } */
     }
 
     /**
@@ -610,23 +579,34 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     /**
      * @param {import("../../../lib/entities/map/MapLayer")} layer
      */
-    dumpSegmentLayer(map, layer) {
+    dumpSegmentLayer(fullMap, layer) {
         // layer.metaData.segmentId
         for(let i = 0; i < layer.congaPixels.length; i = i + 2) {
             let x = layer.congaPixels[i]
             let y = layer.congaPixels[i + 1]
-            /* if (x > maxX) {
-                x = maxX;
-            }
-
-            if (y > maxY) {
-                y = maxY;
-            } */
-            if (map[x][y] == 0) {
-                map[x][y] = layer.metaData.segmentId
+            if (fullMap[x][y] == 255) {
+                fullMap[x][y] = layer.metaData.segmentId
             }
         }
     }
+
+    // Adapted from https://stackoverflow.com/a/53660837
+    /**
+     * @param Array<number> numbers
+     */
+    median (numbers) { //Note that this will modify the input array
+        numbers.sort((a, b) => {
+            return a - b;
+        });
+
+        const middle = Math.floor(numbers.length / 2);
+
+        if (numbers.length % 2 === 0) {
+            return (numbers[middle - 1] + numbers[middle]) / 2;
+        }
+
+        return numbers[middle];
+    };
 
     /**
      * @param {import("@agnoc/core").DeviceMap} map
@@ -645,25 +625,30 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         r.forEach(s => {
             this.dumpSegmentLayer(fullMap, s)
         })
-
+        console.error("---")
         r.forEach(s => {
             // esto cambiarlo, hay que recorrer el array y sacar la media de las posiciones de cada pixel
-            let middleX = 0;
-            let middleY = 0;
-            let c = 0;
+
+            let x = [];
+            let y = [];
+
             for (let i = 0; i < s.congaPixels.length; i = i + 2) {
-                middleX = middleX + s.congaPixels[i];
-                middleY = middleY + s.congaPixels[i + 1];
-                c = c + 1;
+                x.push(s.congaPixels[i]);
+                y.push(s.congaPixels[i + 1]);
             }
-            middleX = Math.round(middleX / c);
-            middleY = Math.round(middleY / c);
+
+            let middleX = Math.round(this.median(x));
+            let middleY = Math.round(this.median(y));
+
             console.error(s.metaData.segmentId)
             console.error(s.metaData.name)
             console.error(middleX)
             console.error(middleY)
-            console.error("----")
+            console.error(s.congaPixels.length)
+
             this.boundaryFill8(middleX, middleY, fullMap, s);
+            console.error(s.congaPixels.length)
+            console.error("----")
         })
         console.error("b")
         // compress congaPixels 
