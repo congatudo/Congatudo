@@ -130,7 +130,6 @@
                     'asset_content_type': 'binary/octet-stream',
                   },
               },
-              ,
               {
                 'name': 'Upload Congatudo arm64.upx',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
