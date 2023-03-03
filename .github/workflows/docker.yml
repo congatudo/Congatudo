@@ -37,6 +37,7 @@ jobs:
     name: Build for ${{ matrix.image_name }}
     needs: [info, matrix]
     strategy:
+      max-parallel: 2
       matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
     steps:
       - name: Set up QEMU
