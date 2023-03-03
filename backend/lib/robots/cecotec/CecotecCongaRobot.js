@@ -620,15 +620,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
             let middleX = Math.round(this.median(x));
             let middleY = Math.round(this.median(y));
 
-            //console.error(s.metaData.segmentId)
-            //console.error(s.metaData.name)
-            //console.error(middleX)
-            //console.error(middleY)
-            //console.error(s.congaPixels.length)
-
             this.boundaryFill8(middleX, middleY, fullMap, s);
-            //console.error(s.congaPixels.length)
-            //console.error("----")
         });
 
         // clean segments

@@ -1,10 +1,9 @@
-# Very similar to the release build.
 {
-  'name': 'Nightly build',
+  'name': 'Congatudo Nightly build',
   'on': {
     'schedule': [
       {
-        'cron': '0 2 * * *'
+        'cron': '0 0 * * *'
       }
     ],
     'workflow_dispatch': null
@@ -14,7 +13,7 @@
       'nightly_build':
         {
           'runs-on': 'ubuntu-latest',
-          'if': "github.repository_owner == 'Hypfer'",
+          'if': "github.repository_owner == 'congatudo'",
           'steps':
             [
               { 
@@ -24,9 +23,9 @@
                 }
               },
               {
-                'name': 'Use Node.js 16.x',
+                'name': 'Use Node.js 18.x',
                 'uses': 'actions/setup-node@v3',
-                'with': { 'node-version': '16.x' },
+                'with': { 'node-version': '18.x' },
               },
               { 'name': 'Install', 'run': 'npm ci' },
               {
@@ -34,15 +33,15 @@
                 'run': 'npm run build_openapi_schema',
               },
               {
-                'name': 'Build Valetudo frontend',
+                'name': 'Build Congatudo frontend',
                 'run': 'npm run build --workspace=frontend',
               },
               {
-                'name': 'Build Valetudo',
+                'name': 'Build Congatudo',
                 'run': 'npm run build --workspace=backend',
               },
               {
-                'name': 'UPX-compress valetudo binaries',
+                'name': 'UPX-compress Congatudo binaries',
                 'run': 'npm run upx',
               },
               {
@@ -56,16 +55,16 @@
               {
                 'name': 'Push binaries to nightly repo',
                 'id': 'push_directory',
-                'uses': 'hypfer/github-action-push-to-another-repository@v1.3',
+                'uses': 'congatudo/github-action-push-to-another-repository@main',
                 'env': {
-                  'API_TOKEN_GITHUB': '${{ secrets.API_TOKEN_GITHUB }}'
+                  'API_TOKEN_GITHUB': '${{ secrets.NIGHTLY_API_TOKEN_GITHUB }}'
                 },
                 'with': {
                   'source-directory': 'build',
-                  'destination-github-username': 'ValetudoBot',
-                  'destination-repository-name': 'valetudo-nightly-builds',
-                  'destination-repository-username': 'hypfer',
-                  'user-email': 'github_valetudo_bot@hypfer.de',
+                  'destination-github-username': 'congatudo-bot',
+                  'destination-repository-name': 'congatudo-nightly',
+                  'destination-repository-username': 'congatudo',
+                  'user-email': 'congatudo@congatudo.cloud',
                   'target-branch': 'master'
                 }
               }
