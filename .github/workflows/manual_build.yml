@@ -35,6 +35,10 @@
                 'name': 'Build Congatudo aarch64',
                 'run': 'npm run build_aarch64 --workspace=backend',
               },
+              {
+                'name': 'Build Congatudo arm64',
+                'run': 'npm run build_build_amd64 --workspace=backend',
+              },
 
               {
                 'name': 'Upload armv7 build',
@@ -61,6 +65,16 @@
                   {
                     'name': 'valetudo-aarch64',
                     'path': './build/aarch64/valetudo',
+                  },
+              },
+              ,
+              {
+                'name': 'Upload arm64 build',
+                'uses': 'actions/upload-artifact@v3',
+                'with':
+                  {
+                    'name': 'valetudo-arm64',
+                    'path': './build/arm64/valetudo',
                   },
               },
 
@@ -93,6 +107,16 @@
                   {
                     'name': 'valetudo-aarch64.upx',
                     'path': './build/aarch64/valetudo.upx',
+                  },
+              },
+              ,
+              {
+                'name': 'Upload arm64 upx build',
+                'uses': 'actions/upload-artifact@v3',
+                'with':
+                  {
+                    'name': 'valetudo-arm64.upx',
+                    'path': './build/arm64/valetudo.upx',
                   },
               },
 
