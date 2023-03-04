@@ -1,8 +1,8 @@
-name: Docker build
+name: Nightly Docker build
 on:
   workflow_dispatch:
   schedule:
-    cron: '0 0 * * *'
+    - cron: '0 0 * * *'
 env:
   REGISTRY: ghcr.io
 jobs:
