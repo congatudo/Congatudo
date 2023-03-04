@@ -1,5 +1,5 @@
 {
-  'name': 'Congatudo Nightly build',
+  'name': 'Nightly build',
   'on': {
     'schedule': [
       {
