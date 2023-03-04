@@ -443,12 +443,95 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         };
     }
 
+    // Convert walls and floor array to matrix style
+    /**
+     * @param {import("../../../lib/entities/map/MapLayer")} walls
+     * @param {import("../../../lib/entities/map/MapLayer")} floor
+     */
+    mapArrayToMatrix(walls, floor) {
+        // Create a map filled with [(0,0),(0,0), ...]
+        let map = new Array();
+        // first, find what is bigger, if walls or floor
+        let maxX = 0;
+        let maxY = 0;
+        if (walls.dimensions.x.max > floor.dimensions.x.max) {
+            maxX = walls.dimensions.x.max;
+        } else {
+            maxX = floor.dimensions.x.max;
+        }
+        if (walls.dimensions.y.max > floor.dimensions.y.max) {
+            maxY = walls.dimensions.y.max;
+        } else {
+            maxY = floor.dimensions.y.max;
+        }
+        for (let i = 0; i <= maxX; i++) {
+            map[i] = new Array();
+            for (let j = 0; j <= maxY; j++) {
+                map[i][j] = 0;
+            }
+        }
+        // id 1 = walls
+        // id 255 = floor
+        for ( let i = 0; i < floor.congaPixels.length; i = i + 2) {
+            let x = floor.congaPixels[i];
+            let y = floor.congaPixels[i + 1];
+            map[x][y] = 255;
+        }
+        for ( let i = 0; i < walls.congaPixels.length; i = i + 2) {
+            let x = walls.congaPixels[i];
+            let y = walls.congaPixels[i + 1];
+            map[x][y] = 1;
+        }
+
+        return map;
+    }
+
+    // fill recursive
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {string | any[]} fullMap
+     * @param {import("../../../lib/entities/map/MapLayer")} layer
+     */
+    boundaryFill8( x, y, fullMap, layer) {
+        let maxX = fullMap.length;
+        let maxY = fullMap[0].length;
+        let pixels = [];
+        fullMap[x][y] = layer.metaData.segmentId;
+        pixels.push(x, y);
+        while (pixels.length !== 0) {
+            x = pixels.shift();
+            y = pixels.shift();
+
+            if (x + 1 <= maxX && fullMap[x+1][y] === 255) {
+                pixels.push(x + 1, y);
+                fullMap[x+1][y] = layer.metaData.segmentId;
+                layer.congaPixels.push(x+1, y);
+            }
+            if (y + 1 <= maxY && fullMap[x][y+1] === 255) {
+                pixels.push(x, y + 1);
+                fullMap[x][y+1] = layer.metaData.segmentId;
+                layer.congaPixels.push(x, y+1);
+            }
+            if (x - 1 >= 0 && fullMap[x-1][y] === 255) {
+                pixels.push(x - 1, y);
+                fullMap[x-1][y] = layer.metaData.segmentId;
+                layer.congaPixels.push(x-1, y);
+            }
+            if (y - 1 >= 0 && fullMap[x][y-1] === 255) {
+                pixels.push(x, y - 1);
+                fullMap[x][y-1] = layer.metaData.segmentId;
+                layer.congaPixels.push(x, y-1);
+            }
+        }
+    }
+
     /**
      * @param {import("@agnoc/core").DeviceMap} map
      * @param {import("@agnoc/core").Room} room
      */
     getSegmentEntity(map, room) {
-        const offset = map.size.y;
+        const offset = map.size.y; // 800 in Conga 3490
         const pixels = room.pixels.map(({ x, y }) => {
             return [x, offset - y];
         });
@@ -467,16 +550,90 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     }
 
     /**
-     * @param {import("@agnoc/core").DeviceMap} map
+     * @param {any[]} fullMap fullMap
+     * @param {import("../../../lib/entities/map/MapLayer")} layer
      */
-    getSegmentEntities(map) {
+    dumpSegmentLayer(fullMap, layer) {
+        // layer.metaData.segmentId
+        for (let i = 0; i < layer.congaPixels.length; i = i + 2) {
+            let x = layer.congaPixels[i];
+            let y = layer.congaPixels[i + 1];
+            if (fullMap[x][y] === 255) {
+                fullMap[x][y] = layer.metaData.segmentId;
+            }
+        }
+    }
+
+    // Adapted from https://stackoverflow.com/a/53660837
+    /**
+     * @param {any[]} numbers
+     */
+    median (numbers) { //Note that this will modify the input array
+        numbers.sort((a, b) => {
+            return a - b;
+        });
+
+        const middle = Math.floor(numbers.length / 2);
+
+        if (numbers.length % 2 === 0) {
+            return (numbers[middle - 1] + numbers[middle]) / 2;
+        }
+
+        return numbers[middle];
+    }
+
+    // clean segments
+    /*clearSegment(s, fullMap) {
+        for (let i = 0; i < s.congaPixels.length; i = i + 2) {
+            x.push(s.congaPixels[i]);
+            y.push(s.congaPixels[i + 1]);
+        }
+    }*/
+
+    /**
+     * @param {import("@agnoc/core").DeviceMap} map
+     * @param {any[]} fullMap
+     */
+    getSegmentEntities(map, fullMap) {
         const { rooms } = map;
 
-        return (
+        let r = (
             rooms.map((room) => {
                 return this.getSegmentEntity(map, room);
             }) || []
         );
+
+        // try to fill the segment, fu** Cec****
+        // first, dump the segment layers to the map
+        r.forEach(s => {
+            this.dumpSegmentLayer(fullMap, s);
+        });
+        r.forEach(s => {
+            let x = [];
+            let y = [];
+
+            for (let i = 0; i < s.congaPixels.length; i = i + 2) {
+                x.push(s.congaPixels[i]);
+                y.push(s.congaPixels[i + 1]);
+            }
+
+            let middleX = Math.round(this.median(x));
+            let middleY = Math.round(this.median(y));
+
+            this.boundaryFill8(middleX, middleY, fullMap, s);
+        });
+
+        // clean segments
+        /*r.forEach(s => {
+            this.clearSegment(s, fullMap);
+        })*/
+
+        // compress congaPixels 
+        r.forEach(s => {
+            s.compressPixels(s.congaPixels);
+        });
+
+        return r;
     }
 
     /**
@@ -520,7 +677,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
             return;
         }
 
-        const { floor, walls } = this.getMapEntities(map);
+        const { floor, walls} = this.getMapEntities(map);
 
         this.updatePathPoints(map);
 
@@ -533,7 +690,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
                 this.getPathEntity(map),
                 ...this.getRestrictedZoneEntities(map),
             ].filter(Boolean),
-            layers: [floor, walls, ...this.getSegmentEntities(map)].filter(Boolean),
+            layers: [floor, walls, ...this.getSegmentEntities(map, this.mapArrayToMatrix(walls, floor))].filter(Boolean),
             metaData: {},
             size: {
                 x: map.size.x,

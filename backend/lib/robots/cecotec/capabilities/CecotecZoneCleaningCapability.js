@@ -5,11 +5,8 @@ const {Pixel} = require("@agnoc/core");
  * @extends ZoneCleaningCapability<import("../CecotecCongaRobot")>
  */
 module.exports = class CecotecZoneCleaningCapability extends ZoneCleaningCapability {
-    /**
-     * @param {Array<import("../../../entities/core/ValetudoZone")>} valetudoZones
-     * @returns {Promise<void>}
-     */
-    async start(valetudoZones) {
+
+    async start(options) {
         if (!this.robot.robot) {
             throw new Error("There is no robot connected to server");
         }
@@ -21,7 +18,7 @@ module.exports = class CecotecZoneCleaningCapability extends ZoneCleaningCapabil
         }
 
         const offset = map.size.y;
-        const areas = valetudoZones.map(({ points }) => {
+        const areas = options.map(({ points }) => {
             return [
                 map.toCoordinate(new Pixel({
                     x: points.pA.x,

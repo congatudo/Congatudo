@@ -74,7 +74,7 @@ class MapNodeMqttHandle extends NodeMqttHandle {
                 datatype: DataType.STRING,
                 format: "json",
                 getter: async () => {
-                    if (this.robot.state.map === null || !(this.controller.currentConfig.customizations.provideMapData ?? true)|| !this.controller.isInitialized()) {
+                    if (this.robot.state.map === null || !(this.controller.currentConfig.customizations.provideMapData ?? true)|| !this.controller.isInitialized) {
                         return {};
                     }
 
@@ -83,7 +83,9 @@ class MapNodeMqttHandle extends NodeMqttHandle {
                         res[segment.id] = segment.name ?? segment.id;
                     }
 
-                    await HassAnchor.getAnchor(HassAnchor.ANCHOR.MAP_SEGMENTS_LEN).post(Object.keys(res).length);
+                    await this.controller.hassAnchorProvider.getAnchor(
+                        HassAnchor.ANCHOR.MAP_SEGMENTS_LEN
+                    ).post(Object.keys(res).length);
 
                     return res;
                 },
@@ -97,15 +99,21 @@ class MapNodeMqttHandle extends NodeMqttHandle {
                             name: "MapSegments",
                             friendlyName: "Map segments",
                             componentType: ComponentType.SENSOR,
-                            baseTopicReference: HassAnchor.getTopicReference(HassAnchor.REFERENCE.HASS_MAP_SEGMENTS_STATE),
+                            baseTopicReference: this.controller.hassAnchorProvider.getTopicReference(
+                                HassAnchor.REFERENCE.HASS_MAP_SEGMENTS_STATE
+                            ),
                             autoconf: {
-                                state_topic: HassAnchor.getTopicReference(HassAnchor.REFERENCE.HASS_MAP_SEGMENTS_STATE),
+                                state_topic: this.controller.hassAnchorProvider.getTopicReference(
+                                    HassAnchor.REFERENCE.HASS_MAP_SEGMENTS_STATE
+                                ),
                                 icon: "mdi:vector-selection",
                                 json_attributes_topic: prop.getBaseTopic(),
                                 json_attributes_template: "{{ value }}"
                             },
                             topics: {
-                                "": HassAnchor.getAnchor(HassAnchor.ANCHOR.MAP_SEGMENTS_LEN)
+                                "": this.controller.hassAnchorProvider.getAnchor(
+                                    HassAnchor.ANCHOR.MAP_SEGMENTS_LEN
+                                )
                             }
                         })
                     );
@@ -159,7 +167,7 @@ class MapNodeMqttHandle extends NodeMqttHandle {
      * @public
      */
     onMapUpdated() {
-        if (this.controller.isInitialized()) {
+        if (this.controller.isInitialized) {
             this.refresh().catch(err => {
                 Logger.error("Error during MQTT handle refresh", err);
             });
@@ -172,7 +180,7 @@ class MapNodeMqttHandle extends NodeMqttHandle {
      * @return {Promise<Buffer|null>}
      */
     async getMapData(wrapInPng) {
-        if (this.robot.state.map === null || !(this.controller.currentConfig.customizations.provideMapData ?? true) || !this.controller.isInitialized()) {
+        if (this.robot.state.map === null || !(this.controller.currentConfig.customizations.provideMapData ?? true) || !this.controller.isInitialized) {
             return null;
         }
         const robot = this.robot;

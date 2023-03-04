@@ -1,20 +1,18 @@
-# Very similar to the release build.
-# Feel free to merge those into a single yaml
 {
   'name': 'Manual Build',
   'on': ['workflow_dispatch'],
   'jobs':
     {
-      'build-valetudo':
+      'build-congatudo':
         {
           'runs-on': 'ubuntu-latest',
           'steps':
             [
               { 'uses': 'actions/checkout@v3' },
               {
-                'name': 'Use Node.js 16.x',
+                'name': 'Use Node.js 18.x',
                 'uses': 'actions/setup-node@v3',
-                'with': { 'node-version': '16.x' },
+                'with': { 'node-version': '18.x' },
               },
               { 'name': 'Install', 'run': 'npm ci' },
               {
@@ -22,20 +20,24 @@
                 'run': 'npm run build_openapi_schema',
               },
               {
-                'name': 'Build Valetudo frontend',
+                'name': 'Build Congatudo frontend',
                 'run': 'npm run build --workspace=frontend',
               },
               {
-                'name': 'Build Valetudo armv7',
+                'name': 'Build Congatudo armv7',
                 'run': 'npm run build_armv7 --workspace=backend',
               },
               {
-                'name': 'Build Valetudo armv7 lowmem',
+                'name': 'Build Congatudo armv7 lowmem',
                 'run': 'npm run build_armv7_lowmem --workspace=backend',
               },
               {
-                'name': 'Build Valetudo aarch64',
+                'name': 'Build Congatudo aarch64',
                 'run': 'npm run build_aarch64 --workspace=backend',
+              },
+              {
+                'name': 'Build Congatudo arm64',
+                'run': 'npm run build_amd64 --workspace=backend',
               },
 
               {
@@ -65,9 +67,18 @@
                     'path': './build/aarch64/valetudo',
                   },
               },
+              {
+                'name': 'Upload arm64 build',
+                'uses': 'actions/upload-artifact@v3',
+                'with':
+                  {
+                    'name': 'valetudo-arm64',
+                    'path': './build/arm64/valetudo',
+                  },
+              },
 
               {
-                'name': 'UPX-compress valetudo binaries',
+                'name': 'UPX-compress Congatudo binaries',
                 'run': 'npm run upx',
               },
               {
@@ -95,6 +106,15 @@
                   {
                     'name': 'valetudo-aarch64.upx',
                     'path': './build/aarch64/valetudo.upx',
+                  },
+              },
+              {
+                'name': 'Upload arm64 upx build',
+                'uses': 'actions/upload-artifact@v3',
+                'with':
+                  {
+                    'name': 'valetudo-arm64.upx',
+                    'path': './build/arm64/valetudo.upx',
                   },
               },
 

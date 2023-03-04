@@ -6,7 +6,7 @@
       'publish-release':
         {
           'runs-on': 'ubuntu-latest',
-          'strategy': { 'matrix': { 'node-version': ['16.x'] } },
+          'strategy': { 'matrix': { 'node-version': ['18.x'] } },
           'steps':
             [
               { 'uses': 'actions/checkout@v3' },
@@ -21,24 +21,28 @@
                 'run': 'npm run build_openapi_schema',
               },
               {
-                'name': 'Build Valetudo frontend',
+                'name': 'Build Congatudo frontend',
                 'run': 'npm run build --workspace=frontend',
               },
               {
-                'name': 'Build Valetudo armv7',
+                'name': 'Build Congatudo armv7',
                 'run': 'npm run build_armv7 --workspace=backend',
               },
               {
-                'name': 'Build Valetudo armv7 lowmem',
+                'name': 'Build Congatudo armv7 lowmem',
                 'run': 'npm run build_armv7_lowmem --workspace=backend',
               },
               {
-                'name': 'Build Valetudo aarch64',
+                'name': 'Build Congatudo aarch64',
                 'run': 'npm run build_aarch64 --workspace=backend',
+              },
+              {
+                'name': 'Build Congatudo arm64',
+                'run': 'npm run build_arm64 --workspace=backend',
               },
 
               {
-                'name': 'Upload Valetudo armv7',
+                'name': 'Upload Congatudo armv7',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
@@ -50,7 +54,7 @@
                   },
               },
               {
-                'name': 'Upload Valetudo armv7 lowmem',
+                'name': 'Upload Congatudo armv7 lowmem',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
@@ -62,7 +66,7 @@
                   },
               },
               {
-                'name': 'Upload Valetudo aarch64',
+                'name': 'Upload Congatudo aarch64',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
@@ -73,13 +77,25 @@
                     'asset_content_type': 'binary/octet-stream',
                   },
               },
+              {
+                'name': 'Upload Congatudo arm64',
+                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
+                'with':
+                  {
+                    'upload_url': '${{ github.event.release.upload_url }}',
+                    'asset_path': './build/arm64/valetudo',
+                    'asset_name': 'valetudo-arm64',
+                    'asset_content_type': 'binary/octet-stream',
+                  },
+              },
 
               {
-                'name': 'UPX-compress valetudo binaries',
+                'name': 'UPX-compress Congatudo binaries',
                 'run': 'npm run upx',
               },
               {
-                'name': 'Upload Valetudo armv7.upx',
+                'name': 'Upload Congatudo armv7.upx',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
@@ -91,7 +107,7 @@
                   },
               },
               {
-                'name': 'Upload Valetudo armv7 lowmem.upx',
+                'name': 'Upload Congatudo armv7 lowmem.upx',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
@@ -103,7 +119,7 @@
                   },
               },
               {
-                'name': 'Upload Valetudo aarch64.upx',
+                'name': 'Upload Congatudo aarch64.upx',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
@@ -111,6 +127,18 @@
                     'upload_url': '${{ github.event.release.upload_url }}',
                     'asset_path': './build/aarch64/valetudo.upx',
                     'asset_name': 'valetudo-aarch64.upx',
+                    'asset_content_type': 'binary/octet-stream',
+                  },
+              },
+              {
+                'name': 'Upload Congatudo arm64.upx',
+                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
+                'with':
+                  {
+                    'upload_url': '${{ github.event.release.upload_url }}',
+                    'asset_path': './build/arm64/valetudo.upx',
+                    'asset_name': 'valetudo-arm64.upx',
                     'asset_content_type': 'binary/octet-stream',
                   },
               },

@@ -47,7 +47,11 @@ export interface Zone {
         pC: Point;
         pD: Point;
     };
-    iterations: number;
+}
+
+export interface ZoneActionRequestParameters {
+    zones: Zone[];
+    iterations?: number;
 }
 
 export interface ZoneProperties {
@@ -201,6 +205,7 @@ export interface MQTTConfiguration {
         tls: {
             enabled: boolean;
             ca: string;
+            ignoreCertificateErrors: boolean;
         };
         authentication: {
             credentials: {
