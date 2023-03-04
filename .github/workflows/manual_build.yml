@@ -37,7 +37,7 @@
               },
               {
                 'name': 'Build Congatudo arm64',
-                'run': 'npm run build_build_amd64 --workspace=backend',
+                'run': 'npm run build_amd64 --workspace=backend',
               },
 
               {

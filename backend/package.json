@@ -34,7 +34,7 @@
   },
   "author": "",
   "dependencies": {
-    "@agnoc/core": "~0.16.0-next.7",
+    "@agnoc/core": "0.17.1",
     "@destinationstransfers/ntp": "2.0.0",
     "ajv": "8.11.0",
     "async-mqtt": "2.6.3",
