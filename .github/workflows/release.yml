@@ -78,14 +78,14 @@
                   },
               },
               {
-                'name': 'Upload Congatudo arm64',
+                'name': 'Upload Congatudo amd64',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
                     'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/arm64/valetudo',
-                    'asset_name': 'valetudo-arm64',
+                    'asset_path': './build/amd64/valetudo',
+                    'asset_name': 'valetudo-amd64',
                     'asset_content_type': 'binary/octet-stream',
                   },
               },
@@ -131,14 +131,14 @@
                   },
               },
               {
-                'name': 'Upload Congatudo arm64.upx',
+                'name': 'Upload Congatudo amd64.upx',
                 'uses': 'hypfer/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
                     'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/arm64/valetudo.upx',
-                    'asset_name': 'valetudo-arm64.upx',
+                    'asset_path': './build/amd64/valetudo.upx',
+                    'asset_name': 'valetudo-amd64.upx',
                     'asset_content_type': 'binary/octet-stream',
                   },
               },
