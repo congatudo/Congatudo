@@ -40,7 +40,7 @@ const binaries = {
         })
     },
     amd64: {
-        base: "./build_dependencies/pkg/v3.4/built-v18.5.0-linuxstatic-amd64",
+        base: "./build_dependencies/pkg/v3.4/built-v18.5.0-linuxstatic-x64",
         built: "./build/amd64/valetudo",
         out: "./build/amd64/valetudo.upx",
         upx: UPX({
