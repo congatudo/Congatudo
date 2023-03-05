@@ -43,7 +43,7 @@
 
               {
                 'name': 'Upload Congatudo armv7',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -55,7 +55,7 @@
               },
               {
                 'name': 'Upload Congatudo armv7 lowmem',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -67,7 +67,7 @@
               },
               {
                 'name': 'Upload Congatudo aarch64',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -79,7 +79,7 @@
               },
               {
                 'name': 'Upload Congatudo amd64',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -96,7 +96,7 @@
               },
               {
                 'name': 'Upload Congatudo armv7.upx',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -108,7 +108,7 @@
               },
               {
                 'name': 'Upload Congatudo armv7 lowmem.upx',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -120,7 +120,7 @@
               },
               {
                 'name': 'Upload Congatudo aarch64.upx',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -132,7 +132,7 @@
               },
               {
                 'name': 'Upload Congatudo amd64.upx',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {
@@ -149,7 +149,7 @@
               },
               {
                 'name': 'Upload manifest',
-                'uses': 'hypfer/upload-release-asset@v1.1.0',
+                'uses': 'congatudo/upload-release-asset@v1.1.0',
                 'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
                 'with':
                   {

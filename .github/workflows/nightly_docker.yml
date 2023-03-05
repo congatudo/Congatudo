@@ -20,7 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build for ${{ matrix.image_name }}
-    needs: [info, matrix]
+    needs: [matrix]
     strategy:
       max-parallel: 2
       matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
@@ -75,7 +75,7 @@ jobs:
   manifest:
     runs-on: ubuntu-latest
     name: Create and push manifest
-    needs: [info, build]
+    needs: [build]
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
