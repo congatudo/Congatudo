@@ -108,25 +108,21 @@ jobs:
           docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:alpine-latest \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-armv7-latest \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-aarch64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-i386-latest
+            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-latest
           docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-latest \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armhf-latest \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armv7-latest \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-aarch64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-i386-latest
+            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-latest
           docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:alpine-${{ needs.info.outputs.version }} \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-armv7-${{ needs.info.outputs.version }} \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-aarch64-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-i386-${{ needs.info.outputs.version }}
+            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-${{ needs.info.outputs.version }}
           docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-${{ needs.info.outputs.version }} \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armhf-${{ needs.info.outputs.version }} \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armv7-${{ needs.info.outputs.version }} \
             --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-aarch64-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-i386-${{ needs.info.outputs.version }}
+            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }}
       - name: Push manifest
         run: |
           # TODO: Use matrix here.
