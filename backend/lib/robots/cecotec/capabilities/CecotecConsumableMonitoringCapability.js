@@ -63,8 +63,7 @@ module.exports = class CecotecConsumableMonitoringCapability extends ConsumableM
             return this.robot.state.upsertFirstMatchingAttribute(c);
         });
 
-        // @ts-ignore
-        this.robot.emitStateUpdated();
+        this.robot.emitStateAttributesUpdated();
 
         return consumables;
     }
@@ -97,5 +96,37 @@ module.exports = class CecotecConsumableMonitoringCapability extends ConsumableM
         if (consumable) {
             await this.robot.robot.resetConsumable(consumable);
         }
+    }
+
+    getProperties() {
+        return {
+            availableConsumables: [
+                {
+                    type: ConsumableStateAttribute.TYPE.BRUSH,
+                    subType: ConsumableStateAttribute.SUB_TYPE.MAIN,
+                    unit: ConsumableStateAttribute.UNITS.MINUTES
+                },
+                {
+                    type: ConsumableStateAttribute.TYPE.BRUSH,
+                    subType: ConsumableStateAttribute.SUB_TYPE.SIDE_RIGHT,
+                    unit: ConsumableStateAttribute.UNITS.MINUTES
+                },
+                {
+                    type: ConsumableStateAttribute.TYPE.FILTER,
+                    subType: ConsumableStateAttribute.SUB_TYPE.MAIN,
+                    unit: ConsumableStateAttribute.UNITS.MINUTES
+                },
+                {
+                    type: ConsumableStateAttribute.TYPE.SENSOR,
+                    subType: ConsumableStateAttribute.SUB_TYPE.ALL,
+                    unit: ConsumableStateAttribute.UNITS.MINUTES
+                },
+                {
+                    type: ConsumableStateAttribute.TYPE.MOP,
+                    subType: ConsumableStateAttribute.SUB_TYPE.MAIN,
+                    unit: ConsumableStateAttribute.UNITS.PERCENT
+                }
+            ]
+        };
     }
 };

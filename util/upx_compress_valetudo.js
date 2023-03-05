@@ -38,6 +38,18 @@ const binaries = {
             lzma: true,
             best: true
         })
+    },
+    amd64: {
+        base: "./build_dependencies/pkg/v3.4/built-v18.5.0-linuxstatic-amd64",
+        built: "./build/amd64/valetudo",
+        out: "./build/amd64/valetudo.upx",
+        upx: UPX({
+            //ultraBrute: true // Disabled for now (2022-05-07) due to performance issues with the latest upx devel
+
+            // instead of ultraBrute, this also works okay-ish
+            lzma: true,
+            best: true
+        })
     }
 };
 
