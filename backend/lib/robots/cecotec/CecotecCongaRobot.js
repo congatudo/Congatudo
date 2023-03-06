@@ -449,6 +449,12 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
      * @param {import("../../../lib/entities/map/MapLayer")} floor
      */
     mapArrayToMatrix(walls, floor) {
+        // check if dimensions is null (empty map?)
+        if (walls.dimensions === null || floor.dimensions === null) {
+            return [];
+        }
+
+
         // Create a map filled with [(0,0),(0,0), ...]
         let map = new Array();
         // first, find what is bigger, if walls or floor
@@ -603,30 +609,27 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
             }) || []
         );
 
-        // try to fill the segment, fu** Cec****
-        // first, dump the segment layers to the map
-        r.forEach(s => {
-            this.dumpSegmentLayer(fullMap, s);
-        });
-        r.forEach(s => {
-            let x = [];
-            let y = [];
+        if (fullMap.length !== 0) {
+            // try to fill the segment, fu** Cec****
+            // first, dump the segment layers to the map
+            r.forEach(s => {
+                this.dumpSegmentLayer(fullMap, s);
+            });
+            r.forEach(s => {
+                let x = [];
+                let y = [];
 
-            for (let i = 0; i < s.congaPixels.length; i = i + 2) {
-                x.push(s.congaPixels[i]);
-                y.push(s.congaPixels[i + 1]);
-            }
+                for (let i = 0; i < s.congaPixels.length; i = i + 2) {
+                    x.push(s.congaPixels[i]);
+                    y.push(s.congaPixels[i + 1]);
+                }
 
-            let middleX = Math.round(this.median(x));
-            let middleY = Math.round(this.median(y));
+                let middleX = Math.round(this.median(x));
+                let middleY = Math.round(this.median(y));
 
-            this.boundaryFill8(middleX, middleY, fullMap, s);
-        });
-
-        // clean segments
-        /*r.forEach(s => {
-            this.clearSegment(s, fullMap);
-        })*/
+                this.boundaryFill8(middleX, middleY, fullMap, s);
+            });
+        }
 
         // compress congaPixels 
         r.forEach(s => {
