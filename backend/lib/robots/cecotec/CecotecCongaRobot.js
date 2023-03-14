@@ -450,7 +450,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
      */
     mapArrayToMatrix(walls, floor) {
         // check if dimensions is null (empty map?)
-        if (walls.dimensions === null || floor.dimensions === null) {
+        if (walls === null || floor === null) {
             return [];
         }
 
