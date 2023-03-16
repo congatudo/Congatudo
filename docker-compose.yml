@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  congatudo:
+    container_name: congatudo
+    image: ghcr.io/congatudo/congatudo:alpine-latest
+    restart: always
+    volumes:
+     - ./congatudo/congatudo_data:/data
+     - ./congatudo/config/congatudo.json:/etc/valetudo/config.json
+    ports:
+      - 80:80
+      - 4010:4010
+      - 4030:4030
+      - 4050:4050
+  broker:
+    container_name: mqtt
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto:/mosquitto
+    ports:
+      - "1883:1883"
+    restart: always
