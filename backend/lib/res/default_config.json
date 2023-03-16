@@ -1,5 +1,5 @@
 {
-    "embedded": true,
+    "embedded": false,
     "robot": {
         "implementation": "auto",
         "implementationSpecificConfig": {
