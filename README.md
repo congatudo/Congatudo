@@ -73,7 +73,7 @@ $ agnoc wlan <wifissid> <pass>
 	 - for 3090: `3irobotics`[^1]
 	 - for 3x90, 4090 & 5490: `@3I#sc$RD%xm^2S&`[^2]
 4. You should see something like this:
-![Tina-Linux](./assets/tina-linux.png)
+![Tina-Linux](https://github.com/congatudo/stuff/blob/master/docs/assets/tina-linux.png)
 1. Now, it would be a good practice to:
    - Change the password (to something non-default and secure 🙏)
    - Add certificates (ssh key-pair) to [access via ssh without passwords](add-ssh-key.md)
