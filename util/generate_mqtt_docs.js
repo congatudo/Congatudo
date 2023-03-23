@@ -602,8 +602,20 @@ class FakeMqttController extends MqttController {
     }
 
 
-    isInitialized() {
-        return this.docsGenerated;
+    get isInitialized() {
+        const stack = new Error().stack;
+        
+        // Now this is some major jank engineering
+        if (
+            stack.split("\n").find(line => {
+                return line.includes("MapNodeMqttHandle") && line.includes("PropertyMqttHandle.getter")
+            }) &&
+            !stack.includes("MapNodeMqttHandle.getMapData")
+        ) {
+            return true;
+        }
+          
+        return !!this.docsGenerated;
     }
 
     async setState(state) {

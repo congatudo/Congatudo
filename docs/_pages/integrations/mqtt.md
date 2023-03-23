@@ -101,7 +101,7 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
      - [Vacuum status (`StatusStateAttribute`)](#vacuumstatusstatusstateattribute)
        - [Error description (`error`)](#errordescriptionerror)
        - [Status (`status`)](#statusstatus)
-       - [Status detail (`detail`)](#statusdetaildetail)
+       - [Status flag (`flag`)](#statusflagflag)
 
 
 ### State attributes index
@@ -554,7 +554,6 @@ Sample payload:
 {
   "zones": [
     {
-      "iterations": 1,
       "points": {
         "pA": {
           "x": 50,
@@ -574,7 +573,8 @@ Sample payload:
         }
       }
     }
-  ]
+  ],
+  "iterations": 1
 }
 ```
 
@@ -775,22 +775,11 @@ Status attributes managed by this node:
 
 - StatusStateAttribute
 
-##### Status detail (`detail`) <a id="statusdetaildetail" />
+Home Assistant components controlled by this node:
 
-*Property, readable, retained*
+- Error ([`sensor.mqtt`](https://www.home-assistant.io/integrations/sensor.mqtt/))
 
-- Read topic: `<TOPIC PREFIX>/<IDENTIFIER>/StatusStateAttribute/detail`
-- Data type: [enum](https://homieiot.github.io/specification/#enum) (allowed payloads: `none`, `zone`, `segment`, `spot`, `target`, `resumable`, `mapping`)
-
-Sample value:
-
-```
-segment
-```
-
-
-
-##### Error description (`error`) <a id="errordescriptionerror" />
+##### Robot Error (`error`) <a id="roboterrorerror" />
 
 *Property, readable, retained*
 
@@ -802,6 +791,21 @@ The error description will only be populated when the robot reports an error. Er
 Home Assistant components controlled by this property:
 
 - Error description ([`sensor.mqtt`](https://www.home-assistant.io/integrations/sensor.mqtt/))
+
+
+
+##### Status flag (`flag`) <a id="statusflagflag" />
+
+*Property, readable, retained*
+
+- Read topic: `<TOPIC PREFIX>/<IDENTIFIER>/StatusStateAttribute/flag`
+- Data type: [enum](https://homieiot.github.io/specification/#enum) (allowed payloads: `none`, `zone`, `segment`, `spot`, `target`, `resumable`, `mapping`)
+
+Sample value:
+
+```
+segment
+```
 
 
 
