@@ -103,7 +103,7 @@ $ npm run build
 ### Prepare a valid configuration file
 In your machine, get a valid valetudo config file in from: https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json
 
-Once you have already downloaded it, edit the implementation of the Congatudo robot to CecotecCongaRobot and teh embebed property aswell:
+Once you have already downloaded it and named as valetudo_config.json, edit the implementation of the Congatudo robot to CecotecCongaRobot and teh embebed property aswell:
 ```
 {
   "embedded": true,
@@ -170,7 +170,7 @@ $> reboot
 ### Configuration file
 Firstly, get a valid valetudo config file in https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json
 
-Once you have already downloaded it, edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
+Once you have already downloaded it and named as "valetudo.json", edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
 ```
 {
   "embedded": false,
