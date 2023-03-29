@@ -277,6 +277,17 @@ Check https://github.com/Koenkk/zigbee2mqtt/issues/7662
 ```
 Check the notifications and accept the new map generated
 ```
+4. Congatudo can't initialize and log says:
+```shell
+[2023-03-15T19:42:03.531Z] [WARN] WifiConfigurationCapabilityRouter: Error while handling route "/" {
+
+  body: {},
+
+  message: "Cannot read properties of null (reading 'toString')"
+```
+```
+Check the emebebed property of your configuration file, you may try to run congatudo in a server but embebed option set as true.
+```
 
 ## Join the Discussion
 * [Congatudo Telegram group](https://t.me/congatudo)
