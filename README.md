@@ -42,6 +42,7 @@ Please give it a try and [file any issues that you encounter there](https://gith
     - [Configuration file](#configuration-file)
     - [Use the prepared image](#use-the-prepared-image)
     - [Finally](#finally-1)
+  - [Docker-Compose installation](#docker-compose-installation)
   - [Home Assistant addon](#home-assistant-addon-installation)
   - [Uninstall Valetudo](Uninstall-valetudo)
   - [Blog](#blog)
@@ -55,7 +56,7 @@ It is needed for the robot to know wich server it has to attend so then, it shou
 
 ### Connect the robot to your local network
 First, you need to have your robot connected througth your wifi to get shell access. If you already have it, you can jumpthis section, otherwise, you can use the [agnoc tool](https://github.com/congatudo/agnoc) form your computer to establish the connection.
-```
+```shell
 $ npm install -g @agnoc/cli 
 $ agnoc wlan <wifissid> <pass>
 ```
@@ -81,7 +82,7 @@ $ agnoc wlan <wifissid> <pass>
 ### Point your Conga robot to Valetudo Server
 Open a ssh terminal to your robot and edit the hosts file, your server:
 *Server IP for standalone installation: 127.0.0.1*
-```
+```shell
 $ ssh root@<conga ip>
 $> echo "<your server ip> cecotec.das.3irobotix.net cecotec.download.3irobotix.net cecotec.log.3irobotix.net cecotec.ota.3irobotix.net eu.das.3irobotics.net eu.log.3irobotics.net eu.ota.3irobotics.net cecotec-das.3irobotix.net cecotec-log.3irobotix.net cecotec-upgrade.3irobotix.net cecotec-download.3irobotix.net" >> /etc/hosts
 $> /etc/init.d/valetudo enable
@@ -90,7 +91,7 @@ $> reboot
 ## Standalone installation
 ### Build a binary for you standalone installation
 Compile Congatudo under the path ./build/armv7/valetudo
-```
+```shell
 $ git clone https://github.com/congatudo/Congatudo.git
 $ cd Congatudo
 $ npm install
@@ -104,7 +105,7 @@ $ npm run build
 In your machine, get a valid valetudo config file in from: https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json
 
 Once you have already downloaded it and named as valetudo_config.json, edit the implementation of the Congatudo robot to CecotecCongaRobot and teh embebed property aswell:
-```
+```json
 {
   "embedded": true,
   "robot": {
@@ -115,7 +116,7 @@ Once you have already downloaded it and named as valetudo_config.json, edit the 
 
 ### Copy the binary and its configuration to your robot
 After that, you are able to copy the binary to your conga
-```
+```shell
 $ ssh root@<robot-ip>
 $> mkdir /mnt/UDISK/valetudo
 $> exit
@@ -123,13 +124,13 @@ $ scp ./build/armv7/valetudo root@<your robot ip>:</mnt/UDISK/valetudo/valetudo>
 $ scp ./default_config.json root@<your robot ip>:</mnt/UDISK/valetudo/valetudo_config.json>
 ```
 ### Create a script file to export the enviroment variable and run the server at boot in your robot
-```
+```shell
 ssh root@<your conga ip>
 $> vi /etc/init.d/valetudo
 ```
 
 add this script:
-```
+```bash
 #!/bin/sh /etc/rc.common                                                                                                    
 # File: /etc/init.d/valetudo
 # Usage help: /etc/init.d/valetudo
@@ -153,12 +154,12 @@ shutdown() {
 ```
 
 Make the init file executable:
-```
+```shell
 $> chmod +x /etc/init.d/valetudo
 ```
 
 ### Enable Congatudo server at boot and reboot the robot
-```
+```shell
 $ ssh root@<conga ip>
 $> /etc/init.d/valetudo enable
 $> reboot
@@ -171,7 +172,7 @@ $> reboot
 Firstly, get a valid valetudo config file in https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json
 
 Once you have already downloaded it and named as "valetudo.json", edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
-```
+```json
 {
   "embedded": false,
   "robot": {
@@ -187,11 +188,48 @@ Once you have already downloaded it and named as "valetudo.json", edit the imple
 
 ### Use the prepared image
 Then, you are able to just run the dockerhub image
-```
+```shell
 docker run -p 8080:8080 -p 4010:4010 -p 4030:4030 -p 4050:4050 -v $(pwd)/valetudo.json:/etc/valetudo/config.json --name congatudo ghcr.io/congatudo/Congatudo:alpine-latest
 ```
 ### Finally
 :tada: With theses steps, you may see your Valetudo server running under <http://ip-server:8080>
+
+## Docker-Compose installation
+The basic service to run congatudo with docker-compose, please download a valid configuration file for congatudo and renamed like valetudo.json from  https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json. edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
+```json
+{
+  "embedded": false,
+  "robot": {
+    "implementation": "CecotecCongaRobot",
+    ...
+    },
+    "webserver": {
+      "port": 8080,
+      ...
+    }
+}
+```
+Once you have this configuration file stored and already setup, add this service to your docker-compose:
+```yaml
+version: '3.8'
+services:
+  congatudo:
+    container_name: congatudo
+    image: ghcr.io/congatudo/congatudo:alpine-latest
+    restart: unless-stopped
+    volumes:
+     - <path-to-file>/valetudo.json:/etc/valetudo/config.json
+    ports:
+      - 80:8080 #Change port 80 to whatever port you want to expose the web GUi
+      - 4010:4010
+      - 4030:4030
+      - 4050:4050
+    environment:
+      - TZ=Etc/UTC
+      - LUID=1000 #Optional
+      - LGUI=1000 #Optional
+```
+Taking care about the path-to-file you need to point to your configuration file (i.e. /home/pi/valetudo.json)
 
 ## Home Assistant addon installation
 Just follow the [read me.](https://github.com/congatudo/congatudo-add-on)
