@@ -45,7 +45,7 @@ class ConsumableMonitoringCapability extends Capability {
 
     /**
      *
-     * @return {{availableConsumables: Array<{type: ConsumableStateAttribute.TYPE, subType: ConsumableStateAttribute.SUB_TYPE, unit: ConsumableStateAttribute.UNITS}>}}
+     * @return {{availableConsumables: Array<ConsumableMeta>}}
      */
     getProperties() {
         return {
@@ -59,6 +59,15 @@ class ConsumableMonitoringCapability extends Capability {
     }
 }
 
+/**
+ * @typedef {object} ConsumableMeta
+ *
+ * @property {ConsumableStateAttribute.TYPE} type
+ * @property {ConsumableStateAttribute.SUB_TYPE} subType
+ * @property {ConsumableStateAttribute.UNITS} unit
+ * @property {number} [maxValue]
+ * 
+ */
 
 ConsumableMonitoringCapability.TYPE = "ConsumableMonitoringCapability";
 
