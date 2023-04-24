@@ -18,7 +18,7 @@ module.exports = class CecotecZoneCleaningCapability extends ZoneCleaningCapabil
         }
 
         const offset = map.size.y;
-        const areas = options.map(({ points }) => {
+        const areas = map(({ points }) => {
             return [
                 map.toCoordinate(new Pixel({
                     x: points.pA.x,
