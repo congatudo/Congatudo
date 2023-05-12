@@ -20,26 +20,25 @@ module.exports = class CecotecZoneCleaningCapability extends ZoneCleaningCapabil
         const offset = map.size.y;
         let areas = [];
         options.zones.forEach(zone => {
-            
-        areas.push(
-            [
-                map.toCoordinate(new Pixel({
-                    x: zone.points.pA.x,
-                    y: offset - zone.points.pA.y,
-                })),
-                map.toCoordinate(new Pixel({
-                    x: zone.points.pD.x,
-                    y: offset - zone.points.pD.y,
-                })),
-                map.toCoordinate(new Pixel({
-                    x: zone.points.pC.x,
-                    y: offset - zone.points.pC.y,
-                })),
-                map.toCoordinate(new Pixel({
-                    x: zone.points.pB.x,
-                    y: offset - zone.points.pB.y,
-                })),
-            ]);
+            areas.push(
+                [
+                    map.toCoordinate(new Pixel({
+                        x: zone.points.pA.x,
+                        y: offset - zone.points.pA.y,
+                    })),
+                    map.toCoordinate(new Pixel({
+                        x: zone.points.pD.x,
+                        y: offset - zone.points.pD.y,
+                    })),
+                    map.toCoordinate(new Pixel({
+                        x: zone.points.pC.x,
+                        y: offset - zone.points.pC.y,
+                    })),
+                    map.toCoordinate(new Pixel({
+                        x: zone.points.pB.x,
+                        y: offset - zone.points.pB.y,
+                    })),
+                ]);
         });
 
         await this.robot.robot.cleanAreas(areas);
