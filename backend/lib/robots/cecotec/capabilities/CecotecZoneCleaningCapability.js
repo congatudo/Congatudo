@@ -43,4 +43,20 @@ module.exports = class CecotecZoneCleaningCapability extends ZoneCleaningCapabil
 
         await this.robot.robot.cleanAreas(areas);
     }
+
+    /**
+     * @returns {import("../../../core/capabilities/ZoneCleaningCapability").ZoneCleaningCapabilityProperties}
+     */
+    getProperties() {
+        return {
+            zoneCount: {
+                min: 1,
+                max: 10
+            },
+            iterationCount: {
+                min: 1,
+                max: 2
+            }
+        };
+    }
 };
