@@ -12,6 +12,12 @@
     "lint_pedantic": "eslint -c .pedantic.eslintrc.json .",
     "prepare_commit": "npm run lint_fix && npm run ts-check"
   },
+  "lint-staged": {
+    "*.js": [
+      "eslint -c .automated.eslintrc.json --fix",
+      "tsc --noEmit --skipLibCheck"
+    ]
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
