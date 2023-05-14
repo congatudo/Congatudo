@@ -647,39 +647,39 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         const { restrictedZones } = map;
 
         return restrictedZones
-          .map((zone) => {
-            const points = zone.coordinates
-              .map((coordinate) => {
-                try {
-                  const { x, y } = map.toPixel(coordinate);
+            .map((zone) => {
+                const points = zone.coordinates
+                    .map((coordinate) => {
+                        try {
+                            const { x, y } = map.toPixel(coordinate);
 
-                  return [x, offset - y];
-                } catch (e) {
-                  return null;
+                            return [x, offset - y];
+                        } catch (e) {
+                            return null;
+                        }
+                    })
+                    .filter(Boolean);
+
+                if (points.length < 4) {
+                    return null;
                 }
-              })
-              .filter(Boolean);
 
-            if (points.length < 4) {
-              return null;
-            }
+                if (
+                    points[0].join() === points[2].join() &&
+                    points[1].join() === points[3].join()
+                ) {
+                    return new LineMapEntity({
+                        type: LineMapEntity.TYPE.VIRTUAL_WALL,
+                        points: [points[0], points[1]].flat(),
+                    });
+                }
 
-            if (
-              points[0].join() === points[2].join() &&
-              points[1].join() === points[3].join()
-            ) {
-              return new LineMapEntity({
-                type: LineMapEntity.TYPE.VIRTUAL_WALL,
-                points: [points[0], points[1]].flat(),
-              });
-            }
-
-            return new PolygonMapEntity({
-              type: PolygonMapEntity.TYPE.NO_GO_AREA,
-              points: [points[0], points[3], points[2], points[1]].flat(),
-            });
-          })
-          .filter(Boolean);
+                return new PolygonMapEntity({
+                    type: PolygonMapEntity.TYPE.NO_GO_AREA,
+                    points: [points[0], points[3], points[2], points[1]].flat(),
+                });
+            })
+            .filter(Boolean);
     }
 
     /**
