@@ -85,7 +85,7 @@ describe("CecotecCongaRobot", function () {
       should(() => {
         result = conga.getRestrictedZoneEntities(map);
       }).not.throw();
-      console.log(result);
+
       result.should.be.an.Array();
       result.should.have.length(0);
 
