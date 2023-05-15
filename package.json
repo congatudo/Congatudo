@@ -22,9 +22,12 @@
     "check_dependencies_for_update": "npx check-outdated --ignore-pre-releases --ignore-packages react-router-dom,typescript,eslint-plugin-jsdoc",
     "generate_changelog": "npx auto-changelog --commit-limit false --tag-pattern .+ --handlebars-setup ./util/res/auto_changelog_handlebars_helpers.js --template ./util/res/auto_changelog_template.hbs --output ./build/changelog.md",
     "generate_nightly_changelog": "npx auto-changelog --commit-limit false --tag-pattern .+ --unreleased-only --handlebars-setup ./util/res/auto_changelog_handlebars_helpers.js --template ./util/res/auto_changelog_template.hbs --output ./build/changelog_nightly.md",
-    "generate_eslintrc_flavors": "node util/generate_eslintrc_flavors.js"
+    "generate_eslintrc_flavors": "node util/generate_eslintrc_flavors.js",
+    "prepare": "husky install"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.6.3",
+    "@commitlint/config-conventional": "^17.6.3",
     "@typescript-eslint/eslint-plugin": "5.55.0",
     "@typescript-eslint/experimental-utils": "5.55.0",
     "@typescript-eslint/parser": "5.55.0",
@@ -37,6 +40,8 @@
     "eslint-plugin-regexp": "1.13.0",
     "eslint-plugin-sort-keys-fix": "1.1.2",
     "eslint-plugin-sort-requires": "git+https://npm@github.com/Hypfer/eslint-plugin-sort-requires.git#2.1.1",
+    "husky": "^7.0.0",
+    "lint-staged": "^13.2.2",
     "swagger-jsdoc": "git+https://npm@github.com/Hypfer/swagger-jsdoc.git#7.0.0-rc.6-noyaml-monorepo-fix",
     "swagger-parser": "10.0.3",
     "typescript": "4.8.4",
