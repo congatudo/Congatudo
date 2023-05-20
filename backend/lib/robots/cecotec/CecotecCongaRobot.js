@@ -67,9 +67,14 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         this.registerCapability(new capabilities.CecotecFanSpeedControlCapability({
             robot: this,
             presets: Object.values(DeviceFanSpeed.VALUE)
-                .filter(k => typeof k === "string")
-                .map(k => new SelectionPreset({ name: String(k), value: k }))
-        }));
+                .filter((k) => {
+                    return typeof k === "string";
+                })
+                .map((k) => {
+                    return new SelectionPreset({ name: String(k), value: k });
+                }),
+        })
+        );
         this.registerCapability(new capabilities.CecotecGoToLocationCapability({
             robot: this
         }));
@@ -106,7 +111,9 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         this.registerCapability(new capabilities.CecotecWaterUsageControlCapability({
             robot: this,
             presets: Object.values(DeviceWaterLevel.VALUE)
-                .map(k => new SelectionPreset({ name: String(k), value: k }))
+                .map(k => {
+                    return new SelectionPreset({ name: String(k), value: k });
+                })
         }));
         if (this.config.get("embedded") === true) {
             this.registerCapability(new capabilities.CecotecWifiConfigurationCapability({
@@ -145,7 +152,9 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
      * @type {import("@agnoc/core").Robot|undefined}
      */
     get robot() {
-        return this.server.getRobots().find((robot) => robot.isConnected);
+        return this.server.getRobots().find((robot) => {
+            return robot.isConnected;
+        });
     }
 
     onError(err) {
@@ -158,10 +167,18 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     onAddRobot(robot) {
         Logger.info(`Added new robot with id '${robot.device.id}'`);
 
-        robot.on("updateDevice", () => this.onUpdateDevice(robot));
-        robot.on("updateMap", () => this.onUpdateMap(robot));
-        robot.on("updateRobotPosition", () => this.onUpdateRobotPosition(robot));
-        robot.on("updateChargerPosition", () => this.onUpdateChargerPosition(robot));
+        robot.on("updateDevice", () => {
+            return this.onUpdateDevice(robot);
+        });
+        robot.on("updateMap", () => {
+            return this.onUpdateMap(robot);
+        });
+        robot.on("updateRobotPosition", () => {
+            return this.onUpdateRobotPosition(robot);
+        });
+        robot.on("updateChargerPosition", () => {
+            return this.onUpdateChargerPosition(robot);
+        });
     }
 
     /**
@@ -364,7 +381,9 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     getSegmentEntities(map) {
         const { rooms } = map;
 
-        return rooms.map((room) => this.getSegmentEntity(map, room)) || [];
+        return rooms.map((room) => {
+            return this.getSegmentEntity(map, room);
+        }) || [];
     }
 
     /**
@@ -454,7 +473,9 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         const entity = this.getChargerEntity(map);
 
         this.state.map.entities = [
-            ...this.state.map.entities.filter((entity) => entity.type !== PointMapEntity.TYPE.CHARGER_LOCATION),
+            ...this.state.map.entities.filter((entity) => {
+                return entity.type !== PointMapEntity.TYPE.CHARGER_LOCATION;
+            }),
             entity
         ];
 
@@ -475,7 +496,9 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
 
         this.state.map.entities = [
             ...this.state.map.entities.filter(
-                (entity) => entity.type !== PointMapEntity.TYPE.ROBOT_POSITION
+                (entity) => {
+                    return entity.type !== PointMapEntity.TYPE.ROBOT_POSITION;
+                }
             ),
             this.getRobotEntity(map),
         ];
@@ -491,6 +514,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         let flag = BatteryStateAttribute.FLAG.DISCHARGING;
 
         if (battery && state && state.value === DeviceState.VALUE.DOCKED) {
+            // @ts-ignore
             flag = battery.value === 100 ? BatteryStateAttribute.FLAG.CHARGED : BatteryStateAttribute.FLAG.CHARGING;
         }
 
@@ -589,7 +613,11 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         let result = {};
 
         if (deviceConf) {
-            deviceConf.toString().split(/\n/).map(line => line.split(/=/, 2)).map(([k, v]) => result[k] = v);
+            deviceConf.toString().split(/\n/).map(line => {
+                return line.split(/=/, 2);
+            }).map(([k, v]) => {
+                return result[k] = v;
+            });
         }
 
         Logger.trace("Software version: " + result.software_version);
