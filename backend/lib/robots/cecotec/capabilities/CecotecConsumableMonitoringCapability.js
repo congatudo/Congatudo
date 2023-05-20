@@ -59,7 +59,9 @@ module.exports = class CecotecConsumableMonitoringCapability extends ConsumableM
             }
         });
 
-        consumables.forEach(c => this.robot.state.upsertFirstMatchingAttribute(c));
+        consumables.forEach(c => {
+            return this.robot.state.upsertFirstMatchingAttribute(c);
+        });
 
         // @ts-ignore
         this.robot.emitStateUpdated();

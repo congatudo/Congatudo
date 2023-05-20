@@ -19,7 +19,9 @@ class CecotecMapSegmentRenameCapability extends MapSegmentRenameCapability {
             throw new Error("There is no map in connected robot");
         }
 
-        const room = map.rooms.find(room => room.id.toString() === String(segment.id));
+        const room = map.rooms.find(room => {
+            return room.id.toString() === String(segment.id);
+        });
 
         if (!room) {
             throw new Error(`There is no room with id '${segment.id}' in current map`);

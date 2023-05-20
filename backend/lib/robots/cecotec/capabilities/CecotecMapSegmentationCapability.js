@@ -22,8 +22,12 @@ class CecotecMapSegmentationCapability extends MapSegmentationCapability {
             throw new Error("There is no map in connected robot");
         }
 
-        const segmentIds = segments.map(segment => String(segment.id));
-        const rooms = map.rooms.filter(room => segmentIds.includes(room.id.toString()));
+        const segmentIds = segments.map(segment => {
+            return String(segment.id);
+        });
+        const rooms = map.rooms.filter(room => {
+            return segmentIds.includes(room.id.toString());
+        });
 
         await this.robot.robot.cleanRooms(rooms);
     }

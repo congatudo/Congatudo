@@ -21,8 +21,12 @@ class CecotecMapSegmentEditCapability extends MapSegmentEditCapability {
             throw new Error("There is no map in connected robot");
         }
 
-        const segmentIds = [segmentA, segmentB].map(segment => String(segment.id));
-        const rooms = map.rooms.filter(room => segmentIds.includes(room.id.toString()));
+        const segmentIds = [segmentA, segmentB].map(segment => {
+            return String(segment.id);
+        });
+        const rooms = map.rooms.filter(room => {
+            return segmentIds.includes(room.id.toString());
+        });
 
         await this.robot.robot.joinRooms(rooms);
         await this.robot.robot.updateMap();
@@ -50,7 +54,9 @@ class CecotecMapSegmentEditCapability extends MapSegmentEditCapability {
         }
 
         const offset = map.size.y;
-        const room = map.rooms.find(room => room.id.toString() === String(segment.id));
+        const room = map.rooms.find(room => {
+            return room.id.toString() === String(segment.id);
+        });
         const pointA = map.toCoordinate(new Pixel({
             x: pA.x,
             y: offset - pA.y

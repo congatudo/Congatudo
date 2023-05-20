@@ -9,7 +9,9 @@ class CecotecWaterUsageControlCapability extends WaterUsageControlCapability {
      * @returns {Array<string>}
      */
     getPresets() {
-        return this.presets.map(p => p.name);
+        return this.presets.map(p => {
+            return p.name;
+        });
     }
 
     /**
@@ -21,7 +23,9 @@ class CecotecWaterUsageControlCapability extends WaterUsageControlCapability {
             throw new Error("There is no robot connected to server");
         }
 
-        const matchedPreset = this.presets.find(p => p.name === preset);
+        const matchedPreset = this.presets.find(p => {
+            return p.name === preset;
+        });
 
         if (!matchedPreset) {
             throw new Error("Invalid Preset");

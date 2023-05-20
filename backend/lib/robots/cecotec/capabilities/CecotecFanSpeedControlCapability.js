@@ -9,7 +9,9 @@ module.exports = class CecotecFanSpeedControlCapability extends FanSpeedControlC
      * @returns {Array<string>}
      */
     getFanSpeedPresets() {
-        return this.presets.map(p => p.name);
+        return this.presets.map(p => {
+            return p.name;
+        });
     }
 
     async selectPreset(preset) {
@@ -17,7 +19,9 @@ module.exports = class CecotecFanSpeedControlCapability extends FanSpeedControlC
             throw new Error("There is no robot connected to server");
         }
 
-        const matchedPreset = this.presets.find(p => p.name === preset);
+        const matchedPreset = this.presets.find(p => {
+            return p.name === preset;
+        });
 
         if (!matchedPreset) {
             throw new Error("Invalid Preset");
