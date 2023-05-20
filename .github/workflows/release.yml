@@ -1,6 +1,6 @@
 {
   'name': 'Release',
-  'on': { 'release': { 'types': ['published'] } },
+  'on': { 'release': { 'types': ['released'] } },
   'jobs':
     {
       'publish-release':
