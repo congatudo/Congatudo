@@ -10,6 +10,9 @@ RUN apk update && \
 # Create working directory
 RUN mkdir -p /usr/src/app && chown -R node:node /usr/src/app
 
+# Fix pkg
+RUN npm install -g pkg
+
 # Configure user
 USER node:node
 
