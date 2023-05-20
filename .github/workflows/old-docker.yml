@@ -63,8 +63,8 @@ jobs:
           push: false
           load: true
           tags: |
-            ${{ env.REGISTRY }}/congatudo/old-old-congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
-            ${{ env.REGISTRY }}/congatudo/old-old-congatudo:${{ matrix.image_name }}-latest
+            ${{ env.REGISTRY }}/congatudo/old-congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+            ${{ env.REGISTRY }}/congatudo/old-congatudo:${{ matrix.image_name }}-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           build-args: |
@@ -74,7 +74,7 @@ jobs:
       - name: Test
         shell: '/bin/bash {0}'
         run: |
-          docker run --rm ${{ env.REGISTRY }}/congatudo/old-old-congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+          docker run --rm ${{ env.REGISTRY }}/congatudo/old-congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
           ret=$?
           if [ $ret -eq 1 ]; then
             exit 0
@@ -83,8 +83,8 @@ jobs:
           fi
       - name: Push
         run: |
-          docker push ${{ env.REGISTRY }}/congatudo/old-old-congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
-          docker push ${{ env.REGISTRY }}/congatudo/old-old-congatudo:${{ matrix.image_name }}-latest
+          docker push ${{ env.REGISTRY }}/congatudo/old-congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+          docker push ${{ env.REGISTRY }}/congatudo/old-congatudo:${{ matrix.image_name }}-latest
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
@@ -105,10 +105,10 @@ jobs:
       - name: Create manifest
         run: |
           # TODO: Use matrix here.
-          docker manifest create ${{ env.REGISTRY }}/congatudo/old-old-congatudo:alpine-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/old-old-congatudo:alpine-armv7-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/old-old-congatudo:alpine-aarch64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/old-old-congatudo:alpine-amd64-latest
+          docker manifest create ${{ env.REGISTRY }}/congatudo/old-congatudo:alpine-latest \
+            --amend ${{ env.REGISTRY }}/congatudo/old-congatudo:alpine-armv7-latest \
+            --amend ${{ env.REGISTRY }}/congatudo/old-congatudo:alpine-aarch64-latest \
+            --amend ${{ env.REGISTRY }}/congatudo/old-congatudo:alpine-amd64-latest
           docker manifest create ${{ env.REGISTRY }}/congatudo/old-congatudo:homeassistant-latest \
             --amend ${{ env.REGISTRY }}/congatudo/old-congatudo:homeassistant-armhf-latest \
             --amend ${{ env.REGISTRY }}/congatudo/old-congatudo:homeassistant-armv7-latest \
