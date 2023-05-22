@@ -7,7 +7,7 @@ order: 20
 # MQTT integration
 
 To make your robot talk to your MQTT broker and integrate with home automation software, such as but not limited to
-Home Assistant, openHAB and Node-RED, configure MQTT via Valetudo's web interface (Hamburger Menu → Connectivity → MQTT Connectivity).
+Home Assistant, openHAB and Node-RED, configure MQTT via Valetudo's web interface (Settings → MQTT).
 
 ## Autodiscovery
 
@@ -67,16 +67,18 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
        - [Current Statistics Area (`area`)](#currentstatisticsareaarea)
        - [Current Statistics Time (`time`)](#currentstatisticstimetime)
        - [Refresh current statistics (`refresh`)](#refreshcurrentstatisticsrefresh)
-     - [Fan speed control (`FanSpeedControlCapability`)](#fanspeedcontrolfanspeedcontrolcapability)
-       - [Fan speed (`preset`)](#fanspeedpreset)
+     - [Fan control (`FanSpeedControlCapability`)](#fancontrolfanspeedcontrolcapability)
+       - [Fan (`preset`)](#fanpreset)
      - [Go to location (`GoToLocationCapability`)](#gotolocationgotolocationcapability)
        - [Go to location (`go`)](#gotolocationgo)
      - [Locate (`LocateCapability`)](#locatelocatecapability)
        - [Locate (`locate`)](#locatelocate)
      - [Segment cleaning (`MapSegmentationCapability`)](#segmentcleaningmapsegmentationcapability)
        - [Clean segments (`clean`)](#cleansegmentsclean)
-     - [Water grade control (`WaterUsageControlCapability`)](#watergradecontrolwaterusagecontrolcapability)
-       - [Water grade (`preset`)](#watergradepreset)
+     - [Speaker volume control (`SpeakerVolumeControlCapability`)](#speakervolumecontrolspeakervolumecontrolcapability)
+       - [Speaker volume (`value`)](#speakervolumevalue)
+     - [Water control (`WaterUsageControlCapability`)](#watercontrolwaterusagecontrolcapability)
+       - [Water (`preset`)](#waterpreset)
      - [Wi-Fi configuration (`WifiConfigurationCapability`)](#wi-ficonfigurationwificonfigurationcapability)
        - [Frequency (`frequency`)](#frequencyfrequency)
        - [IP addresses (`ips`)](#ipaddressesips)
@@ -99,7 +101,8 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
        - [Battery level (`level`)](#batterylevellevel)
        - [Battery status (`status`)](#batterystatusstatus)
      - [Vacuum status (`StatusStateAttribute`)](#vacuumstatusstatusstateattribute)
-       - [Error description (`error`)](#errordescriptionerror)
+       - [Error description (`error_description`)](#errordescriptionerrordescription)
+       - [Robot Error (`error`)](#roboterrorerror)
        - [Status (`status`)](#statusstatus)
        - [Status flag (`flag`)](#statusflagflag)
 
@@ -109,7 +112,7 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
 - [AttachmentStateAttribute](#attachmentstateattachmentstateattribute)
 - [BatteryStateAttribute](#batterystatebatterystateattribute)
 - [ConsumableStateAttribute](#consumablesmonitoringconsumablemonitoringcapability)
-- [PresetSelectionStateAttribute](#watergradecontrolwaterusagecontrolcapability)
+- [PresetSelectionStateAttribute](#watercontrolwaterusagecontrolcapability)
 - [StatusStateAttribute](#vacuumstatusstatusstateattribute)
 
 
@@ -120,12 +123,13 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
 - [Current Statistics Area (`sensor.mqtt`)](#currentstatisticsareaarea)
 - [Current Statistics Time (`sensor.mqtt`)](#currentstatisticstimetime)
 - [Dust bin attachment (`binary_sensor.mqtt`)](#dustbindustbin)
-- [Error description (`sensor.mqtt`)](#errordescriptionerror)
+- [Error (`sensor.mqtt`)](#vacuumstatusstatusstateattribute)
 - [Map data (`camera.mqtt`)](#rawmapdataforhomeassistantmap-data-hass)
 - [Map segments (`sensor.mqtt`)](#mapsegmentssegments)
 - [Mop attachment (`binary_sensor.mqtt`)](#mopmop)
+- [Speaker volume (`number.mqtt`)](#speakervolumevalue)
 - [Vacuum (`vacuum.mqtt`)](#robot)
-- [Water grade (`select.mqtt`)](#watergradepreset)
+- [Water (`select.mqtt`)](#waterpreset)
 - [Water tank attachment (`binary_sensor.mqtt`)](#watertankwatertank)
 - [Wi-Fi configuration (`sensor.mqtt`)](#wi-ficonfigurationwificonfigurationcapability)
 
@@ -146,7 +150,7 @@ Home Assistant components controlled by this device:
 
 #### Auto Empty Dock Manual Trigger (`AutoEmptyDockManualTriggerCapability`) <a id="autoemptydockmanualtriggerautoemptydockmanualtriggercapability" />
 
-*Node, capability: [AutoEmptyDockManualTriggerCapability](/pages/general/capabilities-overview.html#autoemptydockmanualtriggercapability)*
+*Node, capability: [AutoEmptyDockManualTriggerCapability](/pages/usage/capabilities-overview.html#autoemptydockmanualtriggercapability)*
 
 ##### Auto Empty Dock Manual Trigger (`trigger`) <a id="autoemptydockmanualtriggertrigger" />
 
@@ -162,7 +166,7 @@ Home Assistant components controlled by this device:
 
 #### Basic control (`BasicControlCapability`) <a id="basiccontrolbasiccontrolcapability" />
 
-*Node, capability: [BasicControlCapability](/pages/general/capabilities-overview.html#basiccontrolcapability)*
+*Node, capability: [BasicControlCapability](/pages/usage/capabilities-overview.html#basiccontrolcapability)*
 
 ##### Operation (`operation`) <a id="operationoperation" />
 
@@ -178,7 +182,7 @@ Home Assistant components controlled by this device:
 
 #### Consumables monitoring (`ConsumableMonitoringCapability`) <a id="consumablesmonitoringconsumablemonitoringcapability" />
 
-*Node, capability: [ConsumableMonitoringCapability](/pages/general/capabilities-overview.html#consumablemonitoringcapability)*
+*Node, capability: [ConsumableMonitoringCapability](/pages/usage/capabilities-overview.html#consumablemonitoringcapability)*
 
 {% include alert.html type="warning" content="Some information contained in this document may not be exactly what is sent or expected by actual robots, since different vendors have different implementations. Refer to the table below.
 
@@ -241,7 +245,7 @@ Home Assistant components controlled by this property:
 
 #### Current Statistics (`CurrentStatisticsCapability`) <a id="currentstatisticscurrentstatisticscapability" />
 
-*Node, capability: [CurrentStatisticsCapability](/pages/general/capabilities-overview.html#currentstatisticscapability)*
+*Node, capability: [CurrentStatisticsCapability](/pages/usage/capabilities-overview.html#currentstatisticscapability)*
 
 ##### Current Statistics Area (`area`) <a id="currentstatisticsareaarea" />
 
@@ -295,19 +299,19 @@ Home Assistant components controlled by this property:
 
 
 
-#### Fan speed control (`FanSpeedControlCapability`) <a id="fanspeedcontrolfanspeedcontrolcapability" />
+#### Fan control (`FanSpeedControlCapability`) <a id="fancontrolfanspeedcontrolcapability" />
 
-*Node, capability: [FanSpeedControlCapability](/pages/general/capabilities-overview.html#fanspeedcontrolcapability)*
+*Node, capability: [FanSpeedControlCapability](/pages/usage/capabilities-overview.html#fanspeedcontrolcapability)*
 
 Status attributes managed by this node:
 
 - PresetSelectionStateAttribute
 
-##### Fan speed (`preset`) <a id="fanspeedpreset" />
+##### Fan (`preset`) <a id="fanpreset" />
 
 *Property, readable, settable, retained*
 
-This handle allows setting the fan speed. It accepts the preset payloads specified in `$format` or in the HAss json attributes.
+This handle allows setting the fan. It accepts the preset payloads specified in `$format` or in the HAss json attributes.
 
 - Read topic: `<TOPIC PREFIX>/<IDENTIFIER>/FanSpeedControlCapability/preset`
 - Set topic: `<TOPIC PREFIX>/<IDENTIFIER>/FanSpeedControlCapability/preset/set`
@@ -318,7 +322,7 @@ This handle allows setting the fan speed. It accepts the preset payloads specifi
 |------+--------|
 | What | Reason |
 |------|--------|
-| Enum payloads | Different robot models have different fan speed presets. Always check `$format`/`json_attributes` during startup. |
+| Enum payloads | Different robot models have different fan presets. Always check `$format`/`json_attributes` during startup. |
 |------+--------|
 
 " %}
@@ -335,7 +339,7 @@ max
 
 #### Go to location (`GoToLocationCapability`) <a id="gotolocationgotolocationcapability" />
 
-*Node, capability: [GoToLocationCapability](/pages/general/capabilities-overview.html#gotolocationcapability)*
+*Node, capability: [GoToLocationCapability](/pages/usage/capabilities-overview.html#gotolocationcapability)*
 
 ##### Go to location (`go`) <a id="gotolocationgo" />
 
@@ -366,7 +370,7 @@ Sample payload:
 
 #### Locate (`LocateCapability`) <a id="locatelocatecapability" />
 
-*Node, capability: [LocateCapability](/pages/general/capabilities-overview.html#locatecapability)*
+*Node, capability: [LocateCapability](/pages/usage/capabilities-overview.html#locatecapability)*
 
 ##### Locate (`locate`) <a id="locatelocate" />
 
@@ -382,7 +386,7 @@ Sample payload:
 
 #### Segment cleaning (`MapSegmentationCapability`) <a id="segmentcleaningmapsegmentationcapability" />
 
-*Node, capability: [MapSegmentationCapability](/pages/general/capabilities-overview.html#mapsegmentationcapability)*
+*Node, capability: [MapSegmentationCapability](/pages/usage/capabilities-overview.html#mapsegmentationcapability)*
 
 ##### Clean segments (`clean`) <a id="cleansegmentsclean" />
 
@@ -414,19 +418,49 @@ Sample payload:
 
 
 
-#### Water grade control (`WaterUsageControlCapability`) <a id="watergradecontrolwaterusagecontrolcapability" />
+#### Speaker volume control (`SpeakerVolumeControlCapability`) <a id="speakervolumecontrolspeakervolumecontrolcapability" />
 
-*Node, capability: [WaterUsageControlCapability](/pages/general/capabilities-overview.html#waterusagecontrolcapability)*
+*Node, capability: [SpeakerVolumeControlCapability](/pages/usage/capabilities-overview.html#speakervolumecontrolcapability)*
+
+**Note:** This is an optional exposed capability handle and thus will only be available via MQTT if enabled in the Valetudo configuration.
+
+##### Speaker volume (`value`) <a id="speakervolumevalue" />
+
+*Property, readable, settable, retained*
+
+This handle returns the current speaker volume
+
+- Read topic: `<TOPIC PREFIX>/<IDENTIFIER>/SpeakerVolumeControlCapability/value`
+- Set topic: `<TOPIC PREFIX>/<IDENTIFIER>/SpeakerVolumeControlCapability/value/set`
+- Data type: [integer](https://homieiot.github.io/specification/#integer) (range: 0 to 100)
+
+Sample value:
+
+```json
+80
+```
+
+Home Assistant components controlled by this property:
+
+- Speaker volume ([`number.mqtt`](https://www.home-assistant.io/integrations/number.mqtt/))
+
+
+
+
+
+#### Water control (`WaterUsageControlCapability`) <a id="watercontrolwaterusagecontrolcapability" />
+
+*Node, capability: [WaterUsageControlCapability](/pages/usage/capabilities-overview.html#waterusagecontrolcapability)*
 
 Status attributes managed by this node:
 
 - PresetSelectionStateAttribute
 
-##### Water grade (`preset`) <a id="watergradepreset" />
+##### Water (`preset`) <a id="waterpreset" />
 
 *Property, readable, settable, retained*
 
-This handle allows setting the water grade. It accepts the preset payloads specified in `$format` or in the HAss json attributes.
+This handle allows setting the water. It accepts the preset payloads specified in `$format` or in the HAss json attributes.
 
 - Read topic: `<TOPIC PREFIX>/<IDENTIFIER>/WaterUsageControlCapability/preset`
 - Set topic: `<TOPIC PREFIX>/<IDENTIFIER>/WaterUsageControlCapability/preset/set`
@@ -437,7 +471,7 @@ This handle allows setting the water grade. It accepts the preset payloads speci
 |------+--------|
 | What | Reason |
 |------|--------|
-| Enum payloads | Different robot models have different water grade presets. Always check `$format`/`json_attributes` during startup. |
+| Enum payloads | Different robot models have different water presets. Always check `$format`/`json_attributes` during startup. |
 |------+--------|
 
 " %}
@@ -450,7 +484,7 @@ min
 
 Home Assistant components controlled by this property:
 
-- Water grade ([`select.mqtt`](https://www.home-assistant.io/integrations/select.mqtt/))
+- Water ([`select.mqtt`](https://www.home-assistant.io/integrations/select.mqtt/))
 
 
 
@@ -458,7 +492,7 @@ Home Assistant components controlled by this property:
 
 #### Wi-Fi configuration (`WifiConfigurationCapability`) <a id="wi-ficonfigurationwificonfigurationcapability" />
 
-*Node, capability: [WifiConfigurationCapability](/pages/general/capabilities-overview.html#wificonfigurationcapability)*
+*Node, capability: [WifiConfigurationCapability](/pages/usage/capabilities-overview.html#wificonfigurationcapability)*
 
 Home Assistant components controlled by this node:
 
@@ -514,7 +548,7 @@ Sample value:
 Sample value:
 
 ```json
--25
+-41
 ```
 
 
@@ -538,7 +572,7 @@ Valetudo Wi-Fi
 
 #### Zone cleaning (`ZoneCleaningCapability`) <a id="zonecleaningzonecleaningcapability" />
 
-*Node, capability: [ZoneCleaningCapability](/pages/general/capabilities-overview.html#zonecleaningcapability)*
+*Node, capability: [ZoneCleaningCapability](/pages/usage/capabilities-overview.html#zonecleaningcapability)*
 
 ##### Start zoned cleaning (`start`) <a id="startzonedcleaningstart" />
 
@@ -641,7 +675,11 @@ This property contains a JSON mapping of segment IDs to segment names.
 Sample value:
 
 ```json
-{}
+{
+  "16": "Hallway",
+  "18": "Bathroom",
+  "20": "Kitchen"
+}
 ```
 
 Home Assistant components controlled by this property:
@@ -783,14 +821,38 @@ Home Assistant components controlled by this node:
 
 *Property, readable, retained*
 
-The error description will only be populated when the robot reports an error. Errors in Valetudo not reported by the robot won't be sent here.
+This property contains the current ValetudoRobotError (if any)
 
 - Read topic: `<TOPIC PREFIX>/<IDENTIFIER>/StatusStateAttribute/error`
+- Data type: [string](https://homieiot.github.io/specification/#string) (JSON)
+
+Sample value:
+
+```json
+{
+  "severity": {
+    "kind": "none",
+    "level": "none"
+  },
+  "subsystem": "none",
+  "message": ""
+}
+```
+
+
+
+##### Error description (`error_description`) <a id="errordescriptionerrordescription" />
+
+*Property, readable, retained*
+
+- Read topic: `<TOPIC PREFIX>/<IDENTIFIER>/StatusStateAttribute/error_description`
 - Data type: [string](https://homieiot.github.io/specification/#string)
 
-Home Assistant components controlled by this property:
+Sample value:
 
-- Error description ([`sensor.mqtt`](https://www.home-assistant.io/integrations/sensor.mqtt/))
+```
+No error
+```
 
 
 

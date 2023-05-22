@@ -14,7 +14,7 @@ function generateCapabilityLink(capability) {
   return (
     "[" +
     capability +
-    "](https://valetudo.cloud/pages/general/capabilities-overview.html#" +
+    "](https://congatudo.cloud/pages/general/capabilities-overview.html#" +
     capability +
     ")"
   );
@@ -92,16 +92,6 @@ const VALETUDO_ARCHITECTURES = {
 };
 
 const ModelDescriptions = {
-    "Dreame": {
-        "1C": {
-            valetudoSupport: VALETUDO_SUPPORT_GRADES.OKAY,
-            developerSupport: DEVELOPER_SUPPORT_GRADES.BEST_EFFORT,
-            testedWorking: true,
-            recommended: BUY_GRADES.OKAY_ISH,
-            comment: "vSLAM and a small battery, though there are persistent maps and everything seems to work",
-            architecture: VALETUDO_ARCHITECTURES.ARM,
-        }
-    },
     "Cecotec": {
         "Conga": {
               valetudoSupport: VALETUDO_SUPPORT_GRADES.GOOD,
@@ -122,13 +112,13 @@ function getModelDescription(vendor, model) {
   }
 
   return [
-    `#### Valetudo Support\n\n${description.valetudoSupport}\n\n`,
+    `#### Congatudo Support\n\n${description.valetudoSupport}\n\n`,
     `#### Developer Support\n\n${description.developerSupport}\n\n`,
     "#### Tested Working\n\n" +
       (description.testedWorking ? "✔" : "❌") +
       "\n\n",
     `#### Recommended\n\n${description.recommended}\n\n`,
-    `#### Recommended Valetudo binary to use\n\n${description.architecture}\n\n`,
+    `#### Recommended Congatudo binary to use\n\n${description.architecture}\n\n`,
     `#### Comment\n\n${description.comment}\n\n`,
   ];
 }
