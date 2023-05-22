@@ -46,5 +46,8 @@
     "swagger-parser": "10.0.3",
     "typescript": "4.8.4",
     "upx": "git+https://npm@github.com/Hypfer/upx#1.0.11"
+  },
+  "dependencies": {
+    "pkg": "^5.8.1"
   }
 }
