@@ -97,8 +97,6 @@ const CarpetModeControlCapabilitySwitchListMenuItem = () => {
     );
 };
 
-<<<<<<< HEAD
-=======
 const CarpetSensorModeControlCapabilitySelectListMenuItem = () => {
     const SORT_ORDER = {
         "off": 3,
@@ -180,7 +178,6 @@ const CarpetSensorModeControlCapabilitySelectListMenuItem = () => {
     );
 };
 
->>>>>>> 5a364efd (refactor: Bump all dependencies to latest versions + minor code cleanup)
 const AutoEmptyDockAutoEmptyControlCapabilitySwitchListMenuItem = () => {
     const {
         data: data,
@@ -207,8 +204,6 @@ const AutoEmptyDockAutoEmptyControlCapabilitySwitchListMenuItem = () => {
     );
 };
 
-<<<<<<< HEAD
-=======
 const ObstacleAvoidanceControlCapabilitySwitchListMenuItem = () => {
     const {
         data: data,
@@ -287,7 +282,6 @@ const CollisionAvoidantNavigationControlCapabilitySwitchListMenuItem = () => {
     );
 };
 
->>>>>>> 5a364efd (refactor: Bump all dependencies to latest versions + minor code cleanup)
 
 const RobotOptions = (): React.ReactElement => {
     const [
@@ -417,8 +411,6 @@ const RobotOptions = (): React.ReactElement => {
         quirksCapabilitySupported,
     ]);
 
-<<<<<<< HEAD
-=======
     const listItems = React.useMemo(() => {
         const items: Array<React.ReactElement> = [];
 
@@ -454,7 +446,6 @@ const RobotOptions = (): React.ReactElement => {
         submenuListItems
     ]);
 
->>>>>>> 5a364efd (refactor: Bump all dependencies to latest versions + minor code cleanup)
     return (
         <PaperContainer>
             <ListMenu

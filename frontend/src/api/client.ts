@@ -755,6 +755,18 @@ export const sendCarpetModeEnable = async (enable: boolean): Promise<void> => {
     await sendToggleMutation(Capability.CarpetModeControl, enable);
 };
 
+export const fetchObstacleAvoidanceControlState = async (): Promise<SimpleToggleState> => {
+    return valetudoAPI
+        .get<SimpleToggleState>(`/robot/capabilities/${Capability.ObstacleAvoidanceControl}`)
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export const sendObstacleAvoidanceControlState = async (enable: boolean): Promise<void> => {
+    await sendToggleMutation(Capability.ObstacleAvoidanceControl, enable);
+};
+
 export const fetchAutoEmptyDockAutoEmptyControlState = async (): Promise<SimpleToggleState> => {
     return valetudoAPI
         .get<SimpleToggleState>(`/robot/capabilities/${Capability.AutoEmptyDockAutoEmptyControl}`)
