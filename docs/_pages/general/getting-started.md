@@ -1,7 +1,7 @@
 ---
 title: Getting Started
 category: General
-order: 8
+order: 1
 ---
 
 # Getting Started
