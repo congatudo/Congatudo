@@ -7,6 +7,7 @@ import {
 import {ActionsContainer} from "./Styled";
 import SegmentLabelMapStructure from "./structures/map_structures/SegmentLabelMapStructure";
 import SegmentActions from "./actions/edit_map_actions/SegmentActions";
+import ZoneActions from "./actions/edit_map_actions/ZoneActions";
 import CuttingLineClientStructure from "./structures/client_structures/CuttingLineClientStructure";
 import VirtualWallClientStructure from "./structures/client_structures/VirtualWallClientStructure";
 import VirtualRestrictionActions from "./actions/edit_map_actions/VirtualRestrictionActions";
@@ -16,7 +17,7 @@ import HelpDialog from "../components/HelpDialog";
 import HelpAction from "./actions/edit_map_actions/HelpAction";
 import {ProviderContext} from "notistack";
 
-export type mode = "segments" | "virtual_restrictions";
+export type mode = "segments" | "zones" | "virtual_restrictions";
 
 interface EditMapProps extends MapProps {
     supportedCapabilities: {
@@ -312,6 +313,48 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                         this.props.mode === "segments" &&
 
                         <SegmentActions
+                            robotStatus={this.props.robotStatus}
+                            selectedSegmentIds={this.state.selectedSegmentIds}
+                            segmentNames={this.state.segmentNames}
+                            cuttingLine={this.state.cuttingLine}
+                            convertPixelCoordinatesToCMSpace={(coordinates => {
+                                return this.structureManager.convertPixelCoordinatesToCMSpace(coordinates);
+                            })}
+                            supportedCapabilities={{
+                                [Capability.MapSegmentEdit]: this.props.supportedCapabilities[Capability.MapSegmentEdit],
+                                [Capability.MapSegmentRename]: this.props.supportedCapabilities[Capability.MapSegmentRename]
+                            }}
+                            onAddCuttingLine={() => {
+                                const currentCenter = this.getCurrentViewportCenterCoordinatesInPixelSpace();
+
+                                const p0 = {
+                                    x: currentCenter.x -15,
+                                    y: currentCenter.y -15
+                                };
+                                const p1 = {
+                                    x: currentCenter.x +15,
+                                    y: currentCenter.y +15
+                                };
+
+                                this.structureManager.addClientStructure(new CuttingLineClientStructure(
+                                    p0.x, p0.y,
+                                    p1.x, p1.y,
+                                    true
+                                ));
+
+                                this.updateState();
+
+                                this.draw();
+                            }}
+                            onClear={() => {
+                                this.clearSegmentStructures();
+                            }}
+                        />
+                    }
+                    {
+                        this.props.mode === "zones" &&
+
+                        <ZoneActions
                             robotStatus={this.props.robotStatus}
                             selectedSegmentIds={this.state.selectedSegmentIds}
                             segmentNames={this.state.segmentNames}

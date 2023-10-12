@@ -13,6 +13,7 @@ import {
     Layers as MappingPassIcon,
     LayersClear as MapResetIcon,
     Dashboard as SegmentEditIcon,
+    GridView as ZoneEditIcon,
     Dangerous as VirtualRestrictionsIcon,
     Crop as CleanupCoverageIcon,
     Download as ValetudoMapDownloadIcon,
@@ -224,6 +225,16 @@ const MapManagement = (): JSX.Element => {
                 />
             );
         }
+
+        items.push(
+            <LinkListMenuItem
+                key="segmentManagement"
+                url="/options/map_management/zones"
+                primaryLabel="Zone Management"
+                secondaryLabel="Modify the maps zones"
+                icon={<ZoneEditIcon/>}
+            />
+        );
 
         if (combinedVirtualRestrictionsCapabilitySupported) {
             items.push(

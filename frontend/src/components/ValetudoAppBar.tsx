@@ -150,6 +150,12 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
     },
     {
         kind: "MenuSubEntry",
+        routeMatch: "/options/map_management/zones",
+        title: "Zone Management",
+        parentRoute: "/options/map_management"
+    },
+    {
+        kind: "MenuSubEntry",
         routeMatch: "/options/map_management/virtual_restrictions",
         title: "Virtual Restriction Management",
         parentRoute: "/options/map_management"

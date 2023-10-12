@@ -1,9 +1,9 @@
 title: Valetudo
 description: >-
-  Open source cloud replacement for vacuum robots enabling local-only operation
+  Open source cloud replacement for Conga vacuum robots enabling local-only operation
 baseurl: ""
-url: https://valetudo.cloud
-github_username: Hypfer
+url: https://congatudo.cloud
+github_username: congatudo
 
 plugins:
   - jekyll-seo-tag

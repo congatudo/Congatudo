@@ -1,44 +1,26 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/Hypfer/Valetudo/master/assets/logo/valetudo_logo_with_name.svg" width="800" alt="valetudo">
+    <img src="https://raw.githubusercontent.com/congatudo/Congatudo/master/frontend/src/assets/icons/congatudo_logo_with_name.svg" width="800" alt="congatudo">
     <p align="center"><h2>Free your vacuum from the cloud</h2></p>
 </div>
 
-Valetudo is the de-facto-standard open-source software solution for cloud-free vacuum robots empowering thousands of users.<br/>
-Since it was started in 2018, it has matured to a reliable fire-and-forget solution that just works.
+Congatudo is a cloud replacement for vacuum robots enabling local-only operation.<br/>
+It is not a custom firmware. That means that it cannot change anything about how the robot operates.
 
-Valetudo is made, managed, maintained and more by me,
-<a href="https://hypfer.de" rel="noopener" target="_blank">Sören Beye</a>, with occasional contributions by
-<a href="https://github.com/Hypfer/Valetudo/graphs/contributors" rel="noopener" target="_blank">these awesome people</a>.<br/>
-It would not exist without the ongoing work of <a href="https://dontvacuum.me/" rel="noopener" target="_blank">Dennis Giese</a>,
-who is constantly providing us with new ways of liberating and gaining actual ownership of our robots.
-
-As there is no telemetry built-in and no commercial interest to change that, I can't tell you how many users exactly are there,
-however judging by download counts and support group members, I'd guesstimate that there are a few thousand.
-
-If you want to learn more about why someone would want to use something like Valetudo, check out the [Why Valetudo?](https://valetudo.cloud/pages/general/why-valetudo.html) page.
-
-If you want to learn more about why someone would **not** want to use something like Valetudo, check out the [Why not Valetudo?](https://valetudo.cloud/pages/general/why-not-valetudo.html) page.
-
-To choose the right robot to buy, head over to [Buying supported robots](https://valetudo.cloud/pages/general/buying-supported-robots.html).
-
-If you want to learn more about why I'm building Valetudo, the answer is actually pretty simple:<br/>
-When I was looking for a vacuum robot for myself, I didn't find anything that matched what I was looking for.<br/>
-Thus, in a brief moment of hubris, I thought to myself: "How hard can it be?".<br/>
-Now, four years later, we're here and I'm quite happy with how it turned out.
-
-Valetudo is licensed under the Apache-2.0 open-source license, because you need to be able to know what your smart
-devices are doing and also alter (some parts of) it without being dependent on some vendor and/or third party.
-The only way of truly achieving that is by being able to see and modify the code.
-
-The Apache-2.0 license is a very permissive license and a lot of work is being shared for free here, so I trust people to not take
-advantage of that and sell Valetudo; especially not as their own work.<br/>
-Please don't disappoint me. Thank you.
+Congatudo provides control over your vacuum robot via a responsive webinterface that works on all of your devices. It can be used on phones, tablets as well as your desktop computer.
 
 
-These are the Valetudo Docs.
-Simply use the navigation menu on the left to find what you're looking for.
+Congatudo is made, managed, maintained and more by me,
+<a href="https://elraro.eu" rel="noopener" target="_blank">elraro</a>, with occasional contributions by
+<a href="https://github.com/congatudo/congatudo/graphs/contributors" rel="noopener" target="_blank">these awesome people</a>.<br/>
+It would not exist without the ongoing work of <a href="https://hypfer.de/" rel="noopener" target="_blank">Sören Beye.</a>.
 
-The [getting started guide](https://valetudo.cloud/pages/general/getting-started.html) is a good place to start.
+To choose the right robot to buy, head over to [Buying supported robots](https://congatudo.cloud/pages/general/buying-supported-robots.html).
+
+Congatudo is licensed under <a href="https://github.com/congatudo/Congatudo/blob/master/LICENSE" rel="noopener" target="_blank">the Apache-2.0 open-source license</a>.
+
+Based on Valetudo, which is licensed under <a href="https://github.com/Hypfer/Valetudo/blob/master/LICENSE" rel="noopener" target="_blank">the Apache-2.0 open-source license</a>.
+
+The [getting started guide](https://congatudo.cloud/pages/general/getting-started.html) is a good place to start.
 
 Also, make sure to check out the companion apps section.
 
@@ -63,9 +45,4 @@ Also, make sure to check out the companion apps section.
 
 
 ### Join the Discussion
-* [Valetudo Telegram group](https://t.me/+uGuDHt0dNCVmODli)
-* \#valetudo on irc.libera.chat
-
-### Expectation Management
-This project is the hobby of some random guy on the internet who really does not care about market share.<br/>
-It does what I want it to do, so I'm happy with it.
+* [Valetudo Telegram group](https://t.me/congatudo)

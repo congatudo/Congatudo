@@ -7,6 +7,7 @@ import {
 import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import EditMap, { mode } from "./EditMap";
 import {SegmentEditHelp} from "./res/SegmentEditHelp";
+import {ZoneEditHelp} from "./res/ZoneEditHelp";
 import {VirtualRestrictionEditHelp} from "./res/VirtualRestrictionEditHelp";
 import {useSnackbar} from "notistack";
 
@@ -53,6 +54,8 @@ const EditMapPage = (props: {
 
     if (props.mode === "segments") {
         helpText = SegmentEditHelp;
+    } else if (props.mode === "zones") {
+        helpText = ZoneEditHelp;
     } else if (props.mode === "virtual_restrictions") {
         helpText = VirtualRestrictionEditHelp;
     }
