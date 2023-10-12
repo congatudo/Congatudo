@@ -6,7 +6,7 @@ order: 43
 
 # MQTT
 
-Valetudo supports publishing status data and receiving commands from MQTT.
+Congatudo supports publishing status data and receiving commands from MQTT.
 
 The following autodiscovery protocols are supported:
 
@@ -55,11 +55,11 @@ Specifically:
 - `NodeMqttHandle` ⇒ Homie node
 - `PropertyMqttHandle` ⇒ Homie property
 
-Two more classes are present that further extend from these and bridge the handles to Valetudo's internals:
+Two more classes are present that further extend from these and bridge the handles to Congatudo's internals:
 
 - `RobotStateNodeMqttHandle` maps to `StatusStateAttribute`
 - `CapabilityMqttHandle` maps to `Capability`
-- (`RobotMqttHandle` maps to `ValetudoRobot`)
+- (`RobotMqttHandle` maps to `CecotecCongaRobot`)
 
 #### Handle tree and data publication
 
@@ -137,7 +137,7 @@ not map to some capabilities' behavior.
 In some instances it will try to adapt to an existing MQTT structure and allow you to provide topics and payloads for
 accomplishing different tasks. In some other cases it will try to impose its own structure.
 
-This makes it difficult to share data with the previously defined structure. However, Valetudo provides enough
+This makes it difficult to share data with the previously defined structure. However, Congatudo provides enough
 abstraction to make this easier: `HassComponent`.
 
 Home Assistant components may subscribe to topics. However, this should be avoided when possible: most features can and

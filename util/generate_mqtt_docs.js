@@ -38,7 +38,7 @@ order: 20
 # MQTT integration
 
 To make your robot talk to your MQTT broker and integrate with home automation software, such as but not limited to
-Home Assistant, openHAB and Node-RED, configure MQTT via Valetudo's web interface (Settings → MQTT).
+Home Assistant, openHAB and Node-RED, configure MQTT via Congatudo's web interface (Settings → MQTT).
 
 ## Autodiscovery
 
@@ -50,7 +50,7 @@ platform:
 - [Node-RED](./node-red)
 
 Other home automation software that follows the [Homie convention](https://homieiot.github.io/) should also be able to
-automatically discover your Valetudo instance.
+automatically discover your Congatudo instance.
 
 <div style="text-align: center;">
     <a href="https://homieiot.github.io" rel="noopener" target="_blank">
@@ -374,7 +374,7 @@ class FakeMqttController extends MqttController {
         markdown += `*${attributes.join(", ")}*` + "\n\n";
         
         if (handle.constructor.OPTIONAL === true) {
-            markdown += `**Note:** This is an optional exposed capability handle and thus will only be available via MQTT if enabled in the Valetudo configuration.\n\n`;
+            markdown += `**Note:** This is an optional exposed capability handle and thus will only be available via MQTT if enabled in the Congatudo configuration.\n\n`;
         }
 
         if (handle.helpText) {
@@ -672,7 +672,7 @@ class FakeMqttController extends MqttController {
                 }
             },
             "identity": {
-                "friendlyName": "Valetudo Robot",
+                "friendlyName": "Congatudo Robot",
                 "identifier": "<IDENTIFIER>"
             },
             "interfaces": {
