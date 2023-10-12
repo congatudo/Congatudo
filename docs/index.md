@@ -27,21 +27,22 @@ Also, make sure to check out the companion apps section.
 ### Screenshots
 
 ### Phone/Mobile
-![image](https://user-images.githubusercontent.com/974410/143459816-0a5fb9e5-d690-483e-99b0-84c76ef11eaf.png)
-![image](https://user-images.githubusercontent.com/974410/143459878-184c7336-002c-4e04-a706-215499338fce.png)
+![m_1](https://github.com/congatudo/Congatudo/assets/1223299/8c1b7d92-5e0a-4590-970c-0f179acdfec8)
+![m_2](https://github.com/congatudo/Congatudo/assets/1223299/6a85a970-4aa4-4d62-b8cc-dff1e6f9acb8)
 
-![image](https://user-images.githubusercontent.com/974410/152567792-73e4ba52-f39b-44fd-a0ae-18a5c4115e7f.png)
-![image](https://user-images.githubusercontent.com/974410/152567884-b4c06af8-3bfe-4c12-976e-2e424f86df56.png)
+![m_3](https://github.com/congatudo/Congatudo/assets/1223299/630b1803-4ad1-445d-9bf2-c2f348ff642b)
+![m_4](https://github.com/congatudo/Congatudo/assets/1223299/f360be68-8eb8-402b-8761-257a192218f6)
+
 
 ### Tablet/Desktop
 
-![image](https://user-images.githubusercontent.com/974410/152569273-23c4ee7e-310b-40f7-8762-eed661547dff.png)
+![congatudo_1](https://github.com/congatudo/Congatudo/assets/1223299/cf2db089-80fe-4c2c-b74e-e9db7b27f451)
 
-![image](https://user-images.githubusercontent.com/974410/152568144-4b237999-4373-44e3-9b29-b6498d7db81e.png)
+![congatudo_2](https://github.com/congatudo/Congatudo/assets/1223299/e99c4090-b6b1-41c9-ad01-1cbe3d51d3af)
 
-![image](https://user-images.githubusercontent.com/974410/152568471-c111328b-b3d5-4ea8-9a1f-21bb5ae987ca.png)
+![congatudo_3](https://github.com/congatudo/Congatudo/assets/1223299/e9614a2c-ca18-4bb1-8110-dc2479043580)
 
-![image](https://user-images.githubusercontent.com/974410/138562111-3cbfe03c-7a19-4e57-9bfb-6b872239f432.png)
+![congatudo_4](https://github.com/congatudo/Congatudo/assets/1223299/d1cdb388-6751-4c11-9ebc-209019232afc)
 
 
 ### Join the Discussion
