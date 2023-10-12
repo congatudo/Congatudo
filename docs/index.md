@@ -46,4 +46,4 @@ Also, make sure to check out the companion apps section.
 
 
 ### Join the Discussion
-* [Valetudo Telegram group](https://t.me/congatudo)
+* [Congatudo Telegram group](https://t.me/congatudo)

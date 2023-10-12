@@ -14,7 +14,7 @@ Your robot will probably have multiple but not all of these.
 
 ## BasicControlCapability <a id="BasicControlCapability"></a>
 
-Basic robot controls. This should be something that all supported ValetudoRobots implement.
+Basic robot controls. This should be something that all supported CecotecCongaRobot implement.
 
 Its methods are:
 
@@ -22,10 +22,6 @@ Its methods are:
 - pause
 - stop
 - home
-
-
-Unfortunately, not all vendors support "stop".
-If that's not the case, stop will perform a pause.
 
 ## CarpetModeControlCapability <a id="CarpetModeControlCapability"></a>
 
@@ -42,7 +38,6 @@ This capability enables you to view and reset the status of the consumables of y
 ## DoNotDisturbCapability <a id="DoNotDisturbCapability"></a>
 
 This capability enables you to set a DND timespan.
-The exact behaviour is dependent on your vendor.
 
 One usual behaviour is that the robot won't continue a cleanup that has been interrupted due to an empty battery until
 DND is over. On some robots it also dims the LEDs during the DND phase.
