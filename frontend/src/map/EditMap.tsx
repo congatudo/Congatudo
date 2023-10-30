@@ -16,6 +16,7 @@ import NoMopAreaClientStructure from "./structures/client_structures/NoMopAreaCl
 import HelpDialog from "../components/HelpDialog";
 import HelpAction from "./actions/edit_map_actions/HelpAction";
 import {ProviderContext} from "notistack";
+import ZoneClientStructure from "./structures/client_structures/ZoneClientStructure";
 
 export type mode = "segments" | "zones" | "virtual_restrictions";
 
@@ -34,6 +35,8 @@ interface EditMapProps extends MapProps {
 
 interface EditMapState extends MapState {
     segmentNames: Record<string, string>,
+    zoneNames: Record<string, string>,
+    zones: Array<ZoneClientStructure>,
     cuttingLine: CuttingLineClientStructure | undefined,
 
     virtualWalls: Array<VirtualWallClientStructure>,
@@ -51,7 +54,10 @@ class EditMap extends Map<EditMapProps, EditMapState> {
 
         this.state = {
             selectedSegmentIds: [],
+            selectedZoneIds: [],
             segmentNames: {},
+            zoneNames: {},
+            zones: [],
             cuttingLine: undefined,
 
             virtualWalls: [],
@@ -356,13 +362,14 @@ class EditMap extends Map<EditMapProps, EditMapState> {
 
                         <ZoneActions
                             robotStatus={this.props.robotStatus}
-                            selectedSegmentIds={this.state.selectedSegmentIds}
-                            segmentNames={this.state.segmentNames}
-                            cuttingLine={this.state.cuttingLine}
+                            selectedZoneIds={this.state.selectedZoneIds}
+                            zoneNames={this.state.zoneNames}
+                            zones={this.state.zones}
+                            //cuttingLine={this.state.cuttingLine}
                             convertPixelCoordinatesToCMSpace={(coordinates => {
                                 return this.structureManager.convertPixelCoordinatesToCMSpace(coordinates);
                             })}
-                            supportedCapabilities={{
+                            /*supportedCapabilities={{
                                 [Capability.MapSegmentEdit]: this.props.supportedCapabilities[Capability.MapSegmentEdit],
                                 [Capability.MapSegmentRename]: this.props.supportedCapabilities[Capability.MapSegmentRename]
                             }}
@@ -387,9 +394,13 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                                 this.updateState();
 
                                 this.draw();
-                            }}
+                            }} */
                             onClear={() => {
-                                this.clearSegmentStructures();
+                                // TODO
+                                // this.clearSegmentStructures();
+                            }}
+                            onAdd={() => {
+                                // TODO
                             }}
                         />
                     }

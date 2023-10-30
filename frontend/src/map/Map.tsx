@@ -26,7 +26,8 @@ export interface MapProps {
 }
 
 export interface MapState {
-    selectedSegmentIds: Array<string>
+    selectedSegmentIds: Array<string>;
+    selectedZoneIds: Array<string>;
 }
 
 export const usePendingMapAction = create<{
@@ -85,7 +86,8 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
         this.mapLayerManager = new MapLayerManager();
 
         this.state = {
-            selectedSegmentIds: [] as Array<string>
+            selectedSegmentIds: [] as Array<string>,
+            selectedZoneIds: [] as Array<string>
         } as Readonly<S & MapState>;
 
 

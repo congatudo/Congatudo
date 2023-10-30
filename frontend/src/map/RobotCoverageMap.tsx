@@ -20,6 +20,7 @@ class RobotCoverageMap extends Map<CleanupCoverageMapProps, CleanupCoverageMapSt
 
         this.state = {
             selectedSegmentIds: [],
+            selectedZoneIds: [],
             helpDialogOpen: false
         };
     }

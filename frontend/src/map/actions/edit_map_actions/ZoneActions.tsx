@@ -1,6 +1,9 @@
 import {
     Capability,
     StatusState,
+    useCleanZonesMutation,
+    useZonePropertiesQuery,
+    useRobotStatusQuery
 } from "../../../api";
 import React from "react";
 import {Box, Button, CircularProgress, Container, Grid, Typography} from "@mui/material";
@@ -14,6 +17,9 @@ import {IterationsIcon} from "../../../assets/icon_components/IterationsIcon";
 interface ZoneActionsProperties {
     robotStatus: StatusState,
     zones: ZoneClientStructure[];
+
+    selectedZoneIds: string[];
+    zoneNames: Record<string, string>;
 
     convertPixelCoordinatesToCMSpace(coordinates: PointCoordinates) : PointCoordinates
 

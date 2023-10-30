@@ -62,6 +62,7 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
         this.state = {
             mode: this.supportedModes[modeIdxToUse] ?? "none",
             selectedSegmentIds: [],
+            selectedZoneIds: [],
             zones: [],
             goToTarget: undefined
         };
