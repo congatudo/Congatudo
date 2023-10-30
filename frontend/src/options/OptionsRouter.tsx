@@ -52,11 +52,11 @@ const OptionsRouter = (): JSX.Element => {
                 </Route>
             }
 
-                <Route exact path={path + "/map_management/zones"}>
-                    <EditMapPage
-                        mode={"zones"}
-                    />
-                </Route>
+            <Route exact path={path + "/map_management/zones"}>
+                <EditMapPage
+                    mode={"zones"}
+                />
+            </Route>
 
             {
                 combinedVirtualRestrictionsCapabilitySupported &&
