@@ -17,6 +17,7 @@ import HelpDialog from "../components/HelpDialog";
 import HelpAction from "./actions/edit_map_actions/HelpAction";
 import {ProviderContext} from "notistack";
 import ZoneClientStructure from "./structures/client_structures/ZoneClientStructure";
+import React from "react";
 
 export type mode = "segments" | "zones" | "virtual_restrictions";
 
@@ -291,7 +292,7 @@ class EditMap extends Map<EditMapProps, EditMapState> {
         }
     }
 
-    render(): JSX.Element {
+    render(): React.ReactElement {
         return (
             <MapContainer style={{overflow: "hidden"}}>
                 <canvas

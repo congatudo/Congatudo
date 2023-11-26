@@ -25,10 +25,10 @@ import {LinkListMenuItem} from "../components/list_menu/LinkListMenuItem";
 import PaperContainer from "../components/PaperContainer";
 import { ButtonListMenuItem } from "../components/list_menu/ButtonListMenuItem";
 
-const LocateButtonListMenuItem = (): JSX.Element => {
+const LocateButtonListMenuItem = (): React.ReactElement => {
     const {
         mutate: locate,
-        isLoading: locateIsExecuting
+        isPending: locateIsExecuting
     } = useLocateMutation();
 
     return (
@@ -52,7 +52,7 @@ const KeyLockCapabilitySwitchListMenuItem = () => {
         isError: isError,
     } = useKeyLockStateQuery();
 
-    const {mutate: mutate, isLoading: isChanging} = useKeyLockStateMutation();
+    const {mutate: mutate, isPending: isChanging} = useKeyLockStateMutation();
     const loading = isFetching || isChanging;
     const disabled = loading || isChanging || isError;
 
@@ -78,7 +78,7 @@ const CarpetModeControlCapabilitySwitchListMenuItem = () => {
         isError: isError,
     } = useCarpetModeStateQuery();
 
-    const {mutate: mutate, isLoading: isChanging} = useCarpetModeStateMutation();
+    const {mutate: mutate, isPending: isChanging} = useCarpetModeStateMutation();
     const loading = isFetching || isChanging;
     const disabled = loading || isChanging || isError;
 
@@ -97,6 +97,90 @@ const CarpetModeControlCapabilitySwitchListMenuItem = () => {
     );
 };
 
+<<<<<<< HEAD
+=======
+const CarpetSensorModeControlCapabilitySelectListMenuItem = () => {
+    const SORT_ORDER = {
+        "off": 3,
+        "avoid": 2,
+        "lift": 1
+    };
+
+    const {
+        data: carpetSensorModeProperties,
+        isPending: carpetSensorModePropertiesPending,
+        isError: carpetSensorModePropertiesError
+    } = useCarpetSensorModePropertiesQuery();
+
+    const options: Array<SelectListMenuItemOption> = (
+        carpetSensorModeProperties?.supportedModes ?? []
+    ).sort((a, b) => {
+        const aMapped = SORT_ORDER[a] ?? 10;
+        const bMapped = SORT_ORDER[b] ?? 10;
+
+        if (aMapped < bMapped) {
+            return -1;
+        } else if (bMapped < aMapped) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }).map((val: CarpetSensorMode) => {
+        let label;
+
+        switch (val) {
+            case "off":
+                label = "None";
+                break;
+            case "avoid":
+                label = "Avoid Carpet";
+                break;
+            case "lift":
+                label = "Lift Mop";
+                break;
+        }
+
+        return {
+            value: val,
+            label: label
+        };
+    });
+
+
+    const {
+        data: data,
+        isPending: isPending,
+        isFetching: isFetching,
+        isError: isError,
+    } = useCarpetSensorModeQuery();
+
+    const {mutate: mutate, isPending: isChanging} = useCarpetSensorModeMutation();
+    const loading = isFetching || isChanging;
+    const disabled = loading || isChanging || isError;
+
+    const currentValue = options.find(mode => {
+        return mode.value === data;
+    }) ?? {value: "", label: ""};
+
+
+    return (
+        <SelectListMenuItem
+            options={options}
+            currentValue={currentValue}
+            setValue={(e) => {
+                mutate(e.value as CarpetSensorMode);
+            }}
+            disabled={disabled}
+            loadingOptions={carpetSensorModePropertiesPending || isPending}
+            loadError={carpetSensorModePropertiesError}
+            primaryLabel="Carpet Sensor"
+            secondaryLabel="Select what action the robot should take if it detects carpet while mopping."
+            icon={<CarpetSensorModeIcon/>}
+        />
+    );
+};
+
+>>>>>>> 5a364efd (refactor: Bump all dependencies to latest versions + minor code cleanup)
 const AutoEmptyDockAutoEmptyControlCapabilitySwitchListMenuItem = () => {
     const {
         data: data,
@@ -104,7 +188,7 @@ const AutoEmptyDockAutoEmptyControlCapabilitySwitchListMenuItem = () => {
         isError: isError,
     } = useAutoEmptyDockAutoEmptyControlQuery();
 
-    const {mutate: mutate, isLoading: isChanging} = useAutoEmptyDockAutoEmptyControlMutation();
+    const {mutate: mutate, isPending: isChanging} = useAutoEmptyDockAutoEmptyControlMutation();
     const loading = isFetching || isChanging;
     const disabled = loading || isChanging || isError;
 
@@ -123,8 +207,89 @@ const AutoEmptyDockAutoEmptyControlCapabilitySwitchListMenuItem = () => {
     );
 };
 
+<<<<<<< HEAD
+=======
+const ObstacleAvoidanceControlCapabilitySwitchListMenuItem = () => {
+    const {
+        data: data,
+        isFetching: isFetching,
+        isError: isError,
+    } = useObstacleAvoidanceControlQuery();
 
-const RobotOptions = (): JSX.Element => {
+    const {mutate: mutate, isPending: isChanging} = useObstacleAvoidanceControlMutation();
+    const loading = isFetching || isChanging;
+    const disabled = loading || isChanging || isError;
+
+    return (
+        <ToggleSwitchListMenuItem
+            value={data?.enabled ?? false}
+            setValue={(value) => {
+                mutate(value);
+            }}
+            disabled={disabled}
+            loadError={isError}
+            primaryLabel={"Obstacle Avoidance"}
+            secondaryLabel={"Avoid obstacles using sensors such as lasers or cameras. May suffer from false positives."}
+            icon={<ObstacleAvoidanceControlIcon/>}
+        />
+    );
+};
+
+const PetObstacleAvoidanceControlCapabilitySwitchListMenuItem = () => {
+    const {
+        data: data,
+        isFetching: isFetching,
+        isError: isError,
+    } = usePetObstacleAvoidanceControlQuery();
+
+    const {mutate: mutate, isPending: isChanging} = usePetObstacleAvoidanceControlMutation();
+    const loading = isFetching || isChanging;
+    const disabled = loading || isChanging || isError;
+
+    return (
+        <ToggleSwitchListMenuItem
+            value={data?.enabled ?? false}
+            setValue={(value) => {
+                mutate(value);
+            }}
+            disabled={disabled}
+            loadError={isError}
+            primaryLabel={"Pet Obstacle Avoidance"}
+            secondaryLabel={"Fine-tune obstacle avoidance to avoid obstacles left by pets. Will increase the general false positive rate."}
+            icon={<PetObstacleAvoidanceControlIcon/>}
+        />
+    );
+};
+
+const CollisionAvoidantNavigationControlCapabilitySwitchListMenuItem = () => {
+    const {
+        data: data,
+        isFetching: isFetching,
+        isError: isError,
+    } = useCollisionAvoidantNavigationControlQuery();
+
+    const {mutate: mutate, isPending: isChanging} = useCollisionAvoidantNavigationControlMutation();
+    const loading = isFetching || isChanging;
+    const disabled = loading || isChanging || isError;
+
+    return (
+        <ToggleSwitchListMenuItem
+            value={data?.enabled ?? false}
+            setValue={(value) => {
+                mutate(value);
+            }}
+            disabled={disabled}
+            loadError={isError}
+            primaryLabel={"Collision-avoidant Navigation"}
+            secondaryLabel={"Drive a more conservative route to reduce collisions. May cause missed spots."}
+            icon={<CollisionAvoidantNavigationControlIcon/>}
+        />
+    );
+};
+
+>>>>>>> 5a364efd (refactor: Bump all dependencies to latest versions + minor code cleanup)
+
+const RobotOptions = (): React.ReactElement => {
     const [
         locateCapabilitySupported,
 
@@ -252,6 +417,44 @@ const RobotOptions = (): JSX.Element => {
         quirksCapabilitySupported,
     ]);
 
+<<<<<<< HEAD
+=======
+    const listItems = React.useMemo(() => {
+        const items: Array<React.ReactElement> = [];
+
+        items.push(...actionListItems);
+
+        if (behaviorListItems.length > 0) {
+            items.push(<SpacerListMenuItem key={"spacer0"}/>);
+        }
+        items.push(...behaviorListItems);
+
+        if (dockListItems.length > 0) {
+            items.push(<SpacerListMenuItem key={"spacer1"}/>);
+        }
+        items.push(...dockListItems);
+
+        if (miscListItems.length > 0) {
+            items.push(<SpacerListMenuItem key={"spacer2"}/>);
+        }
+        items.push(...miscListItems);
+
+        if (submenuListItems.length > 0) {
+            items.push(<SpacerListMenuItem key={"spacer3"}/>);
+        }
+        items.push(...submenuListItems);
+
+
+        return items;
+    }, [
+        actionListItems,
+        behaviorListItems,
+        dockListItems,
+        miscListItems,
+        submenuListItems
+    ]);
+
+>>>>>>> 5a364efd (refactor: Bump all dependencies to latest versions + minor code cleanup)
     return (
         <PaperContainer>
             <ListMenu

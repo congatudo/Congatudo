@@ -10,6 +10,7 @@ import {SegmentEditHelp} from "./res/SegmentEditHelp";
 import {ZoneEditHelp} from "./res/ZoneEditHelp";
 import {VirtualRestrictionEditHelp} from "./res/VirtualRestrictionEditHelp";
 import {useSnackbar} from "notistack";
+import React from "react";
 
 
 const Container = styled(Box)({
@@ -23,16 +24,16 @@ const Container = styled(Box)({
 
 const EditMapPage = (props: {
     mode: mode;
-}): JSX.Element => {
+}): React.ReactElement => {
     const {
         data: mapData,
-        isLoading: mapIsLoading,
+        isPending: mapIsPending,
         isError: mapLoadError,
         refetch: refetchMap
     } = useRobotMapQuery();
     const {
         data: robotStatus,
-        isLoading: robotStatusLoading
+        isPending: robotStatusPending
     } = useRobotStatusQuery();
 
     const [
@@ -74,7 +75,7 @@ const EditMapPage = (props: {
         );
     }
 
-    if ((!mapData && mapIsLoading) || (!robotStatus && robotStatusLoading)) {
+    if ((!mapData && mapIsPending) || (!robotStatus && robotStatusPending)) {
         return (
             <Container>
                 <CircularProgress/>

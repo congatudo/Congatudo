@@ -6,6 +6,7 @@ import {
     IconButton,
     List,
     ListItem,
+    ListItemButton,
     ListItemIcon,
     ListItemText,
     ListSubheader,
@@ -280,7 +281,7 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
 const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPaletteMode: (newMode: PaletteMode) => void }> = ({
     paletteMode,
     setPaletteMode
-}): JSX.Element => {
+}): React.ReactElement => {
     const [drawerOpen, setDrawerOpen] = React.useState<boolean>(false);
     const robotCapabilities = useCapabilitiesSupported(...Object.values(Capability));
 
@@ -380,14 +381,17 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                                 const ItemIcon = value.menuIcon;
 
                                 return (
-                                    <ListItem key={value.routeMatch} button
+                                    <ListItemButton
+                                        key={value.routeMatch}
                                         selected={value.routeMatch === currentTab}
-                                        component={Link} to={value.routeMatch}>
+                                        component={Link}
+                                        to={value.routeMatch}
+                                    >
                                         <ListItemIcon>
                                             <ItemIcon/>
                                         </ListItemIcon>
                                         <ListItemText primary={value.menuText}/>
-                                    </ListItem>
+                                    </ListItemButton>
                                 );
                             }
                         }
@@ -413,8 +417,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                         sx={{background: "transparent"}}>
                         Links
                     </ListSubheader>
-                    <ListItem
-                        button
+                    <ListItemButton
                         component="a"
                         href="./swagger/"
                         target="_blank"
@@ -424,10 +427,9 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                             <SwaggerUIIcon/>
                         </ListItemIcon>
                         <ListItemText primary="Swagger UI"/>
-                    </ListItem>
+                    </ListItemButton>
                     <Divider/>
-                    <ListItem
-                        button
+                    <ListItemButton
                         component="a"
                         href="https://congatudo.cloud"
                         target="_blank"
@@ -437,9 +439,8 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                             <DocsIcon/>
                         </ListItemIcon>
                         <ListItemText primary="Docs"/>
-                    </ListItem>
-                    <ListItem
-                        button
+                    </ListItemButton>
+                    <ListItemButton
                         component="a"
                         href="https://github.com/congatudo/Congatudo"
                         target="_blank"
@@ -448,9 +449,8 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                             <GithubIcon/>
                         </ListItemIcon>
                         <ListItemText primary="congatudo/Congatudo"/>
-                    </ListItem>
-                    <ListItem
-                        button
+                    </ListItemButton>
+                    <ListItemButton
                         component="a"
                         href="https://congatudo.cloud/donate"
                         target="_blank"
@@ -460,7 +460,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                             <DonateIcon/>
                         </ListItemIcon>
                         <ListItemText primary="Donate"/>
-                    </ListItem>
+                    </ListItemButton>
 
 
                 </List>

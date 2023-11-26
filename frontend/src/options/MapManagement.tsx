@@ -2,8 +2,8 @@ import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {
     Capability,
     useMapResetMutation,
-    usePersistentDataMutation,
-    usePersistentDataQuery,
+    usePersistentMapMutation,
+    usePersistentMapQuery,
     useRobotMapQuery,
     useStartMappingPassMutation,
     useValetudoInformationQuery
@@ -30,8 +30,8 @@ import PaperContainer from "../components/PaperContainer";
 import {MapUtilitiesHelp} from "./res/MapUtilitiesHelp";
 
 
-export const MappingPassButtonItem = (): JSX.Element => {
-    const {mutate: startMappingPass, isLoading: mappingPassStarting} = useStartMappingPassMutation();
+export const MappingPassButtonItem = (): React.ReactElement => {
+    const {mutate: startMappingPass, isPending: mappingPassStarting} = useStartMappingPassMutation();
 
     return (
         <ButtonListMenuItem
@@ -49,8 +49,8 @@ export const MappingPassButtonItem = (): JSX.Element => {
     );
 };
 
-const MapResetButtonItem = (): JSX.Element => {
-    const {mutate: resetMap, isLoading: mapResetting} = useMapResetMutation();
+const MapResetButtonItem = (): React.ReactElement => {
+    const {mutate: resetMap, isPending: mapResetting} = useMapResetMutation();
 
     return (
         <ButtonListMenuItem
@@ -75,9 +75,9 @@ export const PersistentMapSwitchListItem = () => {
         data: persistentData,
         isFetching: persistentDataLoading,
         isError: persistentDataError,
-    } = usePersistentDataQuery();
+    } = usePersistentMapQuery();
 
-    const {mutate: mutatePersistentData, isLoading: persistentDataChanging} = usePersistentDataMutation();
+    const {mutate: mutatePersistentData, isPending: persistentDataChanging} = usePersistentMapMutation();
     const loading = persistentDataLoading || persistentDataChanging;
     const disabled = loading || persistentDataChanging || persistentDataError;
 
@@ -119,15 +119,15 @@ export const PersistentMapSwitchListItem = () => {
     );
 };
 
-const ValetudoMapDataExportButtonItem = (): JSX.Element => {
+const ValetudoMapDataExportButtonItem = (): React.ReactElement => {
     const {
         data: valetudoInformation,
-        isLoading: valetudoInformationLoading
+        isPending: valetudoInformationPending
     } = useValetudoInformationQuery();
 
     const {
         data: mapData,
-        isLoading: mapIsLoading,
+        isPending: mapPending,
     } = useRobotMapQuery();
 
 
@@ -153,12 +153,12 @@ const ValetudoMapDataExportButtonItem = (): JSX.Element => {
                     linkElement.click();
                 }
             }}
-            actionLoading={valetudoInformationLoading || mapIsLoading}
+            actionLoading={valetudoInformationPending || mapPending}
         />
     );
 };
 
-const MapManagement = (): JSX.Element => {
+const MapManagement = (): React.ReactElement => {
     const [
         persistentMapControlCapabilitySupported,
         mappingPassCapabilitySupported,
