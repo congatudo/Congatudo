@@ -120,7 +120,7 @@ class ValetudoRobot {
                 ) {
                     this.valetudoEventStore.raise(new ErrorStateValetudoEvent({
                         //@ts-ignore
-                        message: status.error?.message ?? "Unknown Error"
+                        message: status.error?.message || status.metaData?.error_description || "Unknown Error",
                     }));
                 }
             }),
