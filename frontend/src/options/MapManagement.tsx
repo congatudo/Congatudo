@@ -14,10 +14,12 @@ import {
     LayersClear as MapResetIcon,
     Dashboard as SegmentEditIcon,
     GridView as ZoneEditIcon,
-    Dangerous as VirtualRestrictionsIcon,
     Crop as CleanupCoverageIcon,
     Download as ValetudoMapDownloadIcon,
 } from "@mui/icons-material";
+import {
+    StrategyIcon as VirtualRestrictionsIcon
+} from "@mui-extra/icons/StrategyIcon";
 import React from "react";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import { LinkListMenuItem } from "../components/list_menu/LinkListMenuItem";
