@@ -30,7 +30,7 @@ interface ZoneActionsProperties {
 
 const ZoneActions = (
     props: ZoneActionsProperties
-): JSX.Element => {
+): React.ReactElement  => {
     const { zones, convertPixelCoordinatesToCMSpace, onClear, onAdd } = props;
     const [iterationCount, setIterationCount] = React.useState(1);
     const [integrationHelpDialogOpen, setIntegrationHelpDialogOpen] = React.useState(false);
@@ -41,7 +41,7 @@ const ZoneActions = (
     });
     const {
         mutate: cleanTemporaryZones,
-        isLoading: cleanTemporaryZonesIsExecuting
+        isPending: cleanTemporaryZonesIsExecuting
     } = useCleanZonesMutation({
         onSuccess: onClear,
     });

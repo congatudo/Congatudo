@@ -3,6 +3,9 @@ import { RawMapData } from "./RawMapData";
 import { PresetSelectionState, RobotAttribute } from "./RawRobotState";
 import {
     Capability,
+    CarpetSensorMode,
+    CarpetSensorModeControlProperties,
+    CarpetSensorModePayload,
     CombinedVirtualRestrictionsProperties,
     CombinedVirtualRestrictionsUpdateRequestParameters,
     ConsumableId,
@@ -99,7 +102,8 @@ valetudoAPI.interceptors.response.use(response => {
     return response;
 });
 
-const SSETracker = new Map<string, () => () => void>();
+const SSESubscribers = new Map<string, () => () => void>();
+const SSECleanupTimeouts = new Map<string, any>();
 
 const subscribeToSSE = <T>(
     endpoint: string,
@@ -108,9 +112,16 @@ const subscribeToSSE = <T>(
     raw = false,
 ): (() => void) => {
     const key = `${endpoint}@${event}@${raw}`;
-    const tracker = SSETracker.get(key);
-    if (tracker !== undefined) {
-        return tracker();
+
+    const existingCleanupTimeout = SSECleanupTimeouts.get(key);
+    if (existingCleanupTimeout !== undefined) {
+        SSECleanupTimeouts.delete(key);
+        clearTimeout(existingCleanupTimeout);
+    }
+
+    const existingSubscriber = SSESubscribers.get(key);
+    if (existingSubscriber !== undefined) {
+        return existingSubscriber();
     }
 
     const source = new ReconnectingEventSource(valetudoAPI.defaults.baseURL + endpoint, {
@@ -132,16 +143,27 @@ const subscribeToSSE = <T>(
             subscribers -= 1;
 
             if (subscribers <= 0) {
-                // eslint-disable-next-line no-console
-                console.info(`[SSE] Unsubscribed from ${endpoint} ${event}`);
+                const existingCleanupTimeout = SSECleanupTimeouts.get(key);
+                if (existingCleanupTimeout !== undefined) {
+                    SSECleanupTimeouts.delete(key);
+                    clearTimeout(existingCleanupTimeout);
+                }
 
-                source.close();
-                SSETracker.delete(key);
+                SSECleanupTimeouts.set(
+                    key,
+                    setTimeout(() => {
+                        // eslint-disable-next-line no-console
+                        console.info(`[SSE] Unsubscribed from ${endpoint} ${event}`);
+
+                        source.close();
+                        SSESubscribers.delete(key);
+                    }, 500)
+                );
             }
         };
     };
 
-    SSETracker.set(key, subscriber);
+    SSESubscribers.set(key, subscriber);
 
     return subscriber();
 };
@@ -767,6 +789,19 @@ export const sendObstacleAvoidanceControlState = async (enable: boolean): Promis
     await sendToggleMutation(Capability.ObstacleAvoidanceControl, enable);
 };
 
+export const fetchPetObstacleAvoidanceControlState = async (): Promise<SimpleToggleState> => {
+    return valetudoAPI
+        .get<SimpleToggleState>(`/robot/capabilities/${Capability.PetObstacleAvoidanceControl}`)
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export const sendPetObstacleAvoidanceControlState = async (enable: boolean): Promise<void> => {
+    await sendToggleMutation(Capability.PetObstacleAvoidanceControl, enable);
+};
+
+
 export const fetchAutoEmptyDockAutoEmptyControlState = async (): Promise<SimpleToggleState> => {
     return valetudoAPI
         .get<SimpleToggleState>(`/robot/capabilities/${Capability.AutoEmptyDockAutoEmptyControl}`)
@@ -778,6 +813,19 @@ export const fetchAutoEmptyDockAutoEmptyControlState = async (): Promise<SimpleT
 export const sendAutoEmptyDockAutoEmptyControlEnable = async (enable: boolean): Promise<void> => {
     await sendToggleMutation(Capability.AutoEmptyDockAutoEmptyControl, enable);
 };
+
+export const fetchCollisionAvoidantNavigationControlState = async (): Promise<SimpleToggleState> => {
+    return valetudoAPI
+        .get<SimpleToggleState>(`/robot/capabilities/${Capability.CollisionAvoidantNavigation}`)
+        .then(({ data }) => {
+            return data;
+        });
+};
+
+export const sendCollisionAvoidantNavigationControlState = async (enable: boolean): Promise<void> => {
+    await sendToggleMutation(Capability.CollisionAvoidantNavigation, enable);
+};
+
 
 export const fetchDoNotDisturbConfiguration = async (): Promise<DoNotDisturbConfiguration> => {
     return valetudoAPI
@@ -858,7 +906,7 @@ export const sendManualControlInteraction = async (interaction: ManualControlInt
         });
 };
 
-export const fetchCombinedVirtualRestrictionsPropertiesProperties = async (): Promise<CombinedVirtualRestrictionsProperties> => {
+export const fetchCombinedVirtualRestrictionsProperties = async (): Promise<CombinedVirtualRestrictionsProperties> => {
     return valetudoAPI
         .get<CombinedVirtualRestrictionsProperties>(
             `/robot/capabilities/${Capability.CombinedVirtualRestrictions}/properties`
@@ -1011,5 +1059,34 @@ export const sendValetudoCustomizations = async (customizations: ValetudoCustomi
             if (status !== 200) {
                 throw new Error("Could not update ValetudoCustomizations");
             }
+        });
+};
+
+
+export const sendCarpetSensorMode = async (payload: CarpetSensorModePayload): Promise<void> => {
+    return valetudoAPI
+        .put(`/robot/capabilities/${Capability.CarpetSensorModeControl}`, payload)
+        .then(({status}) => {
+            if (status !== 200) {
+                throw new Error("Could not send carpet sensor mode");
+            }
+        });
+};
+
+export const fetchCarpetSensorMode = async (): Promise<CarpetSensorMode> => {
+    return valetudoAPI
+        .get<CarpetSensorModePayload>(`/robot/capabilities/${Capability.CarpetSensorModeControl}`)
+        .then(({data}) => {
+            return data.mode;
+        });
+};
+
+export const fetchCarpetSensorModeProperties = async (): Promise<CarpetSensorModeControlProperties> => {
+    return valetudoAPI
+        .get<CarpetSensorModeControlProperties>(
+            `/robot/capabilities/${Capability.CarpetSensorModeControl}/properties`
+        )
+        .then(({data}) => {
+            return data;
         });
 };

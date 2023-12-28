@@ -14,7 +14,7 @@ import {
     fetchAutoEmptyDockAutoEmptyControlState,
     fetchCapabilities,
     fetchCarpetModeState,
-    fetchCombinedVirtualRestrictionsPropertiesProperties,
+    fetchCombinedVirtualRestrictionsProperties,
     fetchConsumableStateInformation,
     fetchCurrentStatistics,
     fetchCurrentStatisticsProperties,
@@ -29,8 +29,6 @@ import {
     fetchMQTTProperties,
     fetchNTPClientConfiguration,
     fetchNTPClientState,
-    fetchObstacleAvoidanceControlState,
-    fetchPersistentDataState,
     fetchObstacleAvoidanceControlState,
     fetchPersistentMapState,
     fetchPresetSelections,
@@ -71,8 +69,6 @@ import {
     sendMQTTConfiguration,
     sendNTPClientConfiguration,
     sendObstacleAvoidanceControlState,
-    sendPersistentDataEnable,
-    sendObstacleAvoidanceControlState,
     sendPersistentMapEnabled,
     sendRenameSegmentCommand,
     sendSpeakerTestCommand,
@@ -112,6 +108,13 @@ import {
     sendValetudoCustomizations,
     fetchConsumableProperties,
     sendTimerAction,
+    fetchPetObstacleAvoidanceControlState,
+    sendPetObstacleAvoidanceControlState,
+    fetchCollisionAvoidantNavigationControlState,
+    sendCollisionAvoidantNavigationControlState,
+    fetchCarpetSensorModeProperties,
+    fetchCarpetSensorMode,
+    sendCarpetSensorMode,
 } from "./client";
 import {
     PresetSelectionState,
@@ -122,6 +125,7 @@ import {
 import { isAttribute } from "./utils";
 import {
     Capability,
+    CarpetSensorMode,
     CombinedVirtualRestrictionsUpdateRequestParameters,
     ConsumableId,
     DoNotDisturbConfiguration,
@@ -182,6 +186,7 @@ enum QueryKey {
     LogLevel = "log_level",
     KeyLockInformation = "key_lock",
     ObstacleAvoidance = "obstacle_avoidance",
+    PetObstacleAvoidance = "pet_obstacle_avoidance",
     AutoEmptyDockAutoEmpty = "auto_empty_dock_auto_empty",
     DoNotDisturb = "do_not_disturb",
     WifiStatus = "wifi_status",
@@ -198,7 +203,10 @@ enum QueryKey {
     TotalStatisticsProperties = "total_statistics_properties",
     Quirks = "quirks",
     RobotProperties = "robot_properties",
-    ValetudoCustomizations = "valetudo_customizations"
+    ValetudoCustomizations = "valetudo_customizations",
+    CollisionAvoidantNavigation = "collision_avoidant_navigation",
+    CarpetSensorMode = "carpet_sensor_mode",
+    CarpetSensorModeProperties = "carpet_sensor_mode_properties",
 }
 
 const useOnCommandError = (capability: Capability | string): ((error: unknown) => void) => {
@@ -1275,7 +1283,7 @@ export const useUpdaterCommandMutation = () => {
     return useMutation({
         mutationFn: sendUpdaterCommand,
         onError: useOnCommandError("Updater"),
-        onSuccess() {
+        onSuccess: () => {
             refetchUpdaterState().catch(() => {/*intentional*/});
         }
     });
@@ -1334,7 +1342,7 @@ export const useSetQuirkValueMutation = () => {
     return useMutation({
         mutationFn: sendSetQuirkValueCommand,
         onError: useOnCommandError(Capability.Quirks),
-        onSuccess() {
+        onSuccess: () => {
             refetchQuirksState().catch(() => {/*intentional*/});
         }
     });

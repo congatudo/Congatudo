@@ -1,29 +1,44 @@
 import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {
     Capability,
+    CarpetSensorMode,
     useAutoEmptyDockAutoEmptyControlMutation,
     useAutoEmptyDockAutoEmptyControlQuery,
     useCarpetModeStateMutation,
     useCarpetModeStateQuery,
+    useCarpetSensorModeMutation,
+    useCarpetSensorModePropertiesQuery,
+    useCarpetSensorModeQuery,
+    useCollisionAvoidantNavigationControlMutation,
+    useCollisionAvoidantNavigationControlQuery,
     useKeyLockStateMutation,
     useKeyLockStateQuery,
     useLocateMutation,
+    useObstacleAvoidanceControlMutation,
+    useObstacleAvoidanceControlQuery,
+    usePetObstacleAvoidanceControlMutation,
+    usePetObstacleAvoidanceControlQuery,
 } from "../api";
 import React from "react";
 import {ListMenu} from "../components/list_menu/ListMenu";
 import {ToggleSwitchListMenuItem} from "../components/list_menu/ToggleSwitchListMenuItem";
 import {
-    NotListedLocation as LocateIcon,
-    Lock as KeyLockIcon,
-    Sensors as CarpetModeIcon,
     AutoDelete as AutoEmptyControlIcon,
+    Cable as ObstacleAvoidanceControlIcon,
+    Lock as KeyLockIcon,
     MiscellaneousServices as MiscIcon,
-    Star as QuirksIcon
+    NotListedLocation as LocateIcon,
+    Pets as PetObstacleAvoidanceControlIcon,
+    RoundaboutRight as CollisionAvoidantNavigationControlIcon,
+    Sensors as CarpetModeIcon,
+    Waves as CarpetSensorModeIcon,
+    Star as QuirksIcon,
 } from "@mui/icons-material";
 import {SpacerListMenuItem} from "../components/list_menu/SpacerListMenuItem";
 import {LinkListMenuItem} from "../components/list_menu/LinkListMenuItem";
 import PaperContainer from "../components/PaperContainer";
-import { ButtonListMenuItem } from "../components/list_menu/ButtonListMenuItem";
+import {ButtonListMenuItem} from "../components/list_menu/ButtonListMenuItem";
+import {SelectListMenuItem, SelectListMenuItemOption} from "../components/list_menu/SelectListMenuItem";
 
 const LocateButtonListMenuItem = (): React.ReactElement => {
     const {
@@ -287,9 +302,15 @@ const RobotOptions = (): React.ReactElement => {
     const [
         locateCapabilitySupported,
 
-        keyLockControlCapabilitySupported,
+        obstacleAvoidanceControlCapabilitySupported,
+        petObstacleAvoidanceControlCapabilitySupported,
+        collisionAvoidantNavigationControlCapabilitySupported,
         carpetModeControlCapabilitySupported,
+        carpetSensorModeControlCapabilitySupported,
+
         autoEmptyDockAutoEmptyControlCapabilitySupported,
+
+        keyLockControlCapabilitySupported,
 
         speakerVolumeControlCapabilitySupported,
         speakerTestCapabilitySupported,
@@ -300,9 +321,15 @@ const RobotOptions = (): React.ReactElement => {
     ] = useCapabilitiesSupported(
         Capability.Locate,
 
-        Capability.KeyLock,
+        Capability.ObstacleAvoidanceControl,
+        Capability.PetObstacleAvoidanceControl,
+        Capability.CollisionAvoidantNavigation,
         Capability.CarpetModeControl,
+        Capability.CarpetSensorModeControl,
+
         Capability.AutoEmptyDockAutoEmptyControl,
+
+        Capability.KeyLock,
 
         Capability.SpeakerVolumeControl,
         Capability.SpeakerTest,
@@ -312,19 +339,37 @@ const RobotOptions = (): React.ReactElement => {
         Capability.Quirks
     );
 
-    const listItems = React.useMemo(() => {
+
+    const actionListItems = React.useMemo(() => {
         const items = [];
 
         if (locateCapabilitySupported) {
             items.push(<LocateButtonListMenuItem key={"locateAction"}/>);
-
-            items.push(<SpacerListMenuItem key={"spacer0"}/>);
         }
 
+        return items;
+    }, [
+        locateCapabilitySupported
+    ]);
 
-        if (keyLockControlCapabilitySupported) {
+    const behaviorListItems = React.useMemo(() => {
+        const items = [];
+
+        if (obstacleAvoidanceControlCapabilitySupported) {
             items.push(
-                <KeyLockCapabilitySwitchListMenuItem key={"keyLockControl"}/>
+                <ObstacleAvoidanceControlCapabilitySwitchListMenuItem key={"obstacleAvoidanceControl"}/>
+            );
+        }
+
+        if (petObstacleAvoidanceControlCapabilitySupported) {
+            items.push(
+                <PetObstacleAvoidanceControlCapabilitySwitchListMenuItem key={"petObstacleAvoidanceControl"}/>
+            );
+        }
+
+        if (collisionAvoidantNavigationControlCapabilitySupported) {
+            items.push(
+                <CollisionAvoidantNavigationControlCapabilitySwitchListMenuItem key={"collisionAvoidantNavigationControl"}/>
             );
         }
 
@@ -333,6 +378,23 @@ const RobotOptions = (): React.ReactElement => {
                 <CarpetModeControlCapabilitySwitchListMenuItem key={"carpetModeControl"}/>
             );
         }
+        if (carpetSensorModeControlCapabilitySupported) {
+            items.push(
+                <CarpetSensorModeControlCapabilitySelectListMenuItem key={"carpetSensorModeControl"}/>
+            );
+        }
+
+        return items;
+    }, [
+        obstacleAvoidanceControlCapabilitySupported,
+        petObstacleAvoidanceControlCapabilitySupported,
+        collisionAvoidantNavigationControlCapabilitySupported,
+        carpetModeControlCapabilitySupported,
+        carpetSensorModeControlCapabilitySupported
+    ]);
+
+    const dockListItems = React.useMemo(() => {
+        const items = [];
 
         if (autoEmptyDockAutoEmptyControlCapabilitySupported) {
             items.push(
@@ -340,16 +402,34 @@ const RobotOptions = (): React.ReactElement => {
             );
         }
 
+        return items;
+    }, [
+        autoEmptyDockAutoEmptyControlCapabilitySupported
+    ]);
+
+    const miscListItems = React.useMemo(() => {
+        const items = [];
+
+        if (keyLockControlCapabilitySupported) {
+            items.push(
+                <KeyLockCapabilitySwitchListMenuItem key={"keyLockControl"}/>
+            );
+        }
+
+        return items;
+    }, [
+        keyLockControlCapabilitySupported
+    ]);
+
+    const submenuListItems = React.useMemo(() => {
+        const items = [];
+
         if (
             speakerVolumeControlCapabilitySupported || speakerTestCapabilitySupported ||
             voicePackManagementCapabilitySupported ||
             doNotDisturbCapabilitySupported ||
             quirksCapabilitySupported
         ) {
-            if (items.length > 0) {
-                items.push(<SpacerListMenuItem key={"spacer1"}/>);
-            }
-
             if (
                 (speakerVolumeControlCapabilitySupported && speakerTestCapabilitySupported) ||
                 voicePackManagementCapabilitySupported ||
@@ -392,17 +472,10 @@ const RobotOptions = (): React.ReactElement => {
                 );
             }
 
-
         }
 
         return items;
     }, [
-        locateCapabilitySupported,
-
-        keyLockControlCapabilitySupported,
-        carpetModeControlCapabilitySupported,
-        autoEmptyDockAutoEmptyControlCapabilitySupported,
-
         speakerVolumeControlCapabilitySupported,
         speakerTestCapabilitySupported,
         voicePackManagementCapabilitySupported,

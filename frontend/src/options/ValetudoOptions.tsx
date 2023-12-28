@@ -122,6 +122,7 @@ const UpdateProviderSelectListMenuItem = (): React.ReactElement => {
                 } as UpdaterConfiguration);
             }}
             disabled={disabled}
+            loadingOptions={false}
             loadError={configurationError}
             primaryLabel="Update Channel"
             secondaryLabel="Select the channel used by the inbuilt updater"
