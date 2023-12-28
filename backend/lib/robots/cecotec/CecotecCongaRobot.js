@@ -400,7 +400,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
 
         return new PathMapEntity({
             type: PathMapEntity.TYPE.PATH,
-            points,
+            points: points,
         });
     }
 
@@ -776,7 +776,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
 
         return new BatteryStateAttribute({
             level: battery ? battery.value : 0,
-            flag,
+            flag: flag,
         });
     }
 
@@ -791,7 +791,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
 
         return new StatusStateAttribute({
             value: state ? state.value : StatusStateAttribute.VALUE.DOCKED,
-            flag,
+            flag: flag,
             metaData: {
                 error_description: error && error.value,
             },
