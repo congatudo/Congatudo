@@ -36,7 +36,7 @@
     "*_spec.js": "mocha",
     "*.js": [
       "eslint -c .automated.eslintrc.json --fix",
-      "tsc --noEmit"
+      "bash -c tsc --noEmit"
     ]
   },
   "author": "",

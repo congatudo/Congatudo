@@ -15,7 +15,7 @@
   "lint-staged": {
     "*.js": [
       "eslint -c .automated.eslintrc.json --fix",
-      "tsc --noEmit --skipLibCheck"
+      "bash -c tsc --noEmit --skipLibCheck"
     ]
   },
   "eslintConfig": {
