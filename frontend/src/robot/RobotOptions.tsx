@@ -90,7 +90,7 @@ const CarpetModeControlCapabilitySwitchListMenuItem = () => {
             }}
             disabled={disabled}
             loadError={isError}
-            primaryLabel={"Carpet mode"}
+            primaryLabel={"Carpet Mode"}
             secondaryLabel={"When enabled, the vacuum will recognize carpets automatically and increase the suction."}
             icon={<CarpetModeIcon/>}
         />
