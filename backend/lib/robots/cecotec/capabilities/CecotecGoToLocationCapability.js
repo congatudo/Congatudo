@@ -17,7 +17,7 @@ module.exports = class CecotecGoToLocationCapability extends GoToLocationCapabil
         }
 
         const offset = map.size.y;
-        const absolute = map.toCoordinate(new Pixel({ x, y: offset - y }));
+        const absolute = map.toCoordinate(new Pixel({ x: x, y: offset - y }));
         const position = new Position({
             x: absolute.x,
             y: absolute.y,

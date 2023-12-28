@@ -27,7 +27,7 @@ class CecotecMapSegmentRenameCapability extends MapSegmentRenameCapability {
             throw new Error(`There is no room with id '${segment.id}' in current map`);
         }
 
-        this.robot.robot.updateRoom(room.clone({ name }));
+        this.robot.robot.updateRoom(room.clone({ name: name }));
         await this.robot.robot.updateMap();
     }
 }
