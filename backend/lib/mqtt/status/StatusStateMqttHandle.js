@@ -116,6 +116,19 @@ class StatusStateMqttHandle extends RobotStateNodeMqttHandle {
 
                     if (statusState?.value === stateAttrs.StatusStateAttribute.VALUE.ERROR) {
                         value = statusState.error;
+                        /** Congatudo fix for issue https://github.com/congatudo/Congatudo/issues/77
+                         *  Sometimes, the error are undefined, IDK why
+                         * */
+                        if (value === undefined) {
+                            return {
+                                severity: {
+                                    kind: ValetudoRobotError.SEVERITY_KIND.UNKNOWN,
+                                    level: ValetudoRobotError.SEVERITY_LEVEL.ERROR
+                                },
+                                subsystem: ValetudoRobotError.SUBSYSTEM.CORE,
+                                message: value?.message || statusState.metaData?.error_description || "Unknown Error",
+                            };
+                        }
                     } else {
                         value = new ValetudoRobotError({
                             severity: {
@@ -127,7 +140,6 @@ class StatusStateMqttHandle extends RobotStateNodeMqttHandle {
                             vendorErrorCode: "",
                         });
                     }
-
                     return {
                         severity: value.severity,
                         subsystem: value.subsystem,

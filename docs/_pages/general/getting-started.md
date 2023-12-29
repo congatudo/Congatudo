@@ -47,8 +47,8 @@ Another option that we do **NOT recommend** is to use the Cecotec app to connect
 	```
 	and when you get the login prompt, type `root` and then the password depending on your model:
 
-	 - for 3090: `3irobotics`[^1]
-	 - for 3x90, 4090 & 5490: `@3I#sc$RD%xm^2S&`[^2]
+	 - for 3090: `3irobotics`
+	 - for 3x90, 4090 & 5490: `@3I#sc$RD%xm^2S&`
 4. You should see something like this:
 ![Tina-Linux](https://github.com/congatudo/stuff/blob/master/docs/assets/tina-linux.png)
 1. Now, it would be a good practice to:
@@ -58,9 +58,3 @@ Another option that we do **NOT recommend** is to use the Cecotec app to connect
 ## Choose an install method<a id='choose_install_method'></a>
 
 Now, depending on your needs, you can choose between the [Home Assistant addon](https://congatudo.cloud/pages/installation/home-assistant-installation.html), [Docker](https://congatudo.cloud/pages/installation/docker-installation.html) or [Standalone](https://congatudo.cloud/pages/installation/standalone-installation.html) installation method.
-
-
-## Notes
-[1]: Model 3090 original password hash `$1$ZnE1NgOT$oWafIj8xgsknzdJmRZM9N/` == `3irobotics`
-
-[2]: Model 3x90 original password hash `$1$trVg0hig$L.xDOM91z4d/.8FZRnr.h1` == `@3I#sc$RD%xm^2S&`
