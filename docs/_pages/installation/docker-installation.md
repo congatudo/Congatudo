@@ -1,6 +1,6 @@
 ---
 title: Docker installation
-category: installation
+category: Installation
 order: 2
 ---
 

@@ -1,5 +1,5 @@
 ---
 title: Standalone installation
-category: installation
+category: Installation
 order: 3
 ---
