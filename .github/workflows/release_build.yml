@@ -1,5 +1,5 @@
 {
-  'name': 'Release',
+  'name': 'Release build',
   'on': { 'release': { 'types': ['released'] } },
   'jobs':
     {

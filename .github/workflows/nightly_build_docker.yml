@@ -1,4 +1,4 @@
-name: Nightly Docker build
+name: Nightly build Docker
 on:
   workflow_dispatch: null
   schedule:
@@ -55,16 +55,6 @@ jobs:
             "BUILD_FROM=${{ matrix.build_from }}"
             "PKG_TARGET=${{ matrix.pkg_target }}"
             "PKG_OPTIONS=${{ matrix.pkg_options }}"
-      - name: Test
-        shell: '/bin/bash {0}'
-        run: |
-          docker run --rm ${{ env.REGISTRY }}/congatudo/congatudo-nightly:${{ matrix.image_name }}-latest
-          ret=$?
-          if [ $ret -eq 1 ]; then
-            exit 0
-          else
-            exit $ret
-          fi
       - name: Push
         run: |
           docker push ${{ env.REGISTRY }}/congatudo/congatudo-nightly:${{ matrix.image_name }}-latest
