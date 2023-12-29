@@ -18,7 +18,7 @@ overview of all supported robots.
 
 If you want to support the project, consider donating using [Github sponsors](https://github.com/sponsors/elraro) instead.
 
-For price comparison, check out [idealo.de](https://idealo.es).
+For price comparison, check out [idealo.es](https://idealo.es).
 Also, don't forget [miravia.es](https://miravia.es) and of course [Aliexpress](https://es.aliexpress.com/).
 
 If Amazon is something that you like to use, here are some **affiliate links** for it:
