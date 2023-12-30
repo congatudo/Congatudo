@@ -118,6 +118,7 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
 
 ### Home Assistant components index
 
+- [Battery level (`sensor.mqtt`)](#batterylevellevel)
 - [Consumable (minutes) (`sensor.mqtt`)](#consumableminutesconsumable-minutes)
 - [Consumable (percent) (`sensor.mqtt`)](#consumablepercentconsumable-percent)
 - [Current Statistics Area (`sensor.mqtt`)](#currentstatisticsareaarea)
@@ -128,6 +129,7 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
 - [Map segments (`sensor.mqtt`)](#mapsegmentssegments)
 - [Mop attachment (`binary_sensor.mqtt`)](#mopmop)
 - [Speaker volume (`number.mqtt`)](#speakervolumevalue)
+- [Status Flag (`sensor.mqtt`)](#statusflagflag)
 - [Vacuum (`vacuum.mqtt`)](#robot)
 - [Water (`select.mqtt`)](#waterpreset)
 - [Water tank attachment (`binary_sensor.mqtt`)](#watertankwatertank)
@@ -548,7 +550,7 @@ Sample value:
 Sample value:
 
 ```json
--86
+-26
 ```
 
 
@@ -786,6 +788,10 @@ Sample value:
 42
 ```
 
+Home Assistant components controlled by this property:
+
+- Battery level ([`sensor.mqtt`](https://www.home-assistant.io/integrations/sensor.mqtt/))
+
 
 
 ##### Battery status (`status`) <a id="batterystatusstatus" />
@@ -868,6 +874,10 @@ Sample value:
 ```
 segment
 ```
+
+Home Assistant components controlled by this property:
+
+- Status Flag ([`sensor.mqtt`](https://www.home-assistant.io/integrations/sensor.mqtt/))
 
 
 
