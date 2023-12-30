@@ -1,8 +1,3 @@
-<div align="center">
-    <img src="https://raw.githubusercontent.com/congatudo/Congatudo/master/frontend/src/assets/icons/congatudo_logo_with_name.svg" width="800" alt="congatudo">
-    <p align="center"><h2>Free your vacuum from the cloud</h2></p>
-</div>
-
 Congatudo is a cloud replacement for vacuum robots enabling local-only operation.<br/>
 It is not a custom firmware. That means that it cannot change anything about how the robot operates.
 
