@@ -24,7 +24,7 @@ docs page.
 There's also the [supported robots](https://congatudo.cloud/pages/general/supported-robots.html) page, which features
 remarks for each device to further help you decide on what to buy.
 
-Please refrain from buying any random robot just to then ask how we can make Valetudo on that thing happen.
+Please refrain from buying any random robot just to then ask how we can make Congatudo on that thing happen.
 
 ## Connect the robot to your local network<a id='connect_robot'></a>
 
