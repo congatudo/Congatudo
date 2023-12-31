@@ -103,10 +103,10 @@ class NetworkAdvertisementManager {
             });
         });
 
-        Logger.info("Valetudo can be reached via: " + Tools.GET_ZEROCONF_HOSTNAME());
+        Logger.info("Congatudo can be reached via: " + Tools.GET_ZEROCONF_HOSTNAME());
 
-        this.publishBonjourService(`Valetudo ${Tools.GET_HUMAN_READABLE_SYSTEM_ID()} Web`, "http");
-        this.publishBonjourService(`Valetudo ${Tools.GET_HUMAN_READABLE_SYSTEM_ID()}`, "valetudo");
+        this.publishBonjourService(`Congatudo ${Tools.GET_HUMAN_READABLE_SYSTEM_ID()} Web`, "http");
+        this.publishBonjourService(`Congatudo ${Tools.GET_HUMAN_READABLE_SYSTEM_ID()}`, "congatudo");
     }
 
     /**

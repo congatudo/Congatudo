@@ -4,7 +4,7 @@
       "tags": [
         "System"
       ],
-      "summary": "Information about the underlying host valetudo is running on",
+      "summary": "Information about the underlying host Congatudo is running on",
       "responses": {
         "200": {
           "description": "Ok",
@@ -32,11 +32,11 @@
                       },
                       "valetudo_current": {
                         "type": "number",
-                        "description": "The current Valetudo RSS in bytes"
+                        "description": "The current Congatudo RSS in bytes"
                       },
                       "valetudo_max": {
                         "type": "number",
-                        "description": "The maximum observed RSS of the running Valetudo instances in bytes"
+                        "description": "The maximum observed RSS of the running Congatudo instances in bytes"
                       }
                     }
                   },
@@ -74,7 +74,7 @@
       "tags": [
         "System"
       ],
-      "summary": "Information about the underlying host valetudo is running on",
+      "summary": "Information about the underlying host Congatudo is running on",
       "responses": {
         "200": {
           "description": "Ok",
@@ -85,7 +85,7 @@
                 "properties": {
                   "uptime": {
                     "type": "number",
-                    "description": "The uptime of the currently running Valetudo process in seconds"
+                    "description": "The uptime of the currently running Congatudo process in seconds"
                   },
                   "argv": {
                     "type": "array",
@@ -104,15 +104,15 @@
                   },
                   "uid": {
                     "type": "number",
-                    "description": "UID of the running Valetudo process"
+                    "description": "UID of the running Congatudo process"
                   },
                   "gid": {
                     "type": "number",
-                    "description": "GID of the running Valetudo process"
+                    "description": "GID of the running Congatudo process"
                   },
                   "pid": {
                     "type": "number",
-                    "description": "PID of the running Valetudo process"
+                    "description": "PID of the running Congatudo process"
                   },
                   "versions": {
                     "type": "object",

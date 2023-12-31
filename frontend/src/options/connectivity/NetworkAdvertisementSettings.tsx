@@ -103,12 +103,12 @@ const NetworkAdvertisementSettings = (): React.ReactElement => {
                         }}
                     >
                         <Typography color="info">
-                            When running Valetudo in embedded mode, it will advertise its presence on your local network
+                            When running Congatudo in embedded mode, it will advertise its presence on your local network
                             via both Bonjour/mDNS and SSDP/UPnP to enable other software such as the android companion app
                             or the windows explorer to discover it.
                             <br/><br/>
                             Please note that disabling this feature <em>will break</em> the companion app as well as other
-                            things that may be able to auto-discover Valetudo instances on your network.
+                            things that may be able to auto-discover Congatudo instances on your network.
                         </Typography>
                     </InfoBox>
 

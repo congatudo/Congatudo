@@ -7,7 +7,7 @@ const commitId = Tools.GET_COMMIT_ID();
  * so that it can force a refresh.
  * Using headers for that prevents us from periodically polling the backend for its version.
  *
- * It also makes it much easier to find publicly accessible Valetudo instances on shodan.io
+ * It also makes it much easier to find publicly accessible Congatudo instances on shodan.io
  * Don't do that.
  * Use a VPN or at least a reverse-proxy with proper auth.
  *

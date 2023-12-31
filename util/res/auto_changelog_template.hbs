@@ -1,8 +1,8 @@
 {{#with releases.[0]}}
     {{#if tag}}
-        ## Valetudo {{tag}} ({{date}})
+        ## Congatudo {{tag}} ({{date}})
     {{else}}
-        ## Valetudo nightly ({{date}})
+        ## Congatudo nightly ({{date}})
     {{/if}}
     {{#commit-list (get-all-breaking-commits merges fixes commits) heading='### Breaking Changes'}}
         - {{render-ccm subject}} [`{{shorthash}}`]({{href}})

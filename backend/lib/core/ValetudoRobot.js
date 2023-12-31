@@ -132,23 +132,23 @@ class ValetudoRobot {
                 this.flags.hugeMap = true;
 
                 /*
-                    This will be displayed only once after a map larger than 120 m² has been uploaded to a new Valetudo process
+                    This will be displayed only once after a map larger than 120 m² has been uploaded to a new Congatudo process
                     
-                    It should serve as an unobtrusive reminder that while you can use Valetudo in a commercial environment
+                    It should serve as an unobtrusive reminder that while you can use Congatudo in a commercial environment
                     without any limitations whatsoever, doing so and saving money because of that without giving anything
                     back is simply not a very nice thing to do.
                     
                     While there would be the option to introduce something like license keys or a paid version, not only
                     would that be futile in an open source project, but it would also likely harm perfectly fine non-commercial
-                    uses of Valetudo in e.g., your local hackerspace, art installations, etc.
+                    uses of Congatudo in e.g., your local hackerspace, art installations, etc.
                     
                     In the end, I'd rather have some people take advantage of this permissive system than making
                     the project worse for all of its users to prevent that.
                     
                     You're welcome
                  */
-                Logger.info("Based on your map size, it looks like you might be using Valetudo in a commercial environment.");
-                Logger.info("If Valetudo saves your business money, please consider giving some of those savings back to the project by donating: https://github.com/sponsors/Hypfer");
+                Logger.info("Based on your map size, it looks like you might be using Congatudo in a commercial environment.");
+                Logger.info("If Congatudo saves your business money, please consider giving some of those savings back to the project by donating: https://github.com/sponsors/elraro");
                 Logger.info("Thank you :)");
             }
         });

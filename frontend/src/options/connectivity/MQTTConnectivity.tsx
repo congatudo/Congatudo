@@ -810,7 +810,7 @@ const MQTTConnectivity = (): React.ReactElement => {
                         }}
                     >
                         <Typography color="info">
-                            Valetudo recommends the use of the Eclipse Mosquitto MQTT Broker, which is FOSS, has a
+                            Congatudo recommends the use of the Eclipse Mosquitto MQTT Broker, which is FOSS, has a
                             tiny resource footprint and is part of basically every GNU/Linux distribution.
                             You can also install it as a container via the container management solution of your choice.
 
@@ -821,7 +821,7 @@ const MQTTConnectivity = (): React.ReactElement => {
                             <br/><br/>
                             If you&apos;re using Mosquitto but still experience issues, make sure that your ACLs (if any) are correct and
                             you&apos;re also using the correct login credentials for those.
-                            Valetudo will not receive any feedback from the broker if publishing fails due to ACL restrictions as such feedback
+                            Congatudo will not receive any feedback from the broker if publishing fails due to ACL restrictions as such feedback
                             simply isn&apos;t part of the MQTT v3.1.1 spec. MQTT v5 fixes this issue but isn&apos;t widely available just yet.
                         </Typography>
                     </InfoBox>

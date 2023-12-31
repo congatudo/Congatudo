@@ -11,7 +11,7 @@
             "properties": {
               "currentVersion": {
                 "type": "string",
-                "description": "The currently running valetudo version"
+                "description": "The currently running Congatudo version"
               }
             }
           }

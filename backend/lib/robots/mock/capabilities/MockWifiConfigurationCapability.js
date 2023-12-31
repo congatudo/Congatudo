@@ -13,7 +13,7 @@ class MockWifiConfigurationCapability extends WifiConfigurationCapability {
         super(Object.assign({}, options, {networkInterface: "wlan0"}));
 
         this.connected = true;
-        this.ssid = "Valetudo Wi-Fi";
+        this.ssid = "Congatudo Wi-Fi";
     }
 
     /**

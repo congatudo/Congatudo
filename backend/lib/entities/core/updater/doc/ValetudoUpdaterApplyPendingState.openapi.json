@@ -11,7 +11,7 @@
             "properties": {
               "version": {
                 "type": "string",
-                "description": "The valetudo version to be installed"
+                "description": "The Congatudo version to be installed"
               },
               "releaseTimestamp": {
                 "type": "string",

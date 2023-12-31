@@ -16,19 +16,19 @@ const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Valetudo REST API",
+            title: "Congatudo REST API",
             version: Tools.GET_VALETUDO_VERSION()
         },
         tags: [ //Swagger UI respects the order of these
-            {name: "Valetudo", description: "Valetudo management API"},
-            {name: "ValetudoEvents", description: "Valetudo Events"},
+            {name: "Valetudo", description: "Congatudo management API"},
+            {name: "ValetudoEvents", description: "Congatudo Events"},
             {name: "Robot", description: "Robot API"},
             {name: "System", description: "System API"},
             {name: "MQTT", description: "MQTT Controller API"},
             {name: "NetworkAdvertisement", description: "Network Advertisement Manager API"},
             {name: "NTP", description: "NTP Client API"},
             {name: "Timers", description: "Timers API"},
-            {name: "Updater", description: "Update Valetudo using Valetudo"},
+            {name: "Updater", description: "Update Congatudo using Congatudo"},
 
             {name: "BasicControlCapability", description: "Basic control capability"},
             {name: "FanSpeedControlCapability", description: "Fan speed control capability"},

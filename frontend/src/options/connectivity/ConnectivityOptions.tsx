@@ -42,7 +42,7 @@ const ConnectivityOptions = (): React.ReactElement => {
                 key="mqttConnectivity"
                 url="/options/connectivity/mqtt"
                 primaryLabel="MQTT Connectivity"
-                secondaryLabel="Connect Valetudo to your MQTT Broker"
+                secondaryLabel="Connect Congatudo to your MQTT Broker"
                 icon={<MQTTIcon/>}
             />
         );
@@ -86,7 +86,7 @@ const ConnectivityOptions = (): React.ReactElement => {
         <PaperContainer>
             <ListMenu
                 primaryHeader={"Connectivity Options"}
-                secondaryHeader={"Configure how Valetudo and your robot communicate with the outside world"}
+                secondaryHeader={"Configure how Congatudo and your robot communicate with the outside world"}
                 listItems={listItems}
             />
         </PaperContainer>

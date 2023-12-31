@@ -49,7 +49,7 @@ class Valetudo {
         this.valetudoHelper = new ValetudoHelper({config: this.config, robot: this.robot});
 
 
-        Logger.info(`Starting Valetudo ${Tools.GET_VALETUDO_VERSION()}`);
+        Logger.info(`Starting Congatudo ${Tools.GET_VALETUDO_VERSION()}`);
         Logger.info(`Commit ID: ${Tools.GET_COMMIT_ID()}`);
         Logger.info(`Configuration file: ${this.config.location}`);
         Logger.info(`Logfile: ${Logger.getLogFilePath()}`);
@@ -161,7 +161,7 @@ class Valetudo {
 
                 if (rss > rssLimit && this.config.get("embedded") === true) {
                     Logger.error(
-                        "Valetudo is currently taking up " + rss +
+                        "Congatudo is currently taking up " + rss +
                         " bytes which is more than 1/3 of available system memory. " +
                         "To ensure safe robot operation, it will now shutdown.\n",
                         {
@@ -216,14 +216,14 @@ class Valetudo {
     }
 
     async shutdown() {
-        Logger.info("Valetudo shutdown in progress...");
+        Logger.info("Congatudo shutdown in progress...");
 
         const forceShutdownTimeout = setTimeout(() => {
-            Logger.warn("Failed to shutdown valetudo in a timely manner. Using (the) force");
+            Logger.warn("Failed to shutdown congatudo in a timely manner. Using (the) force");
             process.exit(1);
         }, 5000);
 
-        // shuts down valetudo (reverse startup sequence):
+        // shuts down congatudo (reverse startup sequence):
         clearInterval(this.gcInterval);
 
         await this.networkConnectionStabilizer.shutdown();
@@ -237,7 +237,7 @@ class Valetudo {
         await this.robot.shutdown();
         await this.ntpClient.shutdown();
 
-        Logger.info("Valetudo shutdown done");
+        Logger.info("Congatudo shutdown done");
         clearTimeout(forceShutdownTimeout);
     }
 }

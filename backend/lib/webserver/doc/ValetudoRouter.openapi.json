@@ -4,7 +4,7 @@
       "tags": [
         "Valetudo"
       ],
-      "summary": "Get basic Valetudo info",
+      "summary": "Get basic Congatudo info",
       "responses": {
         "200": {
           "description": "Ok",
@@ -35,7 +35,7 @@
       "tags": [
         "Valetudo"
       ],
-      "summary": "Interact with Valetudo",
+      "summary": "Interact with Congatudo",
       "requestBody": {
         "content": {
           "application/json": {
@@ -94,7 +94,7 @@
       "tags": [
         "Valetudo"
       ],
-      "summary": "Get Valetudo version",
+      "summary": "Get Congatudo version",
       "responses": {
         "200": {
           "description": "Ok",
@@ -311,7 +311,7 @@
       "tags": [
         "Valetudo"
       ],
-      "summary": "Get Valetudo customizations",
+      "summary": "Get Congatudo customizations",
       "responses": {
         "200": {
           "description": "Ok",
@@ -329,7 +329,7 @@
       "tags": [
         "Valetudo"
       ],
-      "summary": "Update Valetudo customizations",
+      "summary": "Update Congatudo customizations",
       "requestBody": {
         "content": {
           "application/json": {

@@ -44,7 +44,7 @@ class MapNodeMqttHandle extends NodeMqttHandle {
 
         // Add "I Can't Believe It's Not Valetudo" map property. Unlike Home Assistant, Homie autodiscovery attributes
         // may not be changed by external services, so for proper autodiscovery support it needs to be provided by
-        // Valetudo itself. ICBINV may publish the data at any point in time.
+        // Congatudo itself. ICBINV may publish the data at any point in time.
         if (this.controller.currentConfig.interfaces.homie.addICBINVMapProperty) {
             this.registerChild(
                 new PropertyMqttHandle({

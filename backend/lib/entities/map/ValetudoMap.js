@@ -5,7 +5,7 @@ const SerializableEntity = require("../SerializableEntity");
 const ValetudoMapSegment = require("../core/ValetudoMapSegment");
 
 /**
- * Represents a Valetudo standard issue map
+ * Represents a Congatudo standard issue map
  * including MapLayers and MapEntities
  *
  * Everything is int. Coordinates and size are in cm

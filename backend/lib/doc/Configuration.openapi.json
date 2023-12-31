@@ -7,7 +7,7 @@
         "properties": {
           "embedded": {
             "type": "boolean",
-            "description": "Whether or not Valetudo is running on the robot itself.\nDetermines if we can do FS access and more."
+            "description": "Whether or not Congatudo is running on the robot itself.\nDetermines if we can do FS access and more."
           },
           "robot": {
             "type": "object",
@@ -100,7 +100,7 @@
           "friendlyName": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9 -]{0,24}$",
-            "description": "An optional user-defined friendly name for the Valetudo instance"
+            "description": "An optional user-defined friendly name for the Congatudo instance"
           }
         }
       },

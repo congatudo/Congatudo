@@ -7,11 +7,11 @@ They come in two flavours, which are basically the same
 - operating hours left
 - percent left
 
-At some point, they will become depleted, requiring you to do maintenance and reset them in the Valetudo UI.
+At some point, they will become depleted, requiring you to do maintenance and reset them in the Congatudo UI.
 This will restore them to either their manufacturer-dependent design operating hours or 100%.
 
 Not maintaining your consumables may lead to performance degradation.<br/>
-Still, Valetudo recommends manual inspection of the part in question. You _may_ be able to use it longer than the manufacturer recommends.
+Still, Congatudo recommends manual inspection of the part in question. You _may_ be able to use it longer than the manufacturer recommends.
 
 
 ### Types of consumables

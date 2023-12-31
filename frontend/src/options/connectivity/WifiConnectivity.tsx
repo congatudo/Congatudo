@@ -289,7 +289,7 @@ const WifiConnectivity = (): React.ReactElement => {
                                 To connect your robot to a different Wi-Fi network, you need to do a Wi-Fi reset.
                                 <br/><br/>
                                 Note that the procedure is different depending on your model of robot, so please refer to the relevant documentation to figure out how to do that.
-                                After having done that, simply connect to the Wi-Fi AP provided by the robot and then either use the Valetudo Webinterface
+                                After having done that, simply connect to the Wi-Fi AP provided by the robot and then either use the Congatudo Webinterface
                                 or the Companion app to enter new Wi-Fi credentials.
                             </Typography>
                         </InfoBox>

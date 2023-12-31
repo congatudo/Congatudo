@@ -226,9 +226,9 @@ const menuTree: Array<MenuEntry | MenuSubEntry | MenuSubheader> = [
     {
         kind: "MenuEntry",
         routeMatch: "/options/valetudo",
-        title: "Valetudo Options",
+        title: "Congatudo Options",
         menuIcon: ValetudoMonochromeIcon,
-        menuText: "Valetudo"
+        menuText: "Congatudo"
     },
     {
         kind: "Subheader",
@@ -312,9 +312,9 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
 
 
         if (ret !== "") {
-            document.title = `Valetudo - ${ret}`;
+            document.title = `Congatudo - ${ret}`;
         } else {
-            document.title = "Valetudo";
+            document.title = "Congatudo";
         }
 
         return ret;

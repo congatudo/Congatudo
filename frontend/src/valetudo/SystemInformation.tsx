@@ -69,7 +69,7 @@ const SystemRuntimeInfo = (): React.ReactElement => {
         }
 
         const topItems: Array<[header: string, body: string]> = [
-            ["Valetudo uptime", convertSecondsToHumans(systemRuntimeInfo.uptime)],
+            ["Congatudo uptime", convertSecondsToHumans(systemRuntimeInfo.uptime)],
             ["UID", String(systemRuntimeInfo.uid)],
             ["GID", String(systemRuntimeInfo.gid)],
             ["PID", String(systemRuntimeInfo.pid)],
@@ -257,7 +257,7 @@ const SystemInformation = (): React.ReactElement => {
         }
 
         if (!version && !valetudoInformation) {
-            return <Typography color="error">No valetudo information</Typography>;
+            return <Typography color="error">No Congatudo information</Typography>;
         }
 
         const items = [
@@ -310,7 +310,7 @@ const SystemInformation = (): React.ReactElement => {
                 body: robotInformation?.modelName
             },
             {
-                header: "Valetudo Implementation",
+                header: "Congatudo Implementation",
                 body: robotInformation?.implementation
             },
             {
@@ -379,13 +379,13 @@ const SystemInformation = (): React.ReactElement => {
                                     color: "#7AC037"
                                 },
                                 {
-                                    label: "Valetudo",
+                                    label: "Congatudo",
                                     value: systemHostInfo.mem.valetudo_current,
                                     valueLabel: `${((systemHostInfo.mem.valetudo_current) / 1024 / 1024).toFixed(2)} MiB`,
                                     color: "#DF5618"
                                 },
                                 {
-                                    label: "Valetudo (Max)",
+                                    label: "Congatudo (Max)",
                                     value: systemHostInfo.mem.valetudo_max - systemHostInfo.mem.valetudo_current,
                                     valueLabel: `${((systemHostInfo.mem.valetudo_max) / 1024 / 1024).toFixed(2)} MiB`,
                                     color: "#19A1A1"

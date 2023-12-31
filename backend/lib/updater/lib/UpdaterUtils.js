@@ -62,7 +62,7 @@ function storageSurvey() {
         );
     }
 
-    // Always use UPX if Valetudo is stored on a small storage
+    // Always use UPX if Congatudo is stored on a small storage
     if (spaceBinaryLocation.total < SPACE_REQUIRED_REGULAR * 3) {
         requiresUPX = true;
         spaceRequired = SPACE_REQUIRED_UPX;

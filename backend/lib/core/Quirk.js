@@ -4,10 +4,10 @@
     They are basic toggles/selects and may change at any time.
 
     Availability of quirks may also depend on the firmware version of the robot.
-    It is not recommended using them in automations etc. They're just here for the Valetudo UI
+    It is not recommended using them in automations etc. They're just here for the Congatudo UI
 
     If there are multiple similar quirks of different vendors, they shall be merged into a capability so
-    that we don't undermine the core idea of Valetudo being a generic abstraction.
+    that we don't undermine the core idea of Congatudo being a generic abstraction.
     One could probably also consider this a staging area for new stuff
  */
 

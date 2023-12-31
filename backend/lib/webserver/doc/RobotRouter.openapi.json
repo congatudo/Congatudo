@@ -33,7 +33,7 @@
                   },
                   "implementation": {
                     "type": "string",
-                    "description": "Valetudo robot implementation in use"
+                    "description": "Congatudo robot implementation in use"
                   }
                 }
               }

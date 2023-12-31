@@ -13,7 +13,7 @@ class SSDPServer {
     /**
      *
      * This is a very basic SSDP/UPNP server implementation, which works well enough
-     * to make valetudo show up in the network tab of the Windows explorer
+     * to make Congatudo show up in the network tab of the Windows explorer
      *
      * For now, it only supports IPv4
      *
@@ -40,7 +40,7 @@ class SSDPServer {
 
             /*
                 For some reason that is beyond me, we need to wait before we add the multicast membership,
-                as otherwise Valetudo simply won't receive the UDP packages
+                as otherwise Congatudo simply won't receive the UDP packages
              */
             this.addMembershipTimeout = setTimeout(() => {
                 for (let iface of this.interfaces) {

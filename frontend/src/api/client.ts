@@ -80,7 +80,7 @@ valetudoAPI.interceptors.response.use(response => {
 
        If something such as a reverse proxy strips these headers, the check will not work.
        Users of advanced setups like these should remember to press ctrl + f5 to force refresh
-       after each Valetudo update
+       after each Congatudo update
     */
     if (response.headers["x-valetudo-commit-id"]) {
         if (currentCommitId !== response.headers["x-valetudo-commit-id"]) {
