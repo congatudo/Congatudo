@@ -66,7 +66,7 @@ class SSDPServer {
                     "ST: upnp:rootdevice",
                     `USN: uuid:${Tools.GET_SYSTEM_ID()}::upnp:rootdevice`,
                     "CACHE-CONTROL: max-age=1800",
-                    `SERVER: Valetudo/${Tools.GET_VALETUDO_VERSION()} UPnP/1.1`,
+                    `SERVER: Congatudo/${Tools.GET_VALETUDO_VERSION()} UPnP/1.1`,
                     `LOCATION: http://${this.ip}:${this.webserverPort}/_ssdp/valetudo.xml`,
 
                     "",

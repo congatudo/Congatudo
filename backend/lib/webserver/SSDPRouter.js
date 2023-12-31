@@ -24,7 +24,7 @@ class SSDPRouter {
 
 
     initRoutes() {
-        this.router.get("/valetudo.xml", (req, res) => {
+        this.router.get("/congatudo.xml", (req, res) => {
             Logger.debug(`SSDP: Received device description request from ${req.ip}`);
 
             res.set("Content-Type", "text/xml");
@@ -68,7 +68,7 @@ class SSDPRouter {
                         "manufacturer": this.robot.getManufacturer()
                     },
                     {
-                        "manufacturerURL": "https://valetudo.cloud"
+                        "manufacturerURL": "https://congatudo.cloud"
                     },
                     {
                         "modelDescription": "Valetudo-enabled robot"
@@ -77,10 +77,10 @@ class SSDPRouter {
                         "modelName": this.robot.getModelName()
                     },
                     {
-                        "modelNumber": Tools.GET_VALETUDO_VERSION() + " (Valetudo)"
+                        "modelNumber": Tools.GET_VALETUDO_VERSION() + " (Congatudo)"
                     },
                     {
-                        "modelURL": "https://valetudo.cloud"
+                        "modelURL": "https://congatudo.cloud"
                     },
                     {
                         "UDN": "uuid:" + Tools.GET_SYSTEM_ID()
