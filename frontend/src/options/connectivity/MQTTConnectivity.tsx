@@ -816,7 +816,7 @@ const MQTTConnectivity = (): React.ReactElement => {
 
                             <br/><br/>
                             If you&apos;re experiencing problems regarding MQTT, make sure to try Mosquitto since some other MQTT
-                            brokers only implement a subset of the MQTT spec, which often leads to issues when used with Valetudo.
+                            brokers only implement a subset of the MQTT spec, which often leads to issues when used with Congatudo.
 
                             <br/><br/>
                             If you&apos;re using Mosquitto but still experience issues, make sure that your ACLs (if any) are correct and

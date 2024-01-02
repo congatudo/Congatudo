@@ -20,7 +20,7 @@ Support is still somewhat experimental, everything in this guide is under your r
 
 - The default settings here will be for running Congatudo on the robot itself, [standalone installation](#standalone-installation).
 - It could run in a server using Docker, [docker installation](#docker-installation).
-- If you want to develop as well, check out the [Local Development guide](https://valetudo.cloud/pages/development/building-and-modifying-valetudo.html).
+- If you want to develop as well, check out the [Local Development guide](https://congatudo.cloud/pages/development/building-and-modifying-congatudo.html).
 
 Any of the ways to get Valetudo running for the robot needs root access to your Conga, so here it will be explained too [Robot Setup](#robot-setup).
 
