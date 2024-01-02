@@ -26,10 +26,10 @@ Steps to reproduce the behavior:
 <!--If applicable, add screenshots to help explain your problem.-->
 
 ### Vacuum Model
-<!-- e.g. Conga 3490/Conga 4090/etc -->
+<!-- e.g. Conga 3090 -->
 
 ### Congatudo Version
-<!-- e.g. 2023.2.1 -->
+<!-- e.g. 2023.12 -->
 
 ## Expected behavior
 <!--
