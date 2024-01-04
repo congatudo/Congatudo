@@ -107,7 +107,7 @@ class SegmentLabelMapStructure extends MapStructure {
             }
 
             if (scaleFactor >= 11) {
-                let metaString = (this.area).toFixed(0) + " m²";
+                let metaString = (this.area / 10 ).toFixed(0) + " m²";
                 metaString += ` (id=${this.id})`;
 
                 ctx.font = "35px sans-serif";
