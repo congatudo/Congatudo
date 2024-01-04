@@ -36,8 +36,13 @@ class LinuxWifiConfigurationCapability extends WifiConfigurationCapability {
 
             :-)
          */
-        const iwOutput = spawnSync("iw", ["dev", this.networkInterface, "link"]).stdout.toString();
-        const wifiStatus = this.parseIwStdout(iwOutput);
+        const iwOutput = spawnSync("iw", ["dev", this.networkInterface, "link"]).stdout;
+        let wifiStatus;
+        if (iwOutput !== null) {
+            wifiStatus = this.parseIwStdout(iwOutput.toString());
+        } else {
+            wifiStatus = this.parseIwStdout("");
+        }
 
         //IPs are not part of the iw output
         if (wifiStatus.state === ValetudoWifiStatus.STATE.CONNECTED) {
@@ -46,7 +51,9 @@ class LinuxWifiConfigurationCapability extends WifiConfigurationCapability {
             });
         }
 
+        // @ts-ignore
         return wifiStatus;
+
     }
 
     /**
@@ -54,6 +61,7 @@ class LinuxWifiConfigurationCapability extends WifiConfigurationCapability {
      * @returns {Promise<void>}
      * @abstract
      */
+    // @ts-ignore
     async setWifiConfiguration(wifiConfig) {
         throw new NotImplementedError();
     }
@@ -71,6 +79,7 @@ class LinuxWifiConfigurationCapability extends WifiConfigurationCapability {
 
         const connectedMatch = stdout.match(WIFI_CONNECTED_IW_REGEX);
         if (connectedMatch) {
+            // @ts-ignore
             output.state = ValetudoWifiStatus.STATE.CONNECTED;
             output.details.bssid = connectedMatch.groups.bssid.trim();
 
@@ -108,6 +117,7 @@ class LinuxWifiConfigurationCapability extends WifiConfigurationCapability {
 
             output.details.frequency = ValetudoWifiStatus.FREQUENCY_TYPE.W2_4Ghz;
         } else if (stdout.trim().match(WIFI_NOT_CONNECTED_IW_REGEX)) {
+            // @ts-ignore
             output.state = ValetudoWifiStatus.STATE.NOT_CONNECTED;
         }
 
