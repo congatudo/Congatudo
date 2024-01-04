@@ -366,15 +366,14 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                             selectedZoneIds={this.state.selectedZoneIds}
                             zoneNames={this.state.zoneNames}
                             zones={this.state.zones}
-                            //cuttingLine={this.state.cuttingLine}
                             convertPixelCoordinatesToCMSpace={(coordinates => {
                                 return this.structureManager.convertPixelCoordinatesToCMSpace(coordinates);
                             })}
-                            /*supportedCapabilities={{
-                                [Capability.MapSegmentEdit]: this.props.supportedCapabilities[Capability.MapSegmentEdit],
-                                [Capability.MapSegmentRename]: this.props.supportedCapabilities[Capability.MapSegmentRename]
+                            onClear={() => {
+                                // TODO
+                                // this.clearSegmentStructures();
                             }}
-                            onAddCuttingLine={() => {
+                            onAdd={() => {
                                 const currentCenter = this.getCurrentViewportCenterCoordinatesInPixelSpace();
 
                                 const p0 = {
@@ -386,7 +385,7 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                                     y: currentCenter.y +15
                                 };
 
-                                this.structureManager.addClientStructure(new CuttingLineClientStructure(
+                                this.structureManager.addClientStructure(new ZoneClientStructure(
                                     p0.x, p0.y,
                                     p1.x, p1.y,
                                     true
@@ -395,13 +394,6 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                                 this.updateState();
 
                                 this.draw();
-                            }} */
-                            onClear={() => {
-                                // TODO
-                                // this.clearSegmentStructures();
-                            }}
-                            onAdd={() => {
-                                // TODO
                             }}
                         />
                     }

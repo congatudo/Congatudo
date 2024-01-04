@@ -6,7 +6,13 @@ import {
     useRobotStatusQuery
 } from "../../../api";
 import React from "react";
-import {Box, Button, CircularProgress, Container, Grid, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    Grid,
+    Typography} from "@mui/material";
 import { useLongPress } from "use-long-press";
 import {ActionButton} from "../../Styled";
 import ZoneClientStructure from "../../structures/client_structures/ZoneClientStructure";
@@ -31,7 +37,13 @@ interface ZoneActionsProperties {
 const ZoneActions = (
     props: ZoneActionsProperties
 ): React.ReactElement => {
-    const { zones, convertPixelCoordinatesToCMSpace, onClear, onAdd } = props;
+    const {
+        zones,
+        convertPixelCoordinatesToCMSpace,
+        onClear,
+        onAdd
+    } = props;
+
     const [iterationCount, setIterationCount] = React.useState(1);
     const [integrationHelpDialogOpen, setIntegrationHelpDialogOpen] = React.useState(false);
     const [integrationHelpDialogPayload, setIntegrationHelpDialogPayload] = React.useState("");
