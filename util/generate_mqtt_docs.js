@@ -6,6 +6,7 @@ const CapabilityMqttHandle = require("../backend/lib/mqtt/capabilities/Capabilit
 const NodeMqttHandle = require("../backend/lib/mqtt/handles/NodeMqttHandle");
 const RobotStateNodeMqttHandle = require("../backend/lib/mqtt/handles/RobotStateNodeMqttHandle");
 const MapNodeMqttHandle = require("../backend/lib/mqtt/handles/MapNodeMqttHandle");
+const ValetudoEventsNodeMqttHandle = require("../backend/lib/mqtt/handles/ValetudoEventsNodeMqttHandle");
 const MockConsumableMonitoringCapability = require("../backend/lib/robots/mock/capabilities/MockConsumableMonitoringCapability");
 const ConsumableStateAttribute = require("../backend/lib/entities/state/attributes/ConsumableStateAttribute");
 const ValetudoMapSegment = require("../backend/lib/entities/core/ValetudoMapSegment");
@@ -180,6 +181,7 @@ class FakeMqttController extends MqttController {
         super({
             robot: robot,
             config: fakeConfig,
+            valetudoEventStore: eventStore,
             valetudoHelper: {
                 onFriendlyNameChanged: () => {}
             }
@@ -191,6 +193,7 @@ class FakeMqttController extends MqttController {
 
         this.robotHandle = new RobotMqttHandle({
             robot: this.robot,
+            valetudoEventStore: eventStore,
             controller: this,
             baseTopic: "<TOPIC PREFIX>",
             topicName: "<IDENTIFIER>",
@@ -556,6 +559,7 @@ class FakeMqttController extends MqttController {
             const capabilities = this.crawlGetHandlesOfType(this.robotHandle, CapabilityMqttHandle);
             const stateAttrs = this.crawlGetHandlesOfType(this.robotHandle, RobotStateNodeMqttHandle, CapabilityMqttHandle);
             const map = this.crawlGetHandlesOfType(this.robotHandle, MapNodeMqttHandle);
+            const valetudoEvents = this.crawlGetHandlesOfType(this.robotHandle, ValetudoEventsNodeMqttHandle);
 
             let anchors;
             let hassComponentAnchors;
@@ -588,6 +592,12 @@ class FakeMqttController extends MqttController {
             anchors.children.push(mapRes.anchors);
             Object.assign(hassComponentAnchors, mapRes.hassComponentAnchors);
             Object.assign(stateAttrAnchors, mapRes.stateAttrAnchors);
+
+            const valetudoEventsRes = await this.generateHandleDoc(valetudoEvents[0], 3, true);
+            markdown += valetudoEventsRes.markdown;
+            anchors.children.push(valetudoEventsRes.anchors);
+            Object.assign(hassComponentAnchors, valetudoEventsRes.hassComponentAnchors);
+            Object.assign(stateAttrAnchors, valetudoEventsRes.stateAttrAnchors);
 
             const statusAnchor = {
                 title: "Status",

@@ -103,6 +103,7 @@ HassAnchor.ANCHOR = Object.freeze({
     CURRENT_STATISTICS_AREA: "current_statistics_area",
     FAN_SPEED: "fan_speed",
     MAP_SEGMENTS_LEN: "map_segments_len",
+    ACTIVE_VALETUDO_EVENTS_COUNT: "active_valetudo_events_count",
     VACUUM_STATE: "vacuum_state",
     WIFI_IPS: "wifi_ips",
     WIFI_FREQUENCY: "wifi_freq",
@@ -120,6 +121,7 @@ HassAnchor.REFERENCE = Object.freeze({
     VALETUDO_ROBOT_ERROR: "valetudo_robot_error",
     HASS_CONSUMABLE_STATE: "hass_consumable_state_",
     HASS_MAP_SEGMENTS_STATE: "hass_map_segments_state",
+    HASS_ACTIVE_VALETUDO_EVENTS: "hass_active_valetudo_events",
     HASS_WIFI_CONFIG_ATTRS: "hass_wifi_config_attrs",
 });
 
