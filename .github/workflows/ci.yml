@@ -1,31 +1,33 @@
-{
-  'name': 'CI',
-  'on': ['push', 'pull_request'],
-  'jobs':
-    {
-      'build':
-        {
-          'runs-on': 'ubuntu-latest',
-          'strategy': { 'matrix': { 'node-version': ['20.10.0'] } },
-          'steps':
-            [
-              { 'uses': 'actions/checkout@v3' },
-              {
-                'name': 'Use Node.js ${{ matrix.node-version }}',
-                'uses': 'actions/setup-node@v4',
-                'with': { 'node-version': '${{ matrix.node-version }}' },
-              },
-              { 'run': 'npm ci' },
-              {
-                'name': 'Generate OpenAPI Docs',
-                'run': 'npm run build_openapi_schema',
-              },
-              { 'run': 'npm run ts-check --workspace={frontend,backend}' },
-              { 'run': 'npm run lint --workspace={frontend,backend}' },
-              { 'run': 'npm run build --workspace=frontend' },
-              { 'run': 'npm run build --workspace=backend' },
-              { 'run': 'npm test --workspace=backend', 'env': { 'CI': true } },
-            ],
-        },
-    },
-}
+name': 'CI'
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on': 'ubuntu-latest'
+    strategy: 
+      matrix:
+        node-version: '20.10.0'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Build
+        run: npm ci
+      - name: Generate OpenAPI Docs
+        run: npm run build_openapi_schema
+      - name: Check Typescript
+        run: npm run ts-check --workspace={frontend,backend}
+      - name: Check lint
+        run: npm run lint --workspace={frontend,backend}
+      - name: Build frontend
+        run: npm run build --workspace=frontend
+      - name: Build backend
+        run: npm run build --workspace=backend
+      - name: Execute tests
+        run: npm test --workspace=backend
+        env:
+          CI: true
