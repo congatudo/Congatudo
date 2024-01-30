@@ -1,8 +1,7 @@
 on:
   schedule:
     - cron: 6 0 * * * # run daily at 6 am
-  repository_dispatch: # run manually
-    types: [check-link]
+  workflow_dispatch: # run manually
 
 name: Broken Link Check
 jobs:
