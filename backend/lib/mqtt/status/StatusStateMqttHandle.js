@@ -91,7 +91,7 @@ class StatusStateMqttHandle extends RobotStateNodeMqttHandle {
                 } else if (statusState.value !== stateAttrs.StatusStateAttribute.VALUE.ERROR) {
                     return "No error";
                 } else {
-                    return statusState.error?.message ?? "Unknown error";
+                    return statusState.error?.message || statusState.error?.error_description || "Unknown error";
                 }
             },
         }).also((prop) => {
