@@ -75,6 +75,16 @@ class Configuration {
                 const config = fs.readFileSync(this.location, {"encoding": "utf-8"}).toString();
                 const parsedConfig = JSON.parse(config);
 
+                if (parsedConfig._version !== Tools.GET_VALETUDO_VERSION()) {
+                    Logger.info(`Migrating config from ${parsedConfig._version} to ${Tools.GET_VALETUDO_VERSION()}`);
+
+                    // BEGIN migration code to be removed with the next version
+
+                    // END migration code to be removed with the next version
+
+                    parsedConfig._version = Tools.GET_VALETUDO_VERSION();
+                }
+
                 if (!ajv.validate(SCHEMAS.components.schemas.Configuration, parsedConfig)) {
                     Logger.error("Error while validating configuration file", ajv.errors);
 
