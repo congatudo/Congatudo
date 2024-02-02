@@ -280,6 +280,9 @@
             "items": {
               "type": "string",
               "enum": [
+                "ConsumableMonitoringCapability",
+                "CurrentStatisticsCapability",
+                "TotalStatisticsCapability",
                 "SpeakerVolumeControlCapability"
               ]
             }
