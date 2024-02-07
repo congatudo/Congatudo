@@ -52,7 +52,7 @@ It is a good practice to do a back up if all the files we are going to handle, s
     ```
 ## Let's speak Spanish
 
-You can change the language to Spanish by replacing the English audio files in the `/usr/share/audio/english` folder. You can [download and use these audios](https://raw.githubusercontent.com/congatudo/Congatudo/master/docs/assets/files/conga_es.tar) or generate your own.
+You can change the language to Spanish by replacing the English audio files in the `/usr/share/audio/english` folder. Before making any changes, please make a backup copy. You can [download and use these audios](https://raw.githubusercontent.com/congatudo/Congatudo/master/docs/assets/files/conga_es.tar) or generate your own.
 
 ## Learning Chinese
 
