@@ -50,8 +50,11 @@ It is a good practice to do a back up if all the files we are going to handle, s
     ```
     root@TinaLinux:~# /etc/init.d/robotManager start
     ```
+## Let's speak Spanish
 
-## Learning chinese
+You can change the language to Spanish by replacing the English audio files in the `/usr/share/audio/english` folder. You can [download and use these audios](https://raw.githubusercontent.com/congatudo/Congatudo/master/docs/assets/files/conga_es.tar) or generate your own.
+
+## Learning Chinese
 
 By default the robot will speak in english, but it is able to "magically learn" mandarin just editing the property `sound_type` from 2 to 1 in the same file `device_config.ini`
 
