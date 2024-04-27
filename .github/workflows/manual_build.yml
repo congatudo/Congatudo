@@ -8,7 +8,7 @@
           'runs-on': 'ubuntu-latest',
           'steps':
             [
-              { 'uses': 'actions/checkout@v3' },
+              { 'uses': 'actions/checkout@v4' },
               {
                 'name': 'Use Node.js 20.10.0',
                 'uses': 'actions/setup-node@v4',
@@ -42,7 +42,7 @@
 
               {
                 'name': 'Upload armv7 build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-armv7',
@@ -51,7 +51,7 @@
               },
               {
                 'name': 'Upload armv7 lowmem build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-armv7-lowmem',
@@ -60,7 +60,7 @@
               },
               {
                 'name': 'Upload aarch64 build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-aarch64',
@@ -69,7 +69,7 @@
               },
               {
                 'name': 'Upload arm64 build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-arm64',
@@ -83,7 +83,7 @@
               },
               {
                 'name': 'Upload armv7 upx build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-armv7.upx',
@@ -92,7 +92,7 @@
               },
               {
                 'name': 'Upload armv7 lowmem upx build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-armv7-lowmem.upx',
@@ -101,7 +101,7 @@
               },
               {
                 'name': 'Upload aarch64 upx build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-aarch64.upx',
@@ -110,7 +110,7 @@
               },
               {
                 'name': 'Upload arm64 upx build',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo-arm64.upx',
@@ -124,7 +124,7 @@
               },
               {
                 'name': 'Upload manifest',
-                'uses': 'actions/upload-artifact@v3',
+                'uses': 'actions/upload-artifact@v4',
                 'with':
                   {
                     'name': 'valetudo_release_manifest.json',
