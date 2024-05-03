@@ -5,7 +5,7 @@ contributors, as well as occasional paid contributors thanks to the financial
 support of generous donors.
 
 The ways to donate to the project, as well as details on how the funds are
-used, are described on [Congatudo's website](https://congatudo.cloud/donate).
+used, are described on [Congatudo's website](https://congatudo.cloud/pages/general/donate.html).
 
 The following is a list of the current donors, who will have their
 generous deed immortalized in the next stable release of Congatudo,

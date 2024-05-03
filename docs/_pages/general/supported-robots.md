@@ -1,7 +1,7 @@
 ---
 title: Supported Robots
 category: General
-order: 9
+order: 3
 ---
 
 # Supported Robots

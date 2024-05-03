@@ -1,7 +1,7 @@
 ---
 title: Capabilities Overview
 category: General
-order: 10
+order: 4
 ---
 
 # Capabilities overview

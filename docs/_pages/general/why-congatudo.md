@@ -1,7 +1,7 @@
 ---
 title: Why Congatudo?
 category: General
-order: 6
+order: 2
 ---
 
 # Why Congatudo?

@@ -452,7 +452,7 @@ const ValetudoAppBar: React.FunctionComponent<{ paletteMode: PaletteMode, setPal
                     </ListItemButton>
                     <ListItemButton
                         component="a"
-                        href="https://congatudo.cloud/donate"
+                        href="https://congatudo.cloud/pages/general/donate.html"
                         target="_blank"
                         rel="noopener"
                     >
