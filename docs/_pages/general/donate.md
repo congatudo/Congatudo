@@ -18,4 +18,4 @@ Keep in mind that I work full-time and can't devote all my time to these project
 
 Thank you for taking the time to read this! 🙋‍♂️
 
-If you are interested in donating, [https://github.com/sponsors/elraro](please click here).
+If you are interested in donating, [please click here](https://github.com/sponsors/elraro).
