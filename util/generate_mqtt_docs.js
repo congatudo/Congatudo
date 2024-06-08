@@ -39,7 +39,8 @@ order: 20
 # MQTT integration
 
 To make your robot talk to your MQTT broker and integrate with home automation software, such as but not limited to
-Home Assistant, openHAB and Node-RED, configure MQTT via Congatudo's web interface (Settings → MQTT).
+Home Assistant, openHAB and Node-RED, configure MQTT via Congatudo's web interface (Connectivity → MQTT connectivity).
+On this page you can also find the exact topic to which to send commands to or from.
 
 ## Autodiscovery
 
