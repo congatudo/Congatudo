@@ -16,7 +16,9 @@ const CAPABILITY_TYPE_TO_HANDLE_MAPPING = {
     [capabilities.ZoneCleaningCapability.TYPE]: capabilityHandles.ZoneCleaningCapabilityMqttHandle,
     [capabilities.AutoEmptyDockManualTriggerCapability.TYPE]: capabilityHandles.AutoEmptyDockManualTriggerCapabilityMqttHandle,
     [capabilities.CurrentStatisticsCapability.TYPE]: capabilityHandles.CurrentStatisticsCapabilityMqttHandle,
-    [capabilities.SpeakerVolumeControlCapability.TYPE]: capabilityHandles.SpeakerVolumeControlCapabilityMqttHandle
+    [capabilities.TotalStatisticsCapability.TYPE]: capabilityHandles.TotalStatisticsCapabilityMqttHandle,
+    [capabilities.SpeakerVolumeControlCapability.TYPE]: capabilityHandles.SpeakerVolumeControlCapabilityMqttHandle,
+    [capabilities.KeyLockCapability.TYPE]: capabilityHandles.KeyLockCapabilityMqttHandle
 };
 
 const STATUS_ATTR_TO_HANDLE_MAPPING = [
