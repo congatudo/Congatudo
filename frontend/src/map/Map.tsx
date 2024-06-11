@@ -18,6 +18,7 @@ import {PinchMoveTouchHandlerEvent} from "./utils/touch_handling/events/PinchMov
 import {PinchEndTouchHandlerEvent} from "./utils/touch_handling/events/PinchEndTouchHandlerEvent";
 import {PointCoordinates} from "./utils/types";
 import { create } from "zustand";
+import {considerHiDPI} from "./utils/helpers";
 
 export interface MapProps {
     rawMap: RawMapData;
@@ -102,8 +103,8 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
                 return;
             }
 
-            this.canvas.height = this.canvas.clientHeight;
-            this.canvas.width = this.canvas.clientWidth;
+            this.canvas.height = considerHiDPI(this.canvas.clientHeight);
+            this.canvas.width = considerHiDPI(this.canvas.clientWidth);
 
             this.ctxWrapper.setTransform(a, b, c, d, e, f);
 
@@ -122,8 +123,8 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
 
     componentDidMount(): void {
         this.canvas = this.canvasRef.current!;
-        this.canvas.height = this.canvas.clientHeight;
-        this.canvas.width = this.canvas.clientWidth;
+        this.canvas.height = considerHiDPI(this.canvas.clientHeight);
+        this.canvas.width = considerHiDPI(this.canvas.clientWidth);
 
         this.ctxWrapper = new Canvas2DContextTrackingWrapper(this.canvas.getContext("2d")!);
 
@@ -328,12 +329,13 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
                 const transformationMatrixToScreenSpace = this.ctxWrapper.getTransform();
                 this.ctxWrapper.save();
                 this.ctxWrapper.setTransform(1, 0, 0, 1, 0, 0);
+                const scaleFactor = Math.round(this.currentScaleFactor / window.devicePixelRatio); //considerHiDPI
 
                 this.structureManager.getMapStructures().forEach(s => {
                     s.draw(
                         this.ctxWrapper,
                         transformationMatrixToScreenSpace,
-                        this.currentScaleFactor,
+                        scaleFactor,
                         this.structureManager.getPixelSize()
                     );
                 });
@@ -342,7 +344,7 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
                     s.draw(
                         this.ctxWrapper,
                         transformationMatrixToScreenSpace,
-                        this.currentScaleFactor,
+                        scaleFactor,
                         this.structureManager.getPixelSize()
                     );
                 });
@@ -432,7 +434,10 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
             factor = 150 / currentScaleFactor;
         }
 
-        const pt = this.ctxWrapper.mapPointToCurrentTransform(evt.offsetX, evt.offsetY);
+        const pt = this.ctxWrapper.mapPointToCurrentTransform(
+            considerHiDPI(evt.offsetX),
+            considerHiDPI(evt.offsetY),
+        );
         this.ctxWrapper.translate(pt.x, pt.y);
         this.ctxWrapper.scale(factor, factor);
         this.ctxWrapper.translate(-pt.x, -pt.y);
@@ -614,8 +619,8 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     protected relativeCoordinatesToCanvas(x: number, y:number) : PointCoordinates {
         const rect = this.canvas.getBoundingClientRect();
         return {
-            x: x - rect.left,
-            y: y - rect.top
+            x: Math.round((x - rect.left) * window.devicePixelRatio),
+            y: Math.round((y - rect.top) * window.devicePixelRatio)
         };
     }
 
