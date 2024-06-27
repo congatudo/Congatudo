@@ -416,7 +416,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         // apply offset to remove fake bottom line.
         for (let x = offset; x < size.x - offset; x++) {
             for (let y = offset; y < size.y - offset; y++) {
-                const coord = (size.y - y) * size.y + x;
+                const coord = (size.y - y) * size.x + x;
                 const point = grid[coord];
 
                 if (point === 255) {
