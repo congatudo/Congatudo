@@ -122,7 +122,7 @@ class EditMap extends Map<EditMapProps, EditMapState> {
         super.updateState();
 
         const segmentNames = {} as Record<string, string>;
-        
+
         this.structureManager.getMapStructures().forEach(s => {
             if (s.type === SegmentLabelMapStructure.TYPE) {
                 const label = s as SegmentLabelMapStructure;
