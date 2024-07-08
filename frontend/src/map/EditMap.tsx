@@ -122,6 +122,7 @@ class EditMap extends Map<EditMapProps, EditMapState> {
         super.updateState();
 
         const segmentNames = {} as Record<string, string>;
+
         this.structureManager.getMapStructures().forEach(s => {
             if (s.type === SegmentLabelMapStructure.TYPE) {
                 const label = s as SegmentLabelMapStructure;
@@ -130,7 +131,6 @@ class EditMap extends Map<EditMapProps, EditMapState> {
             }
         });
 
-
         this.setState({
             segmentNames: segmentNames,
             cuttingLine: this.structureManager.getClientStructures().find(s => {
@@ -138,7 +138,9 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                     return true;
                 }
             }) as CuttingLineClientStructure,
-
+            zones: this.structureManager.getClientStructures().filter(s => {
+                return s.type === ZoneClientStructure.TYPE;
+            }) as Array<ZoneClientStructure>,
             virtualWalls: this.structureManager.getClientStructures().filter(s => {
                 if (s.type === VirtualWallClientStructure.TYPE) {
                     return true;
@@ -230,6 +232,18 @@ class EditMap extends Map<EditMapProps, EditMapState> {
 
         this.structureManager.getClientStructures().forEach(s => {
             if (s.type === CuttingLineClientStructure.TYPE) {
+                this.structureManager.removeClientStructure(s);
+            }
+        });
+
+        this.updateState();
+
+        this.redrawLayers();
+    }
+
+    private clearZoneStructures() : void {
+        this.structureManager.getClientStructures().forEach(s => {
+            if (s.type === ZoneClientStructure.TYPE) {
                 this.structureManager.removeClientStructure(s);
             }
         });
@@ -370,8 +384,7 @@ class EditMap extends Map<EditMapProps, EditMapState> {
                                 return this.structureManager.convertPixelCoordinatesToCMSpace(coordinates);
                             })}
                             onClear={() => {
-                                // TODO
-                                // this.clearSegmentStructures();
+                                this.clearZoneStructures();
                             }}
                             onAdd={() => {
                                 const currentCenter = this.getCurrentViewportCenterCoordinatesInPixelSpace();
