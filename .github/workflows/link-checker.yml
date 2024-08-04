@@ -3,7 +3,7 @@ name: "Link Checker"
 on: # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "21 7 * * *"
 
 jobs:
   link-checker:

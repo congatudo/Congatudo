@@ -3,7 +3,7 @@
   "on": {
     "schedule": [
       {
-        "cron": "30 1 * * *"
+        "cron": "42 2 * * *"
       }
     ],
     "workflow_dispatch": null
