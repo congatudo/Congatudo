@@ -301,46 +301,11 @@ const WifiConnectivity = (): React.ReactElement => {
                                 setConfirmationDialogOpen(true);
                             }}
                         >
-<<<<<<< HEAD:frontend/src/options/connectivity/WifiConnectivity.tsx
-                            <Typography color="info">
-                                To connect your robot to a different Wi-Fi network, you need to do a Wi-Fi reset.
-                                <br/><br/>
-                                Note that the procedure is different depending on your model of robot, so please refer to the relevant documentation to figure out how to do that.
-                                After having done that, simply connect to the Wi-Fi AP provided by the robot and then either use the Congatudo Webinterface
-                                or the Companion app to enter new Wi-Fi credentials.
-                            </Typography>
-                        </InfoBox>
-                    }
-
-                    <Divider sx={{mt: 1}} style={{marginTop: "1rem", marginBottom: "1rem"}}/>
-
-                    {
-                        properties.provisionedReconfigurationSupported &&
-                        <Grid container>
-                            <Grid item style={{marginLeft: "auto"}}>
-                                <LoadingButton
-                                    loading={configurationUpdating}
-                                    color="primary"
-                                    variant="outlined"
-                                    disabled={!(configurationModified && newSSID && newPSK)}
-                                    onClick={() => {
-                                        setConfirmationDialogOpen(true);
-                                    }}
-                                >
-                                    Save configuration
-                                </LoadingButton>
-                            </Grid>
-                        </Grid>
-                    }
-                </Box>
-            </Grid>
-=======
                             Save configuration
                         </LoadingButton>
                     </Grid>
                 </Grid>
             }
->>>>>>> d8714dde (feat(ui): Loading animation cleanup):frontend/src/options/connectivity/WifiConnectivityPage.tsx
             <ConfirmationDialog
                 title="Apply new Wi-Fi configuration?"
                 text=""
