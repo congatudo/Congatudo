@@ -18,6 +18,7 @@ import HelpAction from "./actions/edit_map_actions/HelpAction";
 import {ProviderContext} from "notistack";
 import ZoneClientStructure from "./structures/client_structures/ZoneClientStructure";
 import React from "react";
+import {PathDrawer} from "./PathDrawer";
 
 export type mode = "segments" | "zones" | "virtual_restrictions";
 
@@ -85,6 +86,21 @@ class EditMap extends Map<EditMapProps, EditMapState> {
         this.drawableComponents.push(this.mapLayerManager.getCanvas());
 
         this.updateStructures(this.props.mode);
+
+        if (this.props.mode === "virtual_restrictions") {
+            const pathsImage = await PathDrawer.drawPaths( {
+                paths: this.props.rawMap.entities.filter(e => {
+                    return e.type === RawMapEntityType.Path;
+                }),
+                mapWidth: this.props.rawMap.size.x,
+                mapHeight: this.props.rawMap.size.y,
+                pixelSize: this.props.rawMap.pixelSize,
+                paletteMode: this.props.theme.palette.mode,
+                opacity: 0.5
+            });
+
+            this.drawableComponents.push(pathsImage);
+        }
 
         this.updateState();
 
