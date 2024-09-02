@@ -102,6 +102,14 @@ export interface ValetudoVersion {
     commit: string;
 }
 
+export enum CPUUsageType {
+    USER = "user",
+    NICE = "nice",
+    SYS = "sys",
+    IDLE = "idle",
+    IRQ = "irq"
+}
+
 export interface SystemHostInfo {
     hostname: string;
     arch: string;
@@ -117,6 +125,9 @@ export interface SystemHostInfo {
         5: number;
         15: number;
     };
+    cpus: Array<{
+        usage: Record<CPUUsageType, number>
+    }>
 }
 
 export interface SystemRuntimeInfo {
