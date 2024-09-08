@@ -189,7 +189,7 @@ Once you have already downloaded it and named as "valetudo.json", edit the imple
 ### Use the prepared image
 Then, you are able to just run the dockerhub image
 ```shell
-docker run -p 8080:8080 -p 4010:4010 -p 4030:4030 -p 4050:4050 -v $(pwd)/valetudo.json:/etc/valetudo/config.json --name congatudo ghcr.io/congatudo/Congatudo:alpine-latest
+docker run -p 8080:8080 -p 4010:4010 -p 4030:4030 -p 4050:4050 -v $(pwd)/valetudo.json:/etc/valetudo/config.json --name congatudo ghcr.io/congatudo/congatudo:alpine-latest
 ```
 ### Finally
 :tada: With theses steps, you may see your Valetudo server running under <http://ip-server:8080>
