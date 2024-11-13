@@ -32,7 +32,8 @@ Please give it a try and [file any issues that you encounter there](https://gith
     - [Get root access in your Conga](#get-root-access-in-your-conga)
     - [Point your Conga robot to Valetudo Server](#point-your-conga-robot-to-valetudo-server)
   - [Standalone installation](#standalone-installation)
-    - [Build a binary for you standalone installation](#build-a-binary-for-you-standalone-installation)
+    - [~~Build a binary for you standalone installation(optional step)~~](#build-a-binary-for-you-standalone-installation-old-dated-optional-step)
+    - [Get the binary from the releases](#get-the-binary-from-the-releases)
     - [Prepare a valid configuration file](#prepare-a-valid-configuration-file)
     - [Copy the binary and its configuration to your robot](#copy-the-binary-and-its-configuration-to-your-robot)
     - [Create a script file to export the enviroment variable and run the server at boot in your robot](#create-a-script-file-to-export-the-enviroment-variable-and-run-the-server-at-boot-in-your-robot)
@@ -89,8 +90,8 @@ $> /etc/init.d/valetudo enable
 $> reboot
 ```
 ## Standalone installation
-### Build a binary for you standalone installation
-Compile Congatudo under the path ./build/armv7/valetudo
+### ~~Build a binary for you standalone installation (old dated, optional step)~~
+~~Compile Congatudo under the path ./build/armv7/valetudo~~
 ```shell
 $ git clone https://github.com/congatudo/Congatudo.git
 $ cd Congatudo
@@ -101,6 +102,10 @@ $ npm run build --workspace=frontend # to get access to the under development ne
 $ cd backend
 $ npm run build
 ```
+
+### Get the binary from the releases
+Go to congatudo releases page to download [valetudo-armv7](https://github.com/congatudo/Congatudo/releases) and named only 'valetudo'
+
 ### Prepare a valid configuration file
 In your machine, get a valid valetudo config file in from: https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json
 
