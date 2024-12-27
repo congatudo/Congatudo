@@ -1,49 +1,49 @@
 {
   "include": [
     {
-      "build_from": "arm32v7/alpine:3.18",
-      "platform": "linux/armv7",
+      "build_from": "arm32v7/alpine:3.20",
+      "platform": "linux/arm/v7",
       "image_name": "alpine-armv7",
       "pkg_options": "expose-gc,max-heap-size=48",
       "pkg_target": "node20-linuxstatic-armv7"
     },
     {
-      "build_from": "arm64v8/alpine:3.18",
+      "build_from": "arm64v8/alpine:3.20",
       "platform": "linux/arm64",
       "image_name": "alpine-aarch64",
       "pkg_options": "expose-gc,max-heap-size=64",
       "pkg_target": "node20-linuxstatic-arm64"
     },
     {
-      "build_from": "amd64/alpine:3.18",
+      "build_from": "amd64/alpine:3.20",
       "platform": "linux/amd64",
       "image_name": "alpine-amd64",
       "pkg_options": "expose-gc,max-heap-size=256",
       "pkg_target": "node20-linuxstatic-x64"
     },
     {
-      "build_from": "homeassistant/armhf-base:3.18",
-      "platform": "linux/armhf",
+      "build_from": "homeassistant/armhf-base:3.20",
+      "platform": "linux/arm/v7",
       "image_name": "homeassistant-armhf",
       "pkg_options": "expose-gc,max-heap-size=48",
       "pkg_target": "node20-linuxstatic-armv7"
     },
     {
-      "build_from": "homeassistant/armv7-base:3.18",
-      "platform": "linux/armv7",
+      "build_from": "homeassistant/armv7-base:3.20",
+      "platform": "linux/arm/v7",
       "image_name": "homeassistant-armv7",
       "pkg_options": "expose-gc,max-heap-size=48",
       "pkg_target": "node20-linuxstatic-armv7"
     },
     {
-      "build_from": "homeassistant/aarch64-base:3.18",
+      "build_from": "homeassistant/aarch64-base:3.20",
       "platform": "linux/arm64",
       "image_name": "homeassistant-aarch64",
       "pkg_options": "expose-gc,max-heap-size=64",
       "pkg_target": "node20-linuxstatic-arm64"
     },
     {
-      "build_from": "homeassistant/amd64-base:3.18",
+      "build_from": "homeassistant/amd64-base:3.20",
       "platform": "linux/amd64",
       "image_name": "homeassistant-amd64",
       "pkg_options": "expose-gc,max-heap-size=256",
