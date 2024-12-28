@@ -1,5 +1,6 @@
 # Stage 1
 ARG BUILD_FROM=amd64/alpine:3.18
+ARG BUILD_PLATFORM=linux/amd64
 FROM node:20-alpine AS BUILD_IMAGE
 
 # Install dependencies
