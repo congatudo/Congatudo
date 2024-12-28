@@ -50,7 +50,7 @@ RUN npx pkg \
   backend
 
 # Stage 2
-FROM --platform=$BUILD_PLATFORM ${BUILD_FROM}
+FROM --platform=${BUILD_PLATFORM} ${BUILD_FROM}
 
 # Install dependencies
 RUN apk update && \
