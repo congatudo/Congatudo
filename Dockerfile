@@ -1,7 +1,7 @@
 # Stage 1
 ARG BUILD_FROM=amd64/alpine:3.18
 ARG BUILD_PLATFORM=linux/amd64
-FROM node:20-alpine AS BUILD_IMAGE
+FROM node:20-alpine AS build_image
 
 # Install dependencies
 RUN apk update && \
@@ -67,7 +67,7 @@ USER node:node
 WORKDIR /usr/local/bin
 
 # Copy from build image
-COPY --chown=node:node --from=BUILD_IMAGE /usr/src/app/build/valetudo ./valetudo
+COPY --chown=node:node --from=build_image /usr/src/app/build/valetudo ./valetudo
 
 # Exposed ports
 EXPOSE 8080
