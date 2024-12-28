@@ -1,6 +1,6 @@
 # Stage 1
 ARG BUILD_FROM=amd64/alpine:3.18
-FROM node:20-alpine AS BUILD_IMAGE
+FROM --platform=linux/amd64 node:20-alpine AS BUILD_IMAGE
 
 # Install dependencies
 RUN apk update && \
@@ -73,7 +73,7 @@ EXPOSE 8080
 EXPOSE 4010 4030 4050
 
 # Run environment
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 ENV VALETUDO_CONFIG_PATH=/etc/valetudo/config.json
 ENV NODE_ENV=production
 
