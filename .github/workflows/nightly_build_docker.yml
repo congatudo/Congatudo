@@ -47,7 +47,6 @@ jobs:
         with:
           push: false
           load: true
-          platforms: ${{ matrix.platform }}
           tags: |
             ${{ env.REGISTRY }}/congatudo/congatudo-nightly:${{ matrix.image_name }}-latest
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -56,6 +55,7 @@ jobs:
             "BUILD_FROM=${{ matrix.build_from }}"
             "PKG_TARGET=${{ matrix.pkg_target }}"
             "PKG_OPTIONS=${{ matrix.pkg_options }}"
+            "BUILD_PLATFORM=${{ matrix.platform }}"
       - name: Push
         run: |
           docker push ${{ env.REGISTRY }}/congatudo/congatudo-nightly:${{ matrix.image_name }}-latest
