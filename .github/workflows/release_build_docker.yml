@@ -71,6 +71,7 @@ jobs:
             "BUILD_FROM=${{ matrix.build_from }}"
             "PKG_TARGET=${{ matrix.pkg_target }}"
             "PKG_OPTIONS=${{ matrix.pkg_options }}"
+            "BUILD_PLATFORM=${{ matrix.platform }}"
       - name: Push
         run: |
           docker push ${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
