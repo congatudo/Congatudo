@@ -78,7 +78,7 @@ $ agnoc wlan <wifissid> <pass>
 ![Tina-Linux](https://github.com/congatudo/stuff/blob/master/docs/assets/tina-linux.png)
 1. Now, it would be a good practice to:
    - Change the password (to something non-default and secure 🙏)
-   - Add certificates (ssh key-pair) to [access via ssh without passwords](add-ssh-key.md)
+   - Add certificates (ssh key-pair) to [access via ssh without passwords](https://congatudo.cloud/pages/misc/add-ssh-key.html)
   
 ### Point your Conga robot to Valetudo Server
 Open a ssh terminal to your robot and edit the hosts file, your server:
@@ -300,7 +300,7 @@ Check the emebebed property of your configuration file, you may try to run conga
 
 ## LICENSE
 
-This work is licensed under the [GNU General Public License v3.0](LICENSE-GPLV30). All media and data files that are not source code are licensed under the [Creative Commons Attribution 4.0 BY-SA license](LICENSE-CCBYSA40).
+This work is licensed under the [Apache License 2.0](https://github.com/congatudo/Congatudo/blob/master/LICENSE). All media and data files that are not source code are licensed under the [Creative Commons Attribution 4.0 BY-SA license](https://creativecommons.org/licenses/by/4.0/).
 
 More information about licenses in [Opensource licenses](https://opensource.org/licenses/) and [Creative Commons licenses](https://creativecommons.org/licenses/).
 
