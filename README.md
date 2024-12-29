@@ -24,7 +24,7 @@ Support is still somewhat experimental, everything in this guide is under your r
 
 Any of the ways to get Valetudo running for the robot needs root access to your Conga, so here it will be explained too [Robot Setup](#robot-setup).
 
-Please give it a try and [file any issues that you encounter there](https://github.com/congatudo/Congatudo.git/issues).
+Please give it a try and [file any issues that you encounter there](https://github.com/congatudo/Congatudo/issues).
 
 - [Summary](#)
   - [Robot setup](#robot-setup)
@@ -250,7 +250,7 @@ $> rm /etc/init.d/valetudo /mnt/UDISK/valetudo
 $> sed '/cecotec.das.3irobotix.net/d' /etc/hosts
 ```
 
-## Blog
+## Misc
 ### Hey Google clean my room
 An article to be able to integrate google with congatudo and take advance of the automations Home Assistant provide us [Link](https://congatudo.cloud/blog/hey-google-clean-my-room/)
 
@@ -261,7 +261,7 @@ In case your Conga robot doesn't have the time and bin fill sensor, you can crea
 A Home assistant automation to send the robot to a position (usually near to the bin) once the tank fill sensor reach some threshold [Link](https://congatudo.cloud/blog/clean-me/)
 
 ### Empower your conga voice
-A hack to be able to free the voice the conga play by its speaker [Link](https://congatudo.cloud/blog/empower-your-conga-voice/)
+A hack to be able to free the voice the conga play by its speaker [Link](https://congatudo.cloud/pages/misc/empower-your-conga-voice.html)
 
 
 ### Get area&time in Home Assistant from Valetudo
