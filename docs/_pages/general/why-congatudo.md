@@ -37,6 +37,8 @@ corresponding servers. This is a huge issue with IoT devices. They brick all the
 
 and more.
 
+Of course, if you want to use Congatudo in a container, virtual machine or Home Assistant, you have the possibility to do it.
+
 #### No forced updates
 
 You also don't have to fear forced firmware updates that paywall or even entirely remove a previously available feature.
@@ -86,11 +88,3 @@ of asymmetric information.
 Even if GitHub goes down it doesn't matter.<br/>
 Git is decentralized by default. Use a local backup. Use a backup somewhere else.<br/>
 On that note, check out the [Software Heritage](https://softwareheritage.org) project.
-
-
-**RTFM & RTFC or GTFO**
-
-## Further remarks
-
-Please note that Congatudo has no customers.<br/>
-It is provided free of charge with no warranty whatsoever.

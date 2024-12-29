@@ -10,7 +10,7 @@ Your donation to Congatudo goes towards supporting the project.
 
 The funds will be used to purchase:
 
-- Maintaining the domain [congatudo.cloud](congatudo.cloud)
+- Maintaining the domain [congatudo.cloud](https://congatudo.cloud)
 - Setting up a small build infrastructure using a Raspberry Pi, install HA OS and keep the [Congatudo addon](https://github.com/congatudo/congatudo-add-on) working!
 - IoT and enterprise devices for my [home lab](https://github.com/elraro/home-ops) (I have a rack in my house!)
 
