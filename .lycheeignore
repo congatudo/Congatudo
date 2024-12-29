@@ -1,4 +1,3 @@
 https://es.aliexpress.com/
 http://ip-robot/
 http://ip-server:8080/
-{{ site.github.repository_url }}
