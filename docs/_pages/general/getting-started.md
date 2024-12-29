@@ -8,7 +8,7 @@ order: 1
 
 This page shall help you start using Congatudo.
 
-You may also want to read the [Why Congatudo?](https://congatudo.cloud/pages/general/why-congatudo.html) and [Congatudo vs Valetudo?](https://congatudo.cloud/pages/general/congatudo-vs-valetudo.html) pages before continuing with this guide.
+You may also want to read the [Why Congatudo?](https://congatudo.cloud/pages/general/why-congatudo.html) and [Congatudo or Valetudo?](https://congatudo.cloud/pages/general/congatudo-or-valetudo.html) pages before continuing with this guide.
 
 ## Table of Contents
 0. [Choosing a robot](#choosing_a_robot)

@@ -1,7 +1,7 @@
 ---
 title: Buying supported robots
 category: General
-order: 5
+order: 6
 ---
 # Buying supported robots
 
