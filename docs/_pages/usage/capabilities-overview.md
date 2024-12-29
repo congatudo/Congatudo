@@ -1,7 +1,7 @@
 ---
 title: Capabilities Overview
-category: General
-order: 5
+category: Usage
+order: 1
 ---
 
 # Capabilities overview
