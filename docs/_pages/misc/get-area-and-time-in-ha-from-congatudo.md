@@ -6,7 +6,7 @@ order: 38
 
 # Goal
 
-Get Home Assistant sensors from Congatudo to measure time and area last cleaning
+Get Home Assistant sensors from Congatudo to measure time and area last cleaning.
 
 ## Requirements
 
@@ -53,6 +53,7 @@ Now, you have sensors for both time and area measures but just in default units,
           vacuum_last_clean_duration_time:
             friendly_name: "Vacuum last clean duration time"
             value_template: >-
+                {% raw %}
                 {% set uptime = states.sensor.vacuum_last_clean_duration.state | int %}
                 {% set days = (uptime / 86400) | int %}
                 {%- if days > 0 -%}
@@ -60,9 +61,10 @@ Now, you have sensors for both time and area measures but just in default units,
                 {%- else -%}
                     {{ uptime | int | timestamp_custom('%H:%M:%S', false) }}
                 {%- endif -%}
+                {% endraw %}
           vacuum_last_clean_area_m2:
             friendly_name: "Vacuum last clean area m2"
             value_template: "{{ ( states('sensor.vacuum_last_clean_area')|float / (10000)|float )  }}"
 ```
 
-Restarting Home Assistant you'll find those sensors (sensor.vacuum_last_clean_duration_time and sensor.vacuum_last_clean_area_m2) available to use as you wish. Cheers
+Restarting Home Assistant you'll find those sensors (sensor.vacuum_last_clean_duration_time and sensor.vacuum_last_clean_area_m2) available to use as you wish.
