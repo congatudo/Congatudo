@@ -4,68 +4,69 @@ category: Installation
 order: 2
 ---
 
-## Installing Valetudo<a id='installing_valetudo'></a>
+# Docker installation
 
-After you've acquired your supported vacuum robot, the next step is to do a simple test run **before** you void
-your warranty. Usually it's possible to simply use the buttons on the robot to start a cleanup. No need to use an official app.
+This page shall help you start using Congatudo with a Docker installation.
 
-If everything seems to be working fine with no unexpected error messages, weird behaviour or things catching fire, you can
-now navigate to the [rooting instructions](https://valetudo.cloud/pages/general/rooting-instructions.html) docs page
-and follow the matching guide for your model of robot.
+## Configuration file
+Firstly, get a valid valetudo config file in https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json
 
-## Joining Wifi<a id='joining_wifi'></a>
+Once you have already downloaded it and named as "valetudo.json", edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
+```json
+{
+  "embedded": false,
+  "robot": {
+    "implementation": "CecotecCongaRobot",
+    ...
+    },
+    "webserver": {
+      "port": 8080,
+      ...
+    }
+}
+```
 
-With your robot rooted and Valetudo installed, the next step is to join your robot to your Wi-Fi network
-so that you can interact with it.
-To do that, please **do not** execute any random shell commands or edit some config files as that often leads to breakage.
+## Use the prepared image
+Then, you are able to just run the docker image
+```shell
+docker run -p 8080:8080 -p 4010:4010 -p 4030:4030 -p 4050:4050 -v $(pwd)/valetudo.json:/etc/valetudo/config.json --name congatudo ghcr.io/congatudo/Congatudo:alpine-latest
+```
+## Finally
+:tada: With theses steps, you may see your Congatudo server running under <http://ip-server:8080>
 
-Instead, you should use Valetudo for that.
-The easiest way, which avoids common issues is to use the [android companion app](https://valetudo.cloud/pages/companion_apps/valetudo_companion.html)
-and follow the instructions there after pressing the + button on the bottom right.
-
-[<img src="https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-03.png" width=250>](https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-03.png)
-[<img src="https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-04.png" width=250>](https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-04.png)
-[<img src="https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-05.png" width=250>](https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-05.png)
-
-
-If you are using a laptop, an iphone or remember to disable mobile data on your android phone yourself,
-you can also visit Valetudo by connecting to the AP provided by the robot and do the provisioning via its webinterface:
-
-![image](https://user-images.githubusercontent.com/974410/142760331-ee5a4031-c692-49be-9ad8-4144f35bb5e0.png)
-
-The IP of robot can either be figured out by the IP assigned to you by its DHCP server or by just trying out
-`http://192.168.5.1` and `http://192.168.8.1`. 
-Note that some browsers might try redirecting you to `https://` without you noticing.
-
-## Using Valetudo<a id='using_valetudo'></a>
-
-With your Valetudo-enabled robot being connected to your home network, you can now start using it by simply opening
-its webinterface in the browser of your choice unless your choice is the Internet Explorer.
-
-If you don't know how to find said Webinterface, you can use the [android companion app](https://valetudo.cloud/pages/companion_apps/valetudo_companion.html),
-which will autodiscover Valetudo instances on your network.
-
-[<img src="https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-02.png" width=250>](https://github.com/Hypfer/valetudo-companion/raw/master/fastlane/metadata/android/en-US/images/phoneScreenshots/screenshot-02.png)
-
-If you're using a computer running Microsoft Windows, you can also open the explorer and navigate to "Network" where your new robot should also be autodiscovered.
-
-![image](https://user-images.githubusercontent.com/974410/127387044-da7e8c18-390f-40bc-88b1-3ff316e4e6cf.png)
-
-## Now What?<a id='now_what'></a>
-
-Congratulations! You have now significantly increased the baseline cleanliness of your living space.
-
-It is strongly recommended to now connect Valetudo to the home automation system of your choice such as [OpenHab](https://valetudo.cloud/pages/integrations/openhab-integration.html)
-or [Home Assistant](https://valetudo.cloud/pages/integrations/home-assistant-integration.html).
-
-Using that, you can now do things such as
-
-- running a cleanup after everyone has left the building
-- clean a room by double-pressing its light switch
-
-and more.
-
-Also, consider checking out the companion apps section of the docs where you can find stuff like [Valeronoi](https://github.com/ccoors/Valeronoi),
-which can build a Wi-Fi signal heatmap from the data provided by Valetudo.
-
-Or maybe you're interested in [importing your floor plan into minecraft or the source game engine](https://valetudo.cloud/pages/companion_apps/fun_games.html)?
+## Docker-Compose installation
+The basic service to run congatudo with docker-compose, please download a valid configuration file for congatudo and renamed like valetudo.json from  https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json. edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
+```json
+{
+  "embedded": false,
+  "robot": {
+    "implementation": "CecotecCongaRobot",
+    ...
+    },
+    "webserver": {
+      "port": 8080,
+      ...
+    }
+}
+```
+Once you have this configuration file stored and already setup, add this service to your docker-compose:
+```yaml
+version: '3.8'
+services:
+  congatudo:
+    container_name: congatudo
+    image: ghcr.io/congatudo/congatudo:alpine-latest
+    restart: unless-stopped
+    volumes:
+     - <path-to-file>/valetudo.json:/etc/valetudo/config.json
+    ports:
+      - 80:8080 #Change port 80 to whatever port you want to expose the web GUi
+      - 4010:4010
+      - 4030:4030
+      - 4050:4050
+    environment:
+      - TZ=Etc/UTC
+      - LUID=1000 #Optional
+      - LGUI=1000 #Optional
+```
+Taking care about the path-to-file you need to point to your configuration file (i.e. /home/pi/valetudo.json)

@@ -32,7 +32,6 @@ Please give it a try and [file any issues that you encounter there](https://gith
     - [Get root access in your Conga](#get-root-access-in-your-conga)
     - [Point your Conga robot to Congatudo Server](#point-your-conga-robot-to-congatudo-server)
   - [Standalone installation](#standalone-installation)
-    - [~~Build a binary for you standalone installation(optional step)~~](#build-a-binary-for-you-standalone-installation-old-dated-optional-step)
     - [Get the binary from the releases](#get-the-binary-from-the-releases)
     - [Prepare a valid configuration file](#prepare-a-valid-configuration-file)
     - [Copy the binary and its configuration to your robot](#copy-the-binary-and-its-configuration-to-your-robot)
@@ -90,19 +89,6 @@ $> /etc/init.d/valetudo enable
 $> reboot
 ```
 ## Standalone installation
-### ~~Build a binary for you standalone installation (old dated, optional step)~~
-~~Compile Congatudo under the path ./build/armv7/valetudo~~
-```shell
-$ git clone https://github.com/congatudo/Congatudo.git
-$ cd Congatudo
-$ npm install
-$ npm ci
-$ npm run build_openapi_schema # to get access to a swagger api
-$ npm run build --workspace=frontend # to get access to the under development new fronted 
-$ cd backend
-$ npm run build
-```
-
 ### Get the binary from the releases
 Go to congatudo releases page to download [valetudo-armv7](https://github.com/congatudo/Congatudo/releases) and named only 'valetudo'
 
