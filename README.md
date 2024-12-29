@@ -30,14 +30,14 @@ Please give it a try and [file any issues that you encounter there](https://gith
   - [Robot setup](#robot-setup)
     - [Connect the robot to your local network](#connect-the-robot-to-your-local-network)
     - [Get root access in your Conga](#get-root-access-in-your-conga)
-    - [Point your Conga robot to Valetudo Server](#point-your-conga-robot-to-valetudo-server)
+    - [Point your Conga robot to Congatudo Server](#point-your-conga-robot-to-congatudo-server)
   - [Standalone installation](#standalone-installation)
     - [~~Build a binary for you standalone installation(optional step)~~](#build-a-binary-for-you-standalone-installation-old-dated-optional-step)
     - [Get the binary from the releases](#get-the-binary-from-the-releases)
     - [Prepare a valid configuration file](#prepare-a-valid-configuration-file)
     - [Copy the binary and its configuration to your robot](#copy-the-binary-and-its-configuration-to-your-robot)
     - [Create a script file to export the enviroment variable and run the server at boot in your robot](#create-a-script-file-to-export-the-enviroment-variable-and-run-the-server-at-boot-in-your-robot)
-    - [Enable Valetudo server at boot and reboot the robot](enable-valetudo-server-at-boot-and-reboot-the-robot)
+    - [Enable Congatudo server at boot and reboot the robot](#enable-congatudo-server-at-boot-and-reboot-the-robot)
     - [Finally](#finally)
   - [Docker installation](#docker-installation)
     - [Configuration file](#configuration-file)
@@ -45,12 +45,12 @@ Please give it a try and [file any issues that you encounter there](https://gith
     - [Finally](#finally-1)
   - [Docker-Compose installation](#docker-compose-installation)
   - [Home Assistant addon](#home-assistant-addon-installation)
-  - [Uninstall Valetudo](Uninstall-valetudo)
+  - [Uninstall Congatudo](#uninstall-congatudo)
   - [Blog](#blog)
   - [FAQ](#faq)
-  - [Join the discussion](Join-the-Discussion)
+  - [Join the discussion](#join-the-Discussion)
   - [License](LICENSE)
-  - [Notes:](#notes)
+  - [Notes](#notes)
 
 ## Robot setup
 It is needed for the robot to know wich server it has to attend so then, it should be connected to your local network and point it to the Congatudo server. This is the purpose of the following steps
@@ -80,7 +80,7 @@ $ agnoc wlan <wifissid> <pass>
    - Change the password (to something non-default and secure 🙏)
    - Add certificates (ssh key-pair) to [access via ssh without passwords](https://congatudo.cloud/pages/misc/add-ssh-key.html)
   
-### Point your Conga robot to Valetudo Server
+### Point your Conga robot to Congatudo Server
 Open a ssh terminal to your robot and edit the hosts file, your server:
 *Server IP for standalone installation: 127.0.0.1*
 ```shell
@@ -170,7 +170,7 @@ $> /etc/init.d/valetudo enable
 $> reboot
 ```
 ### Finally
-:tada: With theses steps, you may see your Valetudo server running under <http://ip-robot>
+:tada: With theses steps, you may see your Congatudo server running under <http://ip-robot>
 
 ## Docker installation
 ### Configuration file
@@ -197,7 +197,7 @@ Then, you are able to just run the dockerhub image
 docker run -p 8080:8080 -p 4010:4010 -p 4030:4030 -p 4050:4050 -v $(pwd)/valetudo.json:/etc/valetudo/config.json --name congatudo ghcr.io/congatudo/Congatudo:alpine-latest
 ```
 ### Finally
-:tada: With theses steps, you may see your Valetudo server running under <http://ip-server:8080>
+:tada: With theses steps, you may see your Congatudo server running under <http://ip-server:8080>
 
 ## Docker-Compose installation
 The basic service to run congatudo with docker-compose, please download a valid configuration file for congatudo and renamed like valetudo.json from  https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json. edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
