@@ -252,20 +252,20 @@ $> sed '/cecotec.das.3irobotix.net/d' /etc/hosts
 
 ## Misc
 ### Hey Google clean my room
-An article to be able to integrate google with congatudo and take advance of the automations Home Assistant provide us [Link](https://congatudo.cloud/blog/hey-google-clean-my-room/)
+An article to be able to integrate google with congatudo and take advance of the automations Home Assistant provide us [Link](https://congatudo.cloud/pages/misc/hey-google-clean-my-room.html)
 
 ### Time and Tank Virtual Sensors
-In case your Conga robot doesn't have the time and bin fill sensor, you can create virtual ones in Home assistant [Link](https://congatudo.cloud/blog/time-and-tank-virtual-sensors/)
+In case your Conga robot doesn't have the time and bin fill sensor, you can create virtual ones in Home assistant [Link](https://congatudo.cloud/pages/misc/time-and-tank-virtual-sensors.html)
 
 ### Clean me
-A Home assistant automation to send the robot to a position (usually near to the bin) once the tank fill sensor reach some threshold [Link](https://congatudo.cloud/blog/clean-me/)
+A Home assistant automation to send the robot to a position (usually near to the bin) once the tank fill sensor reach some threshold [Link](https://congatudo.cloud/pages/misc/clean-me.html)
 
 ### Empower your conga voice
 A hack to be able to free the voice the conga play by its speaker [Link](https://congatudo.cloud/pages/misc/empower-your-conga-voice.html)
 
 
-### Get area&time in Home Assistant from Valetudo
-[Deprecated] A way to get the area and time sensor provide by congatudo available on home asistant [Link](https://congatudo.cloud/blog/get-area-and-time-in-ha-from-valetudo/)
+### Get area and time in Home Assistant from Congatudo
+[Deprecated] A way to get the area and time sensor provide by Congatudo available on home asistant [Link](https://congatudo.cloud/pages/misc/get-area-and-time-in-ha-from-congatudo.html)
 
 ## FAQ
 1. I have Congatudo up and running but any robot is found
