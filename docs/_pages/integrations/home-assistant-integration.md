@@ -65,7 +65,7 @@ data:
   payload: '{"segment_ids": ["20", "18", "16"], "iterations": 2, "customOrder": true}'
 ```
 
-For more features check out the [MQTT documentation](/pages/integrations/mqtt.html).
+For more features check out the [MQTT documentation](https://congatudo.cloud/pages/integrations/mqtt.html).
 
 
 #### Segment cleaning lovelace
