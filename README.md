@@ -233,7 +233,7 @@ This will remove Congatudo, free the diskspace and re-enable the cloud interface
 ssh root@<robot ip>
 $> /etc/init.d/valetudo stop
 $> rm /etc/init.d/valetudo /mnt/UDISK/valetudo
-$> sed '/cecotec.das.3irobotix.net/d' /etc/hosts
+$> sed -i '/cecotec.das.3irobotix.net/d' /etc/hosts
 ```
 
 ## Misc
