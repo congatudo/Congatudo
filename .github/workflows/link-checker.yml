@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - name: Link Checker
-        uses: lycheeverse/lychee-action@f796c8b7d468feb9b8c0a46da3fac0af6874d374 # v2.2.0
+        uses: lycheeverse/lychee-action@f613c4a64e50d792e0b31ec34bbcbba12263c6a6 # v2.3.0
         id: lychee
         with:
           args: "--exclude-path './docs/_includes/nav.html' --exclude-path './docs/_layouts/default.html' --verbose --no-progress './**/*.md'"
