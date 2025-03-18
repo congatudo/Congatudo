@@ -35,7 +35,7 @@ Follow these steps to backup and restore the mapping information of your Conga r
 Use the following SCP command to copy map data from your Conga robot to your local computer:
 
 ```bash
-scp -rp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa root@<CONGA_IP_ADDRESS>:/mnt/UDISK/log/ /path/to/local/backup/
+scp -rp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa -O 'root@<CONGA_IP_ADDRESS>:/mnt/UDISK/log/' '/path/to/local/backup/'
 ```
 
 Replace:
@@ -67,7 +67,7 @@ Replace:
 To restore previously backed-up map data to your Conga robot, run:
 
 ```bash
-scp -rp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa /path/to/local/backup/* root@<CONGA_IP_ADDRESS>:/mnt/UDISK/log/
+scp -rp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa /path/to/local/backup/* -O 'root@<CONGA_IP_ADDRESS>:/mnt/UDISK/log/'
 ```
 
 Replace:
