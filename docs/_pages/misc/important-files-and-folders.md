@@ -38,6 +38,8 @@ Use the following SCP command to copy map data from your Conga robot to your loc
 scp -rp -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa -O 'root@<CONGA_IP_ADDRESS>:/mnt/UDISK/log/' '/path/to/local/backup/'
 ```
 
+Note: "-O" Option may error if you have an old ssh client, remove it if it does.
+
 Replace:
 
 - `<CONGA_IP_ADDRESS>` with your robot's IP address (e.g., `192.168.xxx.xxx`).
@@ -94,4 +96,5 @@ Replace:
 
 - Ensure your Conga robot and computer are on the same local network.
 - You will be prompted to enter your robot's root password during SCP operations.
+- Most Conga Robots don't support sftp protocol and some scp implementations use sftp. you need to use option -O to force scp instead of sftp
 - Always make sure you have backups before restoring data, as this operation can overwrite existing robot map information.
