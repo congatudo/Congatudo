@@ -21,7 +21,7 @@ When you encounter an unclickable segment:
 
 In the following image, the highlighted triangles indicate typical unclickable segments:
 
-![Unclickable Segments](/img/unclickable_segments_example.jpg)
+![Unclickable Segments](/img/unclickable_zones_example.jpg)
 
 Click on the **border or edge** of these triangles instead of the center to successfully select the segment.
 
