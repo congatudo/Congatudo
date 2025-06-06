@@ -83,14 +83,14 @@ $ agnoc wlan <wifissid> <pass>
 Open a ssh terminal to your robot and edit the hosts file, your server:
 *Server IP for standalone installation: 127.0.0.1*
 ```shell
-$ ssh root@<conga ip>
-$> echo "<your server ip> cecotec.das.3irobotix.net cecotec.download.3irobotix.net cecotec.log.3irobotix.net cecotec.ota.3irobotix.net eu.das.3irobotics.net eu.log.3irobotics.net eu.ota.3irobotics.net cecotec-das.3irobotix.net cecotec-log.3irobotix.net cecotec-upgrade.3irobotix.net cecotec-download.3irobotix.net" >> /etc/hosts
+$ ssh root@<your-robot-ip>
+$> echo "<your-server-ip> cecotec.das.3irobotix.net cecotec.download.3irobotix.net cecotec.log.3irobotix.net cecotec.ota.3irobotix.net eu.das.3irobotics.net eu.log.3irobotics.net eu.ota.3irobotics.net cecotec-das.3irobotix.net cecotec-log.3irobotix.net cecotec-upgrade.3irobotix.net cecotec-download.3irobotix.net" >> /etc/hosts
 $> /etc/init.d/valetudo enable
 $> reboot
 ```
 ## Standalone installation
 ### Get the binary from the releases
-Go to congatudo releases page to download [valetudo-armv7](https://github.com/congatudo/Congatudo/releases) and named only 'valetudo'
+Go to congatudo releases page to download [valetudo-armv7](https://github.com/congatudo/Congatudo/releases) and name it 'valetudo'
 
 ### Prepare a valid configuration file
 In your machine, get a valid valetudo config file in from: https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json
@@ -108,15 +108,15 @@ Once you have already downloaded it and named as valetudo_config.json, edit the 
 ### Copy the binary and its configuration to your robot
 After that, you are able to copy the binary to your conga
 ```shell
-$ ssh root@<robot-ip>
+$ ssh root@<your-robot-ip>
 $> mkdir /mnt/UDISK/valetudo
 $> exit
-$ scp ./build/armv7/valetudo root@<your robot ip>:</mnt/UDISK/valetudo/valetudo>
-$ scp ./default_config.json root@<your robot ip>:</mnt/UDISK/valetudo/valetudo_config.json>
+$ scp ./valetudo root@<your-robot-ip>:/mnt/UDISK/valetudo/valetudo
+$ scp ./valetudo_config.json root@<your-robot-ip>:/mnt/UDISK/valetudo/valetudo_config.json
 ```
 ### Create a script file to export the enviroment variable and run the server at boot in your robot
 ```shell
-ssh root@<your conga ip>
+ssh root@<your-robot-ip>
 $> vi /etc/init.d/valetudo
 ```
 
@@ -144,19 +144,20 @@ shutdown() {
 }
 ```
 
-Make the init file executable:
+Make the init file and binary executable:
 ```shell
 $> chmod +x /etc/init.d/valetudo
+$> chmod +x /mnt/UDISK/valetudo/valetudo
 ```
 
 ### Enable Congatudo server at boot and reboot the robot
 ```shell
-$ ssh root@<conga ip>
+$ ssh root@<your-robot-ip>
 $> /etc/init.d/valetudo enable
 $> reboot
 ```
 ### Finally
-:tada: With theses steps, you may see your Congatudo server running under <http://ip-robot>
+:tada: With theses steps, you may see your Congatudo server running under <http://your-robot-ip>
 
 ## Docker installation
 ### Configuration file
@@ -230,7 +231,7 @@ Just follow the [read me.](https://github.com/congatudo/congatudo-add-on)
 This will remove Congatudo, free the diskspace and re-enable the cloud interface in case of a standalone installation.
 
 ```shell
-ssh root@<robot ip>
+ssh root@<your-robot-ip>
 $> /etc/init.d/valetudo stop
 $> rm /etc/init.d/valetudo /mnt/UDISK/valetudo
 $> sed -i '/cecotec.das.3irobotix.net/d' /etc/hosts
@@ -254,7 +255,7 @@ A hack to be able to free the voice the conga play by its speaker [Link](https:/
 [Deprecated] A way to get the area and time sensor provide by Congatudo available on home asistant [Link](https://congatudo.cloud/pages/misc/get-area-and-time-in-ha-from-congatudo.html)
 
 ## FAQ
-1. I have Congatudo up and running but any robot is found
+1. I have Congatudo up and running but no robot is found
 ```
 Check if hosts file in the robot is already edited.
 Ping to a one of the cecotec cloud server instances to check if it reaches the conga ip, i.e.:
