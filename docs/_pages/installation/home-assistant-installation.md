@@ -1,7 +1,7 @@
 ---
 title: Home Assistant installation
 category: Installation
-order: 1
+order: 2
 ---
 
 # Home Assistant installation
