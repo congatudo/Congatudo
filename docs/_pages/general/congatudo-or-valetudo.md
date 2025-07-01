@@ -6,21 +6,21 @@ order: 3
 
 # Congatudo or Valetudo
 
-Valetudo and Congatudo are both open-source projects designed to enable local-only operation of robotic vacuum cleaners, eliminating the need for cloud-based services. However, they cater to different brands and employ distinct approaches:
+Valetudo and Congatudo are open-source projects that enable local-only operation of robotic vacuum cleaners, removing reliance on cloud-based services. While both share this goal, they target different brands and use distinct technical approaches.
 
-## Valetudo:
+## Valetudo
 
-- Supported Devices: Primarily supports vacuum robots from brands like Xiaomi, Roborock and Dreame. You can check the list of supported devices on [Valetudo website](https://valetudo.cloud/pages/general/supported-robots.html).
-- Implementation: Valetudo is installed directly on the robot as a replacement for the manufacturer's firmware. This setup requires rooting the device to gain the necessary access for installation.
+- **Supported Devices:** Primarily supports vacuum robots from brands such as Xiaomi, Roborock, and Dreame. See the [Valetudo supported devices list](https://valetudo.cloud/pages/general/supported-robots.html) for details.
+- **How It Works:** Valetudo replaces the manufacturer's firmware by installing directly on the robot. This process requires rooting the device to gain the necessary access.
 
 ## Congatudo
 
-- Supported Devices: Specifically designed for Cecotec Conga vacuum robots. You can check the list of supported devices [here](https://congatudo.cloud/pages/general/supported-robots.html)
-- Implementation: Unlike Valetudo, Congatudo is not a custom firmware and does not require rooting the robot. Instead, it acts as a cloud replacement by redirecting the robot's communication from the manufacturer's servers to a local server. This approach maintains the robot's original firmware while enabling local control.
+- **Supported Devices:** Designed specifically for Cecotec Conga vacuum robots. The list of supported models is available [here](https://congatudo.cloud/pages/general/supported-robots.html).
+- **How It Works:** Congatudo does not replace or modify the robot's firmware and does not require rooting. Instead, it acts as a cloud replacement by redirecting the robot's communication from the manufacturer's servers to a local server, allowing local control while keeping the original firmware intact.
 
-## Key Differences:
+## Key Differences
 
-- Device Compatibility: Valetudo supports a range of devices from multiple manufacturers, while Congatudo is tailored specifically for Cecotec Conga robots.
-- Installation Method: Valetudo requires rooting the robot to replace cloud services directly on the device. Congatudo does not modify the robot's firmware; instead, it redirects communication to a local server, avoiding the need for rooting.
+- **Device Compatibility:** Valetudo supports a variety of brands and models, whereas Congatudo is focused solely on Cecotec Conga robots.
+- **Installation Method:** Valetudo requires rooting and firmware replacement on the robot. Congatudo works by redirecting network traffic, avoiding firmware changes and rooting.
 
-In summary, while both projects aim to provide local control over robotic vacuum cleaners, Valetudo and Congatudo differ in their device compatibility and implementation methods, each tailored to the specific requirements of the robots they support.
+In summary, both Valetudo and Congatudo provide local control over robotic vacuum cleaners, but differ in their supported devices and installation methods. Choose the project that best matches your robot and your preferred approach to local control.
