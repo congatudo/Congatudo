@@ -9,7 +9,7 @@ It is needed for the robot to know wich server it has to attend so then, it shou
 
 ## Connect the robot to your local network
 First, you need to have your robot connected througth your wifi to get shell access. If you already have it, you can jumpthis section, otherwise, you can use the **[agnoc tool](https://github.com/congatudo/agnoc)** form your computer to establish the connection.
-```shell
+```shellell
 $> npm install -g @agnoc/cli 
 $> agnoc wlan <wifissid> <pass>
 ```
@@ -18,7 +18,7 @@ $> agnoc wlan <wifissid> <pass>
 1. Check that you have SSH installed and working in your computer (Linux/MacOS by default, use **[Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/)** in Windows)
 2. You have to find out the IP address of your Conga (see **[this guide](https://techwiser.com/find-ip-address-of-any-device/)** on how to)
 3. Open an SSH connection to your Conga. Replace `192.168.x.x` with your Conga's actual IP address:
-	```shell
+	```shellell
 	$> ssh root@192.168.x.x
 	```
 	and when you get the login prompt, type `root` and then the password depending on your model:
@@ -32,9 +32,9 @@ $> agnoc wlan <wifissid> <pass>
 
 ## Choose your installation method
 Now you need to choose how to install Congatudo on your server. You can use one of the following methods:
-- **[Home Assistant Add-on](https://congatudo.cloud/pages/installation/home-assistant-addon.html):** Recommended if you are running Home Assistant. This method provides seamless integration and easy updates.
-- **[Docker](https://congatudo.cloud/pages/installation/docker.html):** Suitable for most environments. Use this if you want a containerized setup.
-- **[Standalone](https://congatudo.cloud/pages/installation/standalone.html):** For users who prefer manual installation and full control.
+- **[Home Assistant Add-on](https://congatudo.cloud/pages/installation/home-assistant-installation.html):** Recommended if you are running Home Assistant. This method provides seamless integration and easy updates.
+- **[Docker](https://congatudo.cloud/pages/installation/docker-installation.html):** Suitable for most environments. Use this if you want a containerized setup.
+- **[Standalone](https://congatudo.cloud/pages/installation/standalone-installation.html):** For users who prefer manual installation and full control.
 
 Follow the link for your preferred method to continue with the installation.
 

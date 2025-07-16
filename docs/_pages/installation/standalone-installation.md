@@ -26,7 +26,7 @@ Once you have already downloaded it and named as valetudo_config.json, edit the 
 
 ## Copy the binary and its configuration to your robot
 After that, you are able to copy the binary to your conga
-```shell
+```shellell
 $> ssh root@<robot-ip>
 $> mkdir /mnt/UDISK/valetudo
 $> exit
@@ -34,12 +34,12 @@ $> scp ./build/armv7/valetudo root@<your robot ip>:</mnt/UDISK/valetudo/valetudo
 $> scp ./default_config.json root@<your robot ip>:</mnt/UDISK/valetudo/valetudo_config.json>
 ```
 ## Create a script file to export the enviroment variable and run the server at boot in your robot
-```shell
+```shellell
 $> vi /etc/init.d/valetudo
 ```
 
 Add this script:
-```bash
+```shell
 #!/bin/sh /etc/rc.common                                                                                                    
 # File: /etc/init.d/valetudo
 # Usage help: /etc/init.d/valetudo
@@ -63,30 +63,30 @@ shutdown() {
 ```
 
 Make the init script and the binary executable:
-```shell
+```shellell
 $> chmod +x /etc/init.d/valetudo
 $> chmod +x /mnt/UDISK/valetudo/valetudo
 ```
 
 ## Point your Conga robot to Congatudo Server
 Edit the `/etc/hosts` file to redirect all 3irobotix network domains to `127.0.0.1`:
-```shell
+```shellell
 $> echo "127.0.0.1 cecotec.das.3irobotix.net cecotec.download.3irobotix.net cecotec.log.3irobotix.net cecotec.ota.3irobotix.net eu.das.3irobotics.net eu.log.3irobotics.net eu.ota.3irobotics.net cecotec-das.3irobotix.net cecotec-log.3irobotix.net cecotec-upgrade.3irobotix.net cecotec-download.3irobotix.net" >> /etc/hosts
 ```
 
 ## Enable Congatudo server at boot and reboot the robot
-```shell
+```shellell
 $> /etc/init.d/valetudo enable
 $> reboot
 ```
 ## Finally
-:tada: With theses steps, you may see your Congatudo server running under <http://robot-ip>
+🎉 After completing these steps, your Congatudo server should be accessible at <http://robot-ip>
 
 # Uninstall Congatudo
 
 This will remove Congatudo, free the diskspace and re-enable the cloud interface in case of a standalone installation.
 
-```shell
+```shellell
 ssh root@<robot-ip>
 $> /etc/init.d/valetudo stop
 $> rm /etc/init.d/valetudo /mnt/UDISK/valetudo/valetudo /mnt/UDISK/valetudo/valetudo_config.json  
