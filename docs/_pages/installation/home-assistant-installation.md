@@ -10,8 +10,7 @@ order: 2
 
 - Familiarity with the Congatudo project.
 - Root access to your Conga robot via [SSH or ADB](https://congatudo.cloud/pages/installation/robot-setup.html).
-- An MQTT server (preferably the Mosquitto broker add-on) installed and running.
-    > If you already use MQTT in Home Assistant, the add-on will auto-configure it.
+- An MQTT server (preferably the Mosquitto broker add-on) installed and running. If you already use MQTT in Home Assistant, the add-on will auto-configure it.
 - Basic Linux knowledge.
 
 ## Overview
