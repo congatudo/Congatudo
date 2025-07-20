@@ -35,7 +35,7 @@ docker run -p 8080:8080 -p 4010:4010 -p 4030:4030 -p 4050:4050 -v $(pwd)/valetud
 :tada: With theses steps, you may see your Congatudo server running under <http://ip-server:8080>
 
 ## Docker-Compose installation
-The basic service to run congatudo with docker-compose, please download a valid configuration file for congatudo and renamed like valetudo.json from  https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json. edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
+The basic service to run congatudo with docker-compose, please download a valid configuration file for congatudo and renamed like **valetudo.json** from **[https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json](https://raw.githubusercontent.com/congatudo/Congatudo/master/backend/lib/res/default_config.json)**. edit the implementation of the Valetudo robot to CecotecCongaRobot and take care about the embebed propety being set as false:
 ```json
 {
   "embedded": false,
