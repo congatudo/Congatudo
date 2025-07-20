@@ -17,7 +17,7 @@ jobs:
         uses: lycheeverse/lychee-action@f613c4a64e50d792e0b31ec34bbcbba12263c6a6 # v2.3.0
         id: lychee
         with:
-          args: "--exclude-path './docs/_includes/nav.html' --exclude-path './docs/_layouts/default.html' --verbose --no-progress './**/*.md'"
+          args: "--exclude 'http://robot-ip/' --exclude-path './docs/_includes/nav.html' --exclude-path './docs/_layouts/default.html' --verbose --no-progress './**/*.md'"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 

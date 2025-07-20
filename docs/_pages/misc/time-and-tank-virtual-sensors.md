@@ -19,6 +19,7 @@ With this guide, you are going to learn how to create virtual sensor to get the 
 
 2. In the configuration file, we are going to create three sensors
    1. All history cleaning time
+{% raw %}
       ```yaml
       - platform: history_stats
         name: Conga Cleaning
@@ -28,9 +29,11 @@ With this guide, you are going to learn how to create virtual sensor to get the 
         start: "{{ state_attr('input_datetime.robotstartcleaningtime', 'timestamp') }}"
         end: '{{ now() }}'
       ```
+{% endraw %}
         With the entity_id for you vacuum robot and the helper you created before
 
    2. Tank virtual sensor, based on the cleaning time stats and conga cleaning in time
+{% raw %}
       ```yaml
       - platform: template
         sensors:
@@ -41,6 +44,7 @@ With this guide, you are going to learn how to create virtual sensor to get the 
             friendly_name: "Conga Tank Percentage"
             value_template: "{{ ( states('sensor.conga_cleaning')|float * (100)|float / (10)|float ) | round(0)  }}"
       ```
+{% endraw %}
         This conga_tank_percentage is valid for my tank based on rule how many minutes cleaning the tank needs to be full . Do the maths for your needs
 
    3. Now, you are able to use this sensor in some card or even better, to trigger some automation

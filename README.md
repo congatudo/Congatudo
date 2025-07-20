@@ -45,23 +45,7 @@ For running Congatudo directly on your robot, refer to the **[Standalone Install
 If you prefer to run Congatudo on a server or another device, check the **[Docker Installation guide](https://congatudo.cloud/pages/installation/docker-installation.html)**. This guide explains how to set up Congatudo using Docker for easier management and updates.
 
 ## Home Assistant addon installation
-Just follow the **[read me](https://github.com/congatudo/congatudo-add-on)**.
-
-## Misc
-### Hey Google clean my room
-An article to be able to integrate Google with Congatudo and take advantage of the automations Home Assistant provides: **[Link](https://congatudo.cloud/pages/misc/hey-google-clean-my-room.html)**
-
-### Time and Tank Virtual Sensors
-In case your Conga robot doesn't have the time and bin fill sensor, you can create virtual ones in Home Assistant: **[Link](https://congatudo.cloud/pages/misc/time-and-tank-virtual-sensors.html)**
-
-### Clean me
-A Home Assistant automation to send the robot to a position (usually near to the bin) once the tank fill sensor reaches some threshold: **[Link](https://congatudo.cloud/pages/misc/clean-me.html)**
-
-### Empower your conga voice
-A hack to be able to free the voice the Conga plays by its speaker: **[Link](https://congatudo.cloud/pages/misc/empower-your-conga-voice.html)**
-
-### Get area and time in Home Assistant from Congatudo
-[Deprecated] A way to get the area and time sensor provided by Congatudo available on Home Assistant: **[Link](https://congatudo.cloud/pages/misc/get-area-and-time-in-ha-from-congatudo.html)**
+If you want to integrate Congatudo into your Home Assistant installation, check the **[Home Assistant Installation guide]([https://github.com/congatudo/congatudo-add-on](https://congatudo.cloud/pages/installation/home-assistant-installation.html))**.
 
 ## FAQ
 1. I have Congatudo up and running but no robot is found
