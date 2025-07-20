@@ -17,18 +17,18 @@ _At writing time, we just test in 4090 conga model, in other model some people a
 It is a good practice to do a back up if all the files we are going to handle, so:
 
 1. Access to the robot
-    ```
-    ssh root@<Conga IP> 
+    ```shell
+	$> ssh -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa root@<robot-ip> 
     ```
 
 2. Perform a config file backup
-    ``` 
-    root@TinaLinux:~# cd /mnt/UDISK/config
+    ```shell
+	root@TinaLinux:~# cd /mnt/UDISK/config
     root@TinaLinux:~# cp device_config.ini device_config.ini_bak
     ```
 
 3. Edit customer_firm_id=1003 in device_config.ini to 1002 via the vi editor
-    ```
+    ```shell
     root@TinaLinux:~# vi device_config.ini
     ```
     _Editing with vi is not easy to explain in just a few words, but the basics for this exampel could be:_
@@ -38,7 +38,7 @@ It is a good practice to do a back up if all the files we are going to handle, s
     3. Change it
     4. Press `Esc` and then `:wq` to save and exit
 4. Now we are able to stop the services and proceses
-    ```
+    ```shell
     root@TinaLinux:~# /etc/init.d/robotManager stop
     root@TinaLinux:~#  kill -9 $(pidof Monitor)
     root@TinaLinux:~#  kill -9 $(pidof RobotApp)
@@ -47,7 +47,7 @@ It is a good practice to do a back up if all the files we are going to handle, s
     root@TinaLinux:~#  kill -9 $(pidof AuxCtrl)
     ```
 5. Finally, we restart  the service
-    ```
+    ```shell
     root@TinaLinux:~# /etc/init.d/robotManager start
     ```
 
@@ -64,5 +64,5 @@ This steps should be similar in all the 3XXX and 4XXX robots but, as you may thi
 
 If you want to try for the model **3090**, you need to update `deviceFirmsID=1003` to `1002` in both files:
     
--  /etc/sysconf/sysConfig.ini
+- /etc/sysconf/sysConfig.ini
 - /mnt/UDISK/config/sysConfig.ini

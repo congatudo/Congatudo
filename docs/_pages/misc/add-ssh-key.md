@@ -16,8 +16,8 @@ You need to be able to [access your Conga by SSH](https://congatudo.cloud/pages/
 
 We use OpenSSH in our computer. With OpenSSH, an SSH key is created using `ssh-keygen`.
 
-```
-$ ssh-keygen
+```shell
+$> ssh-keygen
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/ylo/.ssh/id_rsa): mykey
 Enter passphrase (empty for no passphrase):
@@ -38,17 +38,19 @@ The key's randomart image is:
 | + = = .         |
 |  + o o          |
 +----[SHA256]-----+
-$
+$> 
 ```
 
 The key pair (public key and private key) are usually stored in the `~/.ssh` directory.
 
 ## Copy the key to your Conga
 
+> ⚠️ **Important:** Since OpenSSH 8.8 (released October 2021), the `ssh-rsa` algorithm is disabled by default due to security concerns. To connect to older robots that require `ssh-rsa`, you must explicitly enable it using the options below. Be aware that this method is less secure and should only be used if necessary.
+
 Conga use Dropbear as SSH Server. We will need to copy key in the `/etc/dropbear` directory. From our computed:
 
-```
-$ ssh root@<conga ip> "tee -a /etc/dropbear/authorized_keys" < ~/.ssh/id_rsa.pub
+```shell
+$> ssh -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa root@<conga ip> "tee -a /etc/dropbear/authorized_keys" < ~/.ssh/id_rsa.pub
 ```
 
 This logs into the server host, and copies keys to the server, and configures them to grant access by adding them to the authorized_keys file. The copying will ask for a password.
@@ -57,8 +59,8 @@ This logs into the server host, and copies keys to the server, and configures th
 
 Once the key has been copied, it is best to test it:
 
-```
-$ ssh root@<conga ip>
+```shell
+$> ssh -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa root@<conga ip>
 ```
 
 The login should now complete without asking for a password. Note, however, that the command might ask for the passphrase you specified for the key.

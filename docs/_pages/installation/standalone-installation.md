@@ -28,17 +28,21 @@ Once you have already downloaded it and named as valetudo_config.json, edit the 
 
 ⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
 
-After that, you are able to copy the binary to your conga
+After that, you are able to copy the binary to your Conga.
+
+> ⚠️ **Important:** Since OpenSSH 8.8 (released October 2021), the `ssh-rsa` algorithm is disabled by default due to security concerns. To connect to older robots that require `ssh-rsa`, you must explicitly enable it using the options below. Be aware that this method is less secure and should only be used if necessary.
+
 ```shell
-$> ssh root@<robot-ip>
-$> mkdir /mnt/UDISK/valetudo
-$> exit
-$> scp ./build/armv7/valetudo root@<your robot ip>:</mnt/UDISK/valetudo/valetudo>
-$> scp ./default_config.json root@<your robot ip>:</mnt/UDISK/valetudo/valetudo_config.json>
+$> ssh -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa root@<robot-ip>
+root@TinaLinux:~# mkdir /mnt/UDISK/valetudo
+root@TinaLinux:~# exit
+$> scp -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa ./build/armv7/valetudo root@<robot-ip>:</mnt/UDISK/valetudo/valetudo>
+$> scp -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa ./default_config.json root@<robot-ip>:</mnt/UDISK/valetudo/valetudo_config.json>
 ```
 ## Create a script file to export the enviroment variable and run the server at boot in your robot
 ```shell
-$> vi /etc/init.d/valetudo
+$> ssh -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa root@<robot-ip>
+root@TinaLinux:~# vi /etc/init.d/valetudo
 ```
 
 Add this script:
@@ -67,20 +71,20 @@ shutdown() {
 
 Make the init script and the binary executable:
 ```shell
-$> chmod +x /etc/init.d/valetudo
-$> chmod +x /mnt/UDISK/valetudo/valetudo
+root@TinaLinux:~# chmod +x /etc/init.d/valetudo
+root@TinaLinux:~# chmod +x /mnt/UDISK/valetudo/valetudo
 ```
 
 ## Point your Conga robot to Congatudo Server
 Edit the `/etc/hosts` file to redirect all 3irobotix network domains to `127.0.0.1`:
 ```shell
-$> echo "127.0.0.1 cecotec.das.3irobotix.net cecotec.download.3irobotix.net cecotec.log.3irobotix.net cecotec.ota.3irobotix.net eu.das.3irobotics.net eu.log.3irobotics.net eu.ota.3irobotics.net cecotec-das.3irobotix.net cecotec-log.3irobotix.net cecotec-upgrade.3irobotix.net cecotec-download.3irobotix.net" >> /etc/hosts
+root@TinaLinux:~# echo "127.0.0.1 cecotec.das.3irobotix.net cecotec.download.3irobotix.net cecotec.log.3irobotix.net cecotec.ota.3irobotix.net eu.das.3irobotics.net eu.log.3irobotics.net eu.ota.3irobotics.net cecotec-das.3irobotix.net cecotec-log.3irobotix.net cecotec-upgrade.3irobotix.net cecotec-download.3irobotix.net" >> /etc/hosts
 ```
 
 ## Enable Congatudo server at boot and reboot the robot
 ```shell
-$> /etc/init.d/valetudo enable
-$> reboot
+root@TinaLinux:~# /etc/init.d/valetudo enable
+root@TinaLinux:~# reboot now
 ```
 ## Finally
 🎉 After completing these steps, your Congatudo server should be accessible at <http://robot-ip>
@@ -90,9 +94,9 @@ $> reboot
 This will remove Congatudo, free the diskspace and re-enable the cloud interface in case of a standalone installation.
 
 ```shell
-ssh root@<robot-ip>
-$> /etc/init.d/valetudo stop
-$> rm /etc/init.d/valetudo /mnt/UDISK/valetudo/valetudo /mnt/UDISK/valetudo/valetudo_config.json  
-$> sed -i '/cecotec.das.3irobotix.net/d' /etc/hosts
-$> reboot now
+$> ssh -oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa root@<robot-ip>
+root@TinaLinux:~# /etc/init.d/valetudo stop
+root@TinaLinux:~# rm /etc/init.d/valetudo /mnt/UDISK/valetudo/valetudo /mnt/UDISK/valetudo/valetudo_config.json  
+root@TinaLinux:~# sed -i '/cecotec.das.3irobotix.net/d' /etc/hosts
+root@TinaLinux:~# reboot now
 ```
