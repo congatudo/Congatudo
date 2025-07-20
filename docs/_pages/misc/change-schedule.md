@@ -14,6 +14,8 @@ To resolve this, you have two options:
 
 The schedule configuration file is located at `/mnt/UDISK/config/booking_list_config.ini`. You can access and modify it via [SSH](https://congatudo.cloud/pages/installation/robot-setup.html).
 
+⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
+
 Below is an example configuration file from a Conga 4090:
 
 ```

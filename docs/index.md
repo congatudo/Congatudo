@@ -1,4 +1,4 @@
-Congatudo is a cloud replacement for vacuum robots enabling local-only operation.<br/>
+Congatudo is a cloud replacement for vacuum robots enabling local-only operation.
 It is not a custom firmware. That means that it cannot change anything about how the robot operates.
 
 Congatudo provides control over your vacuum robot via a responsive webinterface that works on all of your devices. It can be used on phones, tablets as well as your desktop computer.
@@ -6,7 +6,7 @@ Congatudo provides control over your vacuum robot via a responsive webinterface 
 
 Congatudo is made, managed, maintained and more by me,
 <a href="https://elraro.eu" rel="noopener" target="_blank">elraro</a>, with occasional contributions by
-<a href="https://github.com/congatudo/congatudo/graphs/contributors" rel="noopener" target="_blank">these awesome people</a>.<br/>
+<a href="https://github.com/congatudo/congatudo/graphs/contributors" rel="noopener" target="_blank">these awesome people</a>.
 It would not exist without the ongoing work of <a href="https://hypfer.de/" rel="noopener" target="_blank">Sören Beye.</a>.
 
 To choose the right robot to buy, head over to [Buying supported robots](https://congatudo.cloud/pages/general/buying-supported-robots.html).

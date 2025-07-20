@@ -9,16 +9,19 @@ It is needed for the robot to know wich server it has to attend so then, it shou
 
 ## Connect the robot to your local network
 First, you need to have your robot connected througth your wifi to get shell access. If you already have it, you can jumpthis section, otherwise, you can use the **[agnoc tool](https://github.com/congatudo/agnoc)** form your computer to establish the connection.
-```shellell
+```shell
 $> npm install -g @agnoc/cli 
 $> agnoc wlan <wifissid> <pass>
 ```
 
 ## Get root access in your Conga
+
+⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
+
 1. Check that you have SSH installed and working in your computer (Linux/MacOS by default, use **[Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/)** in Windows)
 2. You have to find out the IP address of your Conga (see **[this guide](https://techwiser.com/find-ip-address-of-any-device/)** on how to)
 3. Open an SSH connection to your Conga. Replace `192.168.x.x` with your Conga's actual IP address:
-	```shellell
+	```shell
 	$> ssh root@192.168.x.x
 	```
 	and when you get the login prompt, type `root` and then the password depending on your model:

@@ -60,14 +60,18 @@ The config key `robot` specifies the CecotecCongaRobot implementation Congatudo 
 When running on the robot itself, these are usually detected automatically.
 
 Please note that Congatudo will replace the configuration with a default one if it fails to parse it correctly.
+You can configure the logfile location using the `VALETUDO_LOG_PATH` environment variable. By default, it uses the system temporary directory (`os.tmpdir()`). If you prefer to log only to stdout during development, set the variable as follows:
 
-The logfile is also configured via an environment variable: `VALETUDO_LOG_PATH` and defaults to `os.tmpdir()` if unset. <br/>
-To just use stdout in your dev setup, you'll need
+- On Linux/macOS:
+  ```
+  VALETUDO_LOG_PATH=/dev/null
+  ```
 
-`VALETUDO_LOG_PATH=/dev/null` for linux/osx and
-
-`VALETUDO_LOG_PATH=\\\\.\\NUL` for windows hosts.<br/>
-That's `four backslash dot two backslash NUL` if it's not displayed correctly due to escaping issues.
+- On Windows:
+  ```
+  VALETUDO_LOG_PATH=\\\\.\\NUL
+  ```
+  *(That's four backslashes, a dot, two backslashes, and NUL. Escaping may cause it to display differently.)*
 
 ### 4. Verify configuration and run
 ```

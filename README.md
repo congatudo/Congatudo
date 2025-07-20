@@ -79,7 +79,7 @@ Check https://github.com/Koenkk/zigbee2mqtt/issues/7662
 Check the notifications and accept the new map generated
 ```
 4. Congatudo can't initialize and log says:
-```shellell
+```shell
 [2023-03-15T19:42:03.531Z] [WARN] WifiConfigurationCapabilityRouter: Error while handling route "/" {
 
   body: {},

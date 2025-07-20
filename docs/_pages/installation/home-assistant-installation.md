@@ -35,7 +35,7 @@ To link your Conga robot with the Congatudo add-on:
     Ensure your robot is [connected to your WiFi](https://congatudo.cloud/pages/installation/robot-setup.html).
 
 2. **Access via SSH:**  
-    Connect to your robot using SSH. If you need to bypass the root password, see [this guide](https://github.com/congatudo/stuff/blob/master/docs/rooting-conga.md).
+    Connect to your robot using SSH. If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
 
 3. **Edit the Hosts File:**  
     Update `/etc/hosts` on your robot to point required domains to your Home Assistant IP.  
