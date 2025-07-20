@@ -20,6 +20,7 @@ Support is still somewhat experimental, everything in this guide is under your r
 
 - The default settings here will be for running Congatudo on the robot itself, **[Standalone installation](https://congatudo.cloud/pages/installation/standalone-installation.html)**.
 - It could run on a server using Docker, **[Docker installation](https://congatudo.cloud/pages/installation/docker-installation.html)**.
+- Or use the **[Home Assistant addon](https://congatudo.cloud/pages/installation/home-assistant-installation.html)**.
 - If you want to develop as well, check out the **[Local Development guide](https://congatudo.cloud/pages/development/building-and-modifying-congatudo.html)**.
 
 Any of the ways to get Valetudo running for the robot needs root access to your Conga, so here it will be explained too: **[Robot Setup](#robot-setup)**.
@@ -45,7 +46,7 @@ For running Congatudo directly on your robot, refer to the **[Standalone Install
 If you prefer to run Congatudo on a server or another device, check the **[Docker Installation guide](https://congatudo.cloud/pages/installation/docker-installation.html)**. This guide explains how to set up Congatudo using Docker for easier management and updates.
 
 ## Home Assistant addon installation
-If you want to integrate Congatudo into your Home Assistant installation, check the **[Home Assistant Installation guide]([https://github.com/congatudo/congatudo-add-on](https://congatudo.cloud/pages/installation/home-assistant-installation.html))**.
+If you want to integrate Congatudo into your Home Assistant installation, check the **[Home Assistant Installation guide](https://congatudo.cloud/pages/installation/home-assistant-installation.html)**.
 
 ## FAQ
 1. I have Congatudo up and running but no robot is found
