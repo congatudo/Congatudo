@@ -1,4 +1,4 @@
-name: ci 
+name: Generate docs and deploy to GitHub Pages
 on:
   push:
     branches:
