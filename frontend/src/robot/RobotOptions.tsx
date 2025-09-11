@@ -2,8 +2,6 @@ import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {
     Capability,
     CarpetSensorMode,
-    useAutoEmptyDockAutoEmptyControlMutation,
-    useAutoEmptyDockAutoEmptyControlQuery,
     useCarpetModeStateMutation,
     useCarpetModeStateQuery,
     useCarpetSensorModeMutation,
@@ -193,32 +191,6 @@ const CarpetSensorModeControlCapabilitySelectListMenuItem = () => {
     );
 };
 
-const AutoEmptyDockAutoEmptyControlCapabilitySwitchListMenuItem = () => {
-    const {
-        data: data,
-        isFetching: isFetching,
-        isError: isError,
-    } = useAutoEmptyDockAutoEmptyControlQuery();
-
-    const {mutate: mutate, isPending: isChanging} = useAutoEmptyDockAutoEmptyControlMutation();
-    const loading = isFetching || isChanging;
-    const disabled = loading || isChanging || isError;
-
-    return (
-        <ToggleSwitchListMenuItem
-            value={data?.enabled ?? false}
-            setValue={(value) => {
-                mutate(value);
-            }}
-            disabled={disabled}
-            loadError={isError}
-            primaryLabel={"Auto-Empty Dock"}
-            secondaryLabel={"Enables automatic emptying of the robot into the dock. The interval between empties is robot-specific."}
-            icon={<AutoEmptyControlIcon/>}
-        />
-    );
-};
-
 const ObstacleAvoidanceControlCapabilitySwitchListMenuItem = () => {
     const {
         data: data,
@@ -308,8 +280,6 @@ const RobotOptions = (): React.ReactElement => {
         carpetModeControlCapabilitySupported,
         carpetSensorModeControlCapabilitySupported,
 
-        autoEmptyDockAutoEmptyControlCapabilitySupported,
-
         keyLockControlCapabilitySupported,
 
         speakerVolumeControlCapabilitySupported,
@@ -326,8 +296,6 @@ const RobotOptions = (): React.ReactElement => {
         Capability.CollisionAvoidantNavigation,
         Capability.CarpetModeControl,
         Capability.CarpetSensorModeControl,
-
-        Capability.AutoEmptyDockAutoEmptyControl,
 
         Capability.KeyLock,
 
@@ -391,20 +359,6 @@ const RobotOptions = (): React.ReactElement => {
         collisionAvoidantNavigationControlCapabilitySupported,
         carpetModeControlCapabilitySupported,
         carpetSensorModeControlCapabilitySupported
-    ]);
-
-    const dockListItems = React.useMemo(() => {
-        const items = [];
-
-        if (autoEmptyDockAutoEmptyControlCapabilitySupported) {
-            items.push(
-                <AutoEmptyDockAutoEmptyControlCapabilitySwitchListMenuItem key={"autoEmptyControl"}/>
-            );
-        }
-
-        return items;
-    }, [
-        autoEmptyDockAutoEmptyControlCapabilitySupported
     ]);
 
     const miscListItems = React.useMemo(() => {
@@ -494,11 +448,6 @@ const RobotOptions = (): React.ReactElement => {
         }
         items.push(...behaviorListItems);
 
-        if (dockListItems.length > 0) {
-            items.push(<SpacerListMenuItem key={"spacer1"}/>);
-        }
-        items.push(...dockListItems);
-
         if (miscListItems.length > 0) {
             items.push(<SpacerListMenuItem key={"spacer2"}/>);
         }
@@ -514,7 +463,6 @@ const RobotOptions = (): React.ReactElement => {
     }, [
         actionListItems,
         behaviorListItems,
-        dockListItems,
         miscListItems,
         submenuListItems
     ]);

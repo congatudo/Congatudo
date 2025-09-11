@@ -1,5 +1,4 @@
 module.exports = {
-    AutoEmptyDockManualTriggerCapabilityMqttHandle: require("./AutoEmptyDockManualTriggerCapabilityMqttHandle"),
     BasicControlCapabilityMqttHandle: require("./BasicControlCapabilityMqttHandle"),
     CapabilityMqttHandle: require("./CapabilityMqttHandle"),
     ConsumableMonitoringCapabilityMqttHandle: require("./ConsumableMonitoringCapabilityMqttHandle"),

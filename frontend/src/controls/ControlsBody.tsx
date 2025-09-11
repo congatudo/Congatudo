@@ -29,7 +29,6 @@ const ControlsBody = (): React.ReactElement => {
         Capability.FanSpeedControl,
         Capability.WaterUsageControl,
         Capability.OperationModeControl,
-        Capability.AutoEmptyDockManualTrigger,
         Capability.MopDockCleanManualTrigger,
         Capability.MopDockDryManualTrigger,
         Capability.CurrentStatistics

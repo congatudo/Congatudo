@@ -1,8 +1,6 @@
 import {AttachmentStateAttributeType} from "./RawRobotState";
 
 export enum Capability {
-    AutoEmptyDockAutoEmptyControl = "AutoEmptyDockAutoEmptyControlCapability",
-    AutoEmptyDockManualTrigger = "AutoEmptyDockManualTriggerCapability",
     BasicControl = "BasicControlCapability",
     CarpetModeControl = "CarpetModeControlCapability",
     CarpetSensorModeControl = "CarpetSensorModeControlCapability",

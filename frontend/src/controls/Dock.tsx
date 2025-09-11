@@ -1,7 +1,6 @@
 import {
     Capability,
     RobotAttributeClass,
-    useAutoEmptyDockManualTriggerMutation,
     useMopDockCleanManualTriggerMutation,
     useMopDockDryManualTriggerMutation,
     useRobotAttributeQuery,
@@ -43,15 +42,10 @@ const Dock = (): React.ReactElement => {
         mopDockCleanTriggerSupported,
         mopDockDryTriggerSupported,
     ] = useCapabilitiesSupported(
-        Capability.AutoEmptyDockManualTrigger,
         Capability.MopDockCleanManualTrigger,
         Capability.MopDockDryManualTrigger,
     );
 
-    const {
-        mutate: triggerDockEmpty,
-        isPending: emptyIsExecuting,
-    } = useAutoEmptyDockManualTriggerMutation();
     const {
         mutate: triggerMopDockCleanCommand,
         isPending: mopDockCleanCommandExecuting,

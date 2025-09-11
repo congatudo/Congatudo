@@ -1,0 +1,53 @@
+site_name: ""
+theme:
+  name: material
+  favicon: img/favicon.ico
+  logo: img/congatudo_logo_with_name.svg
+
+repo_url: https://github.com/congatudo/Congatudo
+
+nav:
+  - Home: index.md
+  - General:
+      - Getting started: general/getting-started.md
+      - Why Congatudo?: general/why-congatudo.md
+      - Congatudo or Valetudo: general/congatudo-or-valetudo.md
+      - Supported Robots: general/supported-robots.md
+      - Buying supported robots: general/buying-supported-robots.md
+      - Donate to the project: general/donate.md
+  - Installation:
+      - Robot setup: installation/robot-setup.md
+      - Home Assistant installation: installation/home-assistant-installation.md
+      - Docker installation: installation/docker-installation.md
+      - Standalone installation: installation/standalone-installation.md
+  - Usage:
+      - Capabilities Overview: usage/capabilities-overview.md
+  - Companion Apps:
+      - Valetudo Companion: companion_apps/valetudo_companion.md
+      - Valetudo Tray Companion: companion_apps/valetudo_tray_companion.md
+      - Valeronoi: companion_apps/valeronoi.md
+      - Lovelace Valetudo Map Card: companion_apps/lovelace_valetudo_map_card.md
+      - I can't believe it's not Valetudo: companion_apps/i_cant_believe_its_not_valetudo.md
+      - node-red-contrib-valetudo: companion_apps/node-red-contrib-valetudo.md
+      - Fun & Games: companion_apps/fun_games.md
+  - Integrations:
+      - MQTT: integrations/mqtt.md
+      - Home Assistant: integrations/home-assistant-integration.md
+      - Node-RED: integrations/node-red.md
+      - openHAB: integrations/openhab-integration.md
+  - Misc:
+      - Important Files & Folders: misc/important-files-and-folders.md
+      - Troubleshooting: misc/troubleshooting.md
+      - Empower your Conga voice: misc/empower-your-conga-voice.md
+      - Map Segments: misc/map-segments.md
+      - Add SSH Key: misc/add-ssh-key.md
+      - Hey Google Clean My Room: misc/hey-google-clean-my-room.md
+      - Get area and time in Home Assistant from Congatudo: misc/get-area-and-time-in-ha-from-congatudo.md
+      - Clean me: misc/clean-me.md
+      - Time and Tank Virtual Sensors: misc/time-and-tank-virtual-sensors.md
+      - Recovery root password: misc/recovery-root-password.md
+      - Change schedule: misc/change-schedule.md
+  - Development:
+      - Building and Modifying Congatudo: development/building-and-modifying-congatudo.md
+      - Congatudo core concepts: development/congatudo-core-concepts.md
+      - MQTT: development/mqtt.md

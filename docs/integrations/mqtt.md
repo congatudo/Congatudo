@@ -21,20 +21,14 @@ platform:
 Other home automation software that follows the [Homie convention](https://homieiot.github.io/) should also be able to
 automatically discover your Congatudo instance.
 
-<div style="text-align: center;">
-    <a href="https://homieiot.github.io" rel="noopener" target="_blank">
-        <img src="./img/works-with-homie.svg" />
-    </a>
-    <br>
-    <br>
-</div>
+[![Works with Homie](./img/works-with-homie.svg)](https://homieiot.github.io)
 
 ## Map
 
 Note that, in order to view the map provided over MQTT, you additionally need
-[I Can't Believe It's Not Valetudo](/pages/companion_apps/i_cant_believe_its_not_valetudo.html) to generate PNG maps.
+[I Can't Believe It's Not Valetudo](../companion_apps/i_cant_believe_its_not_valetudo.md) to generate PNG maps.
 You can then configure it to serve the PNG map over HTTP for openHAB and other software, or install the
-[Lovelace Valetudo Card Map](/pages/companion_apps/lovelace_valetudo_map_card.html) for Home Assistant. 
+[Lovelace Valetudo Card Map](../companion_apps/lovelace_valetudo_map_card.md) for Home Assistant. 
 
 ## Custom integrations
 
@@ -56,8 +50,6 @@ Homie autodiscovery info is best viewed with something like [MQTT Explorer](http
 
  - [Robot](#robot)
    - [Capabilities](#capabilities)
-     - [Auto Empty Dock Manual Trigger (`AutoEmptyDockManualTriggerCapability`)](#autoemptydockmanualtriggerautoemptydockmanualtriggercapability)
-       - [Auto Empty Dock Manual Trigger (`trigger`)](#autoemptydockmanualtriggertrigger)
      - [Basic control (`BasicControlCapability`)](#basiccontrolbasiccontrolcapability)
        - [Operation (`operation`)](#operationoperation)
      - [Consumables monitoring (`ConsumableMonitoringCapability`)](#consumablesmonitoringconsumablemonitoringcapability)
@@ -150,25 +142,9 @@ Home Assistant components controlled by this device:
 
 ### Capabilities <a id="capabilities" />
 
-#### Auto Empty Dock Manual Trigger (`AutoEmptyDockManualTriggerCapability`) <a id="autoemptydockmanualtriggerautoemptydockmanualtriggercapability" />
-
-*Node, capability: [AutoEmptyDockManualTriggerCapability](/pages/usage/capabilities-overview.html#autoemptydockmanualtriggercapability)*
-
-##### Auto Empty Dock Manual Trigger (`trigger`) <a id="autoemptydockmanualtriggertrigger" />
-
-*Property, command, not retained*
-
-- Command topic: `<TOPIC PREFIX>/<IDENTIFIER>/AutoEmptyDockManualTriggerCapability/trigger/set`
-- Command response topic: `<TOPIC PREFIX>/<IDENTIFIER>/AutoEmptyDockManualTriggerCapability/trigger`
-- Data type: [enum](https://homieiot.github.io/specification/#enum) (allowed payloads: `PERFORM`)
-
-
-
-
-
 #### Basic control (`BasicControlCapability`) <a id="basiccontrolbasiccontrolcapability" />
 
-*Node, capability: [BasicControlCapability](/pages/usage/capabilities-overview.html#basiccontrolcapability)*
+*Node, capability: [BasicControlCapability](../usage/capabilities-overview.md#basiccontrolcapability)*
 
 ##### Operation (`operation`) <a id="operationoperation" />
 
@@ -179,12 +155,9 @@ Home Assistant components controlled by this device:
 - Data type: [enum](https://homieiot.github.io/specification/#enum) (allowed payloads: `START`, `STOP`, `PAUSE`, `HOME`)
 
 
-
-
-
 #### Consumables monitoring (`ConsumableMonitoringCapability`) <a id="consumablesmonitoringconsumablemonitoringcapability" />
 
-*Node, capability: [ConsumableMonitoringCapability](/pages/usage/capabilities-overview.html#consumablemonitoringcapability)*
+*Node, capability: [ConsumableMonitoringCapability](../usage/capabilities-overview.md#consumablemonitoringcapability)*
 
 {% include alert.html type="warning" content="Some information contained in this document may not be exactly what is sent or expected by actual robots, since different vendors have different implementations. Refer to the table below.
 
@@ -247,7 +220,7 @@ Home Assistant components controlled by this property:
 
 #### Current Statistics (`CurrentStatisticsCapability`) <a id="currentstatisticscurrentstatisticscapability" />
 
-*Node, capability: [CurrentStatisticsCapability](/pages/usage/capabilities-overview.html#currentstatisticscapability)*
+*Node, capability: [CurrentStatisticsCapability](../usage/capabilities-overview.md#currentstatisticscapability)*
 
 ##### Current Statistics Area (`area`) <a id="currentstatisticsareaarea" />
 
@@ -303,7 +276,7 @@ Home Assistant components controlled by this property:
 
 #### Fan control (`FanSpeedControlCapability`) <a id="fancontrolfanspeedcontrolcapability" />
 
-*Node, capability: [FanSpeedControlCapability](/pages/usage/capabilities-overview.html#fanspeedcontrolcapability)*
+*Node, capability: [FanSpeedControlCapability](../usage/capabilities-overview.md#fanspeedcontrolcapability)*
 
 Status attributes managed by this node:
 
@@ -341,7 +314,7 @@ max
 
 #### Go to location (`GoToLocationCapability`) <a id="gotolocationgotolocationcapability" />
 
-*Node, capability: [GoToLocationCapability](/pages/usage/capabilities-overview.html#gotolocationcapability)*
+*Node, capability: [GoToLocationCapability](../usage/capabilities-overview.md#gotolocationcapability)*
 
 ##### Go to location (`go`) <a id="gotolocationgo" />
 
@@ -372,7 +345,7 @@ Sample payload:
 
 #### Locate (`LocateCapability`) <a id="locatelocatecapability" />
 
-*Node, capability: [LocateCapability](/pages/usage/capabilities-overview.html#locatecapability)*
+*Node, capability: [LocateCapability](../usage/capabilities-overview.md#locatecapability)*
 
 ##### Locate (`locate`) <a id="locatelocate" />
 
@@ -388,7 +361,7 @@ Sample payload:
 
 #### Segment cleaning (`MapSegmentationCapability`) <a id="segmentcleaningmapsegmentationcapability" />
 
-*Node, capability: [MapSegmentationCapability](/pages/usage/capabilities-overview.html#mapsegmentationcapability)*
+*Node, capability: [MapSegmentationCapability](../usage/capabilities-overview.md#mapsegmentationcapability)*
 
 ##### Clean segments (`clean`) <a id="cleansegmentsclean" />
 
@@ -422,7 +395,7 @@ Sample payload:
 
 #### Speaker volume control (`SpeakerVolumeControlCapability`) <a id="speakervolumecontrolspeakervolumecontrolcapability" />
 
-*Node, capability: [SpeakerVolumeControlCapability](/pages/usage/capabilities-overview.html#speakervolumecontrolcapability)*
+*Node, capability: [SpeakerVolumeControlCapability](../usage/capabilities-overview.md#speakervolumecontrolcapability)*
 
 **Note:** This is an optional exposed capability handle and thus will only be available via MQTT if enabled in the Congatudo configuration.
 
@@ -452,7 +425,7 @@ Home Assistant components controlled by this property:
 
 #### Water control (`WaterUsageControlCapability`) <a id="watercontrolwaterusagecontrolcapability" />
 
-*Node, capability: [WaterUsageControlCapability](/pages/usage/capabilities-overview.html#waterusagecontrolcapability)*
+*Node, capability: [WaterUsageControlCapability](../usage/capabilities-overview.md#waterusagecontrolcapability)*
 
 Status attributes managed by this node:
 
@@ -494,7 +467,7 @@ Home Assistant components controlled by this property:
 
 #### Wi-Fi configuration (`WifiConfigurationCapability`) <a id="wi-ficonfigurationwificonfigurationcapability" />
 
-*Node, capability: [WifiConfigurationCapability](/pages/usage/capabilities-overview.html#wificonfigurationcapability)*
+*Node, capability: [WifiConfigurationCapability](../usage/capabilities-overview.md#wificonfigurationcapability)*
 
 Home Assistant components controlled by this node:
 
@@ -574,7 +547,7 @@ Valetudo Wi-Fi
 
 #### Zone cleaning (`ZoneCleaningCapability`) <a id="zonecleaningzonecleaningcapability" />
 
-*Node, capability: [ZoneCleaningCapability](/pages/usage/capabilities-overview.html#zonecleaningcapability)*
+*Node, capability: [ZoneCleaningCapability](../usage/capabilities-overview.md#zonecleaningcapability)*
 
 ##### Start zoned cleaning (`start`) <a id="startzonedcleaningstart" />
 

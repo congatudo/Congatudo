@@ -1,6 +1,4 @@
 module.exports = {
-    MockAutoEmptyDockAutoEmptyControlCapability: require("./MockAutoEmptyDockAutoEmptyControlCapability"),
-    MockAutoEmptyDockManualTriggerCapability: require("./MockAutoEmptyDockManualTriggerCapability"),
     MockBasicControlCapability: require("./MockBasicControlCapability"),
     MockCarpetModeControlCapability: require("./MockCarpetModeControlCapability"),
     MockConsumableMonitoringCapability: require("./MockConsumableMonitoringCapability"),

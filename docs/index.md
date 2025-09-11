@@ -4,16 +4,13 @@ It is not a custom firmware. That means that it cannot change anything about how
 Congatudo provides control over your vacuum robot via a responsive webinterface that works on all of your devices. It can be used on phones, tablets as well as your desktop computer.
 
 
-Congatudo is made, managed, maintained and more by me,
-<a href="https://elraro.eu" rel="noopener" target="_blank">elraro</a>, with occasional contributions by
-<a href="https://github.com/congatudo/congatudo/graphs/contributors" rel="noopener" target="_blank">these awesome people</a>.
-It would not exist without the ongoing work of <a href="https://hypfer.de/" rel="noopener" target="_blank">Sören Beye.</a>.
+Congatudo is made, managed, maintained and more by me, [elraro](https://elraro.eu), with occasional contributions by [these awesome people](https://github.com/congatudo/congatudo/graphs/contributors). It would not exist without the ongoing work of [Sören Beye](https://hypfer.de/).
 
 To choose the right robot to buy, head over to [Buying supported robots](https://congatudo.cloud/pages/general/buying-supported-robots.html).
 
-Congatudo is licensed under <a href="https://github.com/congatudo/Congatudo/blob/master/LICENSE" rel="noopener" target="_blank">the Apache-2.0 open-source license</a>.
+Congatudo is licensed under [the Apache-2.0 open-source license](https://github.com/congatudo/Congatudo/blob/master/LICENSE).
 
-Based on Valetudo, which is licensed under <a href="https://github.com/Hypfer/Valetudo/blob/master/LICENSE" rel="noopener" target="_blank">the Apache-2.0 open-source license</a>.
+Based on Valetudo, which is licensed under [the Apache-2.0 open-source license](https://github.com/Hypfer/Valetudo/blob/master/LICENSE).
 
 The [getting started guide](https://congatudo.cloud/pages/general/getting-started.html) is a good place to start.
 

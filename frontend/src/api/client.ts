@@ -357,12 +357,6 @@ export const sendLocateCommand = async (): Promise<void> => {
     });
 };
 
-export const sendAutoEmptyDockManualTriggerCommand = async (): Promise<void> => {
-    await valetudoAPI.put(`/robot/capabilities/${Capability.AutoEmptyDockManualTrigger}`, {
-        action: "trigger",
-    });
-};
-
 export const fetchConsumableStateInformation = async (): Promise<Array<ConsumableState>> => {
     return valetudoAPI
         .get<Array<ConsumableState>>(`/robot/capabilities/${Capability.ConsumableMonitoring}`)
@@ -801,18 +795,6 @@ export const sendPetObstacleAvoidanceControlState = async (enable: boolean): Pro
     await sendToggleMutation(Capability.PetObstacleAvoidanceControl, enable);
 };
 
-
-export const fetchAutoEmptyDockAutoEmptyControlState = async (): Promise<SimpleToggleState> => {
-    return valetudoAPI
-        .get<SimpleToggleState>(`/robot/capabilities/${Capability.AutoEmptyDockAutoEmptyControl}`)
-        .then(({ data }) => {
-            return data;
-        });
-};
-
-export const sendAutoEmptyDockAutoEmptyControlEnable = async (enable: boolean): Promise<void> => {
-    await sendToggleMutation(Capability.AutoEmptyDockAutoEmptyControl, enable);
-};
 
 export const fetchCollisionAvoidantNavigationControlState = async (): Promise<SimpleToggleState> => {
     return valetudoAPI

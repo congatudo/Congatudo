@@ -1,6 +1,4 @@
 module.exports = {
-    AutoEmptyDockAutoEmptyControlCapability: require("./AutoEmptyDockAutoEmptyControlCapability"),
-    AutoEmptyDockManualTriggerCapability: require("./AutoEmptyDockManualTriggerCapability"),
     BasicControlCapability: require("./BasicControlCapability"),
     CarpetModeControlCapability: require("./CarpetModeControlCapability"),
     CombinedVirtualRestrictionsCapability: require("./CombinedVirtualRestrictionsCapability"),

@@ -11,7 +11,6 @@ import {
 import {
     BasicControlCommand,
     deleteTimer,
-    fetchAutoEmptyDockAutoEmptyControlState,
     fetchCapabilities,
     fetchCarpetModeState,
     fetchCombinedVirtualRestrictionsProperties,
@@ -50,8 +49,6 @@ import {
     fetchVoicePackManagementState,
     fetchWifiStatus,
     fetchZoneProperties,
-    sendAutoEmptyDockAutoEmptyControlEnable,
-    sendAutoEmptyDockManualTriggerCommand,
     sendBasicControlCommand,
     sendCarpetModeEnable,
     sendCleanSegmentsCommand,
@@ -187,7 +184,6 @@ enum QueryKey {
     KeyLockInformation = "key_lock",
     ObstacleAvoidance = "obstacle_avoidance",
     PetObstacleAvoidance = "pet_obstacle_avoidance",
-    AutoEmptyDockAutoEmpty = "auto_empty_dock_auto_empty",
     DoNotDisturb = "do_not_disturb",
     WifiStatus = "wifi_status",
     WifiConfigurationProperties = "wifi_configuration_properties",
@@ -614,13 +610,6 @@ export const useConsumableResetMutation = () => {
             return sendConsumableReset(parameters).then(fetchConsumableStateInformation);
         },
         onError: useOnCommandError(Capability.ConsumableMonitoring)
-    });
-};
-
-export const useAutoEmptyDockManualTriggerMutation = () => {
-    return useMutation({
-        mutationFn: sendAutoEmptyDockManualTriggerCommand,
-        onError: useOnCommandError(Capability.AutoEmptyDockManualTrigger)
     });
 };
 
@@ -1085,25 +1074,6 @@ export const usePetObstacleAvoidanceControlMutation = () => {
     });
 };
 
-
-export const useAutoEmptyDockAutoEmptyControlQuery = () => {
-    return useQuery( {
-        queryKey: [QueryKey.AutoEmptyDockAutoEmpty],
-        queryFn: fetchAutoEmptyDockAutoEmptyControlState,
-
-        staleTime: Infinity
-    });
-};
-
-export const useAutoEmptyDockAutoEmptyControlMutation = () => {
-    return useValetudoFetchingMutation({
-        queryKey: [QueryKey.AutoEmptyDockAutoEmpty],
-        mutationFn: (enable: boolean) => {
-            return sendAutoEmptyDockAutoEmptyControlEnable(enable).then(fetchAutoEmptyDockAutoEmptyControlState);
-        },
-        onError: useOnCommandError(Capability.AutoEmptyDockAutoEmptyControl)
-    });
-};
 
 export const useCollisionAvoidantNavigationControlQuery = () => {
     return useQuery( {
