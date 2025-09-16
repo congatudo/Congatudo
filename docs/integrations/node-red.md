@@ -6,9 +6,9 @@ order: 22
 
 ## Node-RED
 
-You need to [connect valetudo to the same MQTT Broker as your Node-RED](https://congatudo.cloud/pages/integrations/mqtt.html).
+You need to [connect valetudo to the same MQTT Broker as your Node-RED](./mqtt.md).
 
-Build your flows with `mqtt in` and `mqtt out` nodes using the [valetudo topics](https://congatudo.cloud/pages/integrations/mqtt.html).
+Build your flows with `mqtt in` and `mqtt out` nodes using the [valetudo topics](./mqtt.md).
 
 To draw a map for your Dashboard you can use [node-red-contrib-valetudo](https://flows.nodered.org/node/node-red-contrib-valetudo).
 

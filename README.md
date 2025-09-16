@@ -18,9 +18,9 @@ Based on **[Valetudo](https://valetudo.cloud/)**. Please, consider donating to t
 These pages guide you through the installation steps for Cecotec Conga robots.
 Support is still somewhat experimental, everything in this guide is under your responsibility.
 
-- The default settings here will be for running Congatudo on the robot itself, **[Standalone installation](https://congatudo.cloud/pages/installation/standalone-installation.html)**.
-- It could run on a server using Docker, **[Docker installation](https://congatudo.cloud/pages/installation/docker-installation.html)**.
-- Or use the **[Home Assistant addon](https://congatudo.cloud/pages/installation/home-assistant-installation.html)**.
+- The default settings here will be for running Congatudo on the robot itself, **[Standalone installation](https://congatudo.cloud/installation/standalone-installation/)**.
+- It could run on a server using Docker, **[Docker installation](https://congatudo.cloud/installation/docker-installation/)**.
+- Or use the **[Home Assistant addon](https://congatudo.cloud/installation/home-assistant-installation/)**.
 - If you want to develop as well, check out the **[Local Development guide](https://congatudo.cloud/pages/development/building-and-modifying-congatudo.html)**.
 
 Any of the ways to get Valetudo running for the robot needs root access to your Conga, so here it will be explained too: **[Robot Setup](#robot-setup)**.
@@ -40,13 +40,13 @@ Please give it a try and **[file any issues that you encounter here](https://git
 Follow the **[Robot Setup guide](https://congatudo.cloud/pages/installation/robot-setup.html)** for instructions on preparing your Cecotec Conga robot. This includes gaining root access and configuring your device to work with Congatudo.
 
 ## Standalone installation
-For running Congatudo directly on your robot, refer to the **[Standalone Installation guide](https://congatudo.cloud/pages/installation/standalone-installation.html)**. This guide covers all steps required to install and configure Congatudo for local-only operation.
+For running Congatudo directly on your robot, refer to the **[Standalone Installation guide](https://congatudo.cloud/installation/standalone-installation/)**. This guide covers all steps required to install and configure Congatudo for local-only operation.
 
 ## Docker installation
-If you prefer to run Congatudo on a server or another device, check the **[Docker Installation guide](https://congatudo.cloud/pages/installation/docker-installation.html)**. This guide explains how to set up Congatudo using Docker for easier management and updates.
+If you prefer to run Congatudo on a server or another device, check the **[Docker Installation guide](https://congatudo.cloud/installation/docker-installation/)**. This guide explains how to set up Congatudo using Docker for easier management and updates.
 
 ## Home Assistant addon installation
-If you want to integrate Congatudo into your Home Assistant installation, check the **[Home Assistant Installation guide](https://congatudo.cloud/pages/installation/home-assistant-installation.html)**.
+If you want to integrate Congatudo into your Home Assistant installation, check the **[Home Assistant Installation guide](https://congatudo.cloud/installation/home-assistant-installation/)**.
 
 ## FAQ
 1. I have Congatudo up and running but no robot is found

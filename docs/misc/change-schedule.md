@@ -12,9 +12,9 @@ To resolve this, you have two options:
 - **Disable Congatudo and turn off the schedule using the mobile app.**
 - **Manually edit the schedule configuration file on the robot.**
 
-The schedule configuration file is located at `/mnt/UDISK/config/booking_list_config.ini`. You can access and modify it via [SSH](https://congatudo.cloud/pages/installation/robot-setup.html).
+The schedule configuration file is located at `/mnt/UDISK/config/booking_list_config.ini`. You can access and modify it via [SSH](../installation/robot-setup.md).
 
-⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
+⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](../misc/recovery-root-password.md).
 
 Below is an example configuration file from a Conga 4090:
 

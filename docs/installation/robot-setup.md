@@ -17,7 +17,7 @@ $> agnoc wlan <wifissid> <pass>
 
 ## Get root access in your Conga
 
-⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
+⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](../misc/recovery-root-password.md).
 
 1. Check that you have SSH installed and working in your computer (Linux/MacOS by default, use **[Putty](https://www.chiark.greenend.org.uk/~sgtatham/putty/)** in Windows)
 2. You have to find out the IP address of your Conga (see **[this guide](https://techwiser.com/find-ip-address-of-any-device/)** on how to)
@@ -35,13 +35,13 @@ $> agnoc wlan <wifissid> <pass>
 ![Tina-Linux](https://github.com/congatudo/stuff/blob/master/docs/assets/tina-linux.png)
 5. Now, it would be a good practice to:
    - Change the password (to something non-default and secure 🙏)
-   - Add certificates (ssh key-pair) to **[access via ssh without passwords](https://congatudo.cloud/pages/misc/add-ssh-key.html)**
+   - Add certificates (ssh key-pair) to **[access via ssh without passwords](../misc/add-ssh-key.md)**
 
 ## Choose your installation method
 Now you need to choose how to install Congatudo on your server. You can use one of the following methods:
-- **[Home Assistant Add-on](https://congatudo.cloud/pages/installation/home-assistant-installation.html):** Recommended if you are running Home Assistant. This method provides seamless integration and easy updates.
-- **[Docker](https://congatudo.cloud/pages/installation/docker-installation.html):** Suitable for most environments. Use this if you want a containerized setup.
-- **[Standalone](https://congatudo.cloud/pages/installation/standalone-installation.html):** For users who prefer manual installation and full control.
+- **[Home Assistant Add-on](./home-assistant-installation.md):** Recommended if you are running Home Assistant. This method provides seamless integration and easy updates.
+- **[Docker](./docker-installation.md):** Suitable for most environments. Use this if you want a containerized setup.
+- **[Standalone](./standalone-installation.md):** For users who prefer manual installation and full control.
 
 Follow the link for your preferred method to continue with the installation.
 

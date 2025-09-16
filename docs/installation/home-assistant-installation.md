@@ -9,7 +9,7 @@ order: 2
 ## Prerequisites
 
 - Familiarity with the Congatudo project.
-- Root access to your Conga robot via [SSH or ADB](https://congatudo.cloud/pages/installation/robot-setup.html).
+- Root access to your Conga robot via [SSH or ADB](./robot-setup.md).
 - An MQTT server (preferably the Mosquitto broker add-on) installed and running. If you already use MQTT in Home Assistant, the add-on will auto-configure it.
 - Basic Linux knowledge.
 
@@ -32,10 +32,10 @@ order: 2
 To link your Conga robot with the Congatudo add-on:
 
 1. **Connect to WiFi:**  
-    Ensure your robot is [connected to your WiFi](https://congatudo.cloud/pages/installation/robot-setup.html).
+    Ensure your robot is [connected to your WiFi](./robot-setup.md).
 
 2. **Access via SSH:**  
-    Connect to your robot using SSH. If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
+    Connect to your robot using SSH. If you need to reset or recover the root password, refer to the [root password recovery guide](../misc/recovery-root-password.md).
 
 3. **Edit the Hosts File:**  
     Update `/etc/hosts` on your robot to point required domains to your Home Assistant IP.  

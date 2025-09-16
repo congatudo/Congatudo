@@ -11,7 +11,7 @@ Get your vacuum close to your bin once the tank is full
 ## Requirements
 
 - Congatudo integrated into Home assistant
-- Tank percentage sensor available (i.e. with [this tutorial](https://congatudo.cloud/pages/misc/time-and-tank-virtual-sensors.html))
+- Tank percentage sensor available (i.e. with [this tutorial](../misc/time-and-tank-virtual-sensors.md))
 - A defined spot in Congatudo
 
 ## Steps

@@ -26,7 +26,7 @@ Once you have already downloaded it and named as valetudo_config.json, edit the 
 
 ## Copy the binary and its configuration to your robot
 
-⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](https://congatudo.cloud/pages/misc/recovery-root-password.html).
+⚠️ If you need to reset or recover the root password, refer to the [root password recovery guide](../misc/recovery-root-password.md).
 
 After that, you are able to copy the binary to your Conga.
 

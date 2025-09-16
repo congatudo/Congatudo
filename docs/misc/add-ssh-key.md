@@ -10,7 +10,7 @@ Key based authentication in SSH is called public key authentication. SSH keys ar
 
 ## Prerequisites
 
-You need to be able to [access your Conga by SSH](https://congatudo.cloud/pages/general/getting-started.html#root_access).
+You need to be able to [access your Conga by SSH](../general/getting-started.md#root_access).
 
 ## Generate an SSH Key in your computer
 

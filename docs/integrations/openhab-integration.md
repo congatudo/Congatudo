@@ -7,7 +7,7 @@ order: 23
 # openHAB integration
 
 [openHAB](https://www.openhab.org/) supports MQTT autodiscovery using the Homie convention. Make sure MQTT is configured
-properly and that Homie autodiscovery is enabled (see [MQTT](https://congatudo.cloud/pages/integrations/mqtt.html)).
+properly and that Homie autodiscovery is enabled (see [MQTT](./mqtt.md)).
 
 <div style="text-align: center;">
     <a href="https://homieiot.github.io" rel="noopener" target="_blank">
