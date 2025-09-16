@@ -6,13 +6,13 @@ Congatudo provides control over your vacuum robot via a responsive webinterface 
 
 Congatudo is made, managed, maintained and more by me, [elraro](https://elraro.eu), with occasional contributions by [these awesome people](https://github.com/congatudo/congatudo/graphs/contributors). It would not exist without the ongoing work of [Sören Beye](https://hypfer.de/).
 
-To choose the right robot to buy, head over to [Buying supported robots](https://congatudo.cloud/pages/general/buying-supported-robots.html).
+To choose the right robot to buy, head over to [Buying supported robots](./general/buying-supported-robots.md).
 
 Congatudo is licensed under [the Apache-2.0 open-source license](https://github.com/congatudo/Congatudo/blob/master/LICENSE).
 
 Based on Valetudo, which is licensed under [the Apache-2.0 open-source license](https://github.com/Hypfer/Valetudo/blob/master/LICENSE).
 
-The [getting started guide](https://congatudo.cloud/pages/general/getting-started.html) is a good place to start.
+The [getting started guide](./general/getting-started.md) is a good place to start.
 
 Also, make sure to check out the companion apps section.
 

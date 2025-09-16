@@ -14,9 +14,9 @@ Home Assistant, openHAB and Node-RED, configure MQTT via Congatudo's web interfa
 See the specific integration pages for instructions on how to set up autodiscovery for your home automation software
 platform:
 
-- [Home Assistant](https://congatudo.cloud/pages/integrations/home-assistant-integration.html)
-- [openHAB](https://congatudo.cloud/pages/integrations/openhab-integration.html)
-- [Node-RED](https://congatudo.cloud/pages/integrations/node-red.html)
+- [Home Assistant](./home-assistant-integration.md)
+- [openHAB](./openhab-integration.md)
+- [Node-RED](./node-red.md)
 
 Other home automation software that follows the [Homie convention](https://homieiot.github.io/) should also be able to
 automatically discover your Congatudo instance.
