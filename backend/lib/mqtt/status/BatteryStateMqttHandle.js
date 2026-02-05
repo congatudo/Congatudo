@@ -2,12 +2,11 @@ const ComponentType = require("../homeassistant/ComponentType");
 const DataType = require("../homie/DataType");
 const DeviceClass = require("../homeassistant/DeviceClass");
 const EntityCategory = require("../homeassistant/EntityCategory");
-const HassAnchor = require("../homeassistant/HassAnchor");
 const InLineHassComponent = require("../homeassistant/components/InLineHassComponent");
-const Logger = require("../../Logger");
 const PropertyMqttHandle = require("../handles/PropertyMqttHandle");
 const RobotStateNodeMqttHandle = require("../handles/RobotStateNodeMqttHandle");
 const stateAttrs = require("../../entities/state/attributes");
+const StateClass = require("../homeassistant/StateClass");
 const Unit = require("../common/Unit");
 
 class BatteryStateMqttHandle extends RobotStateNodeMqttHandle {
@@ -37,12 +36,6 @@ class BatteryStateMqttHandle extends RobotStateNodeMqttHandle {
                     return null;
                 }
 
-                this.controller.hassAnchorProvider.getAnchor(
-                    HassAnchor.ANCHOR.BATTERY_LEVEL
-                ).post(batteryState.level).catch(err => {
-                    Logger.error("Error while posting value to HassAnchor", err);
-                });
-
                 return batteryState.level;
             }
         }).also((prop) => {
@@ -59,7 +52,8 @@ class BatteryStateMqttHandle extends RobotStateNodeMqttHandle {
                             icon: "mdi:battery",
                             entity_category: EntityCategory.DIAGNOSTIC,
                             unit_of_measurement: Unit.PERCENT,
-                            device_class: DeviceClass.BATTERY
+                            device_class: DeviceClass.BATTERY,
+                            state_class: StateClass.MEASUREMENT
                         }
                     })
                 );
@@ -78,10 +72,6 @@ class BatteryStateMqttHandle extends RobotStateNodeMqttHandle {
                 if (batteryState === null) {
                     return null;
                 }
-
-                await this.controller.hassAnchorProvider.getAnchor(
-                    HassAnchor.ANCHOR.BATTERY_CHARGING
-                ).post(batteryState.flag === stateAttrs.BatteryStateAttribute.FLAG.CHARGING);
 
                 return batteryState.flag;
             }
