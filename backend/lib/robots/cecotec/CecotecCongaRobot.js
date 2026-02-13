@@ -25,12 +25,23 @@ const {
     PolygonMapEntity,
     LineMapEntity,
 } = require("../../entities/map");
+const { DeviceError } = require("@agnoc/core/lib/value-objects/device-error.value-object");
 const { DeviceMode } = require("@agnoc/core");
 
 const DEVICE_MODE_TO_STATUS_STATE_FLAG = {
     [DeviceMode.VALUE.NONE]: StatusStateAttribute.FLAG.NONE,
     [DeviceMode.VALUE.SPOT]: StatusStateAttribute.FLAG.SPOT,
     [DeviceMode.VALUE.ZONE]: StatusStateAttribute.FLAG.ZONE,
+};
+
+const DEVICE_ERROR_TO_DESCRIPTION = {
+    [DeviceError.VALUE.DUSTBOX_NOT_EXIST]: "Dust bin missing. Please insert it.",
+    [DeviceError.VALUE.DUST_BOX_FULL]: "The dust bin is full. Please empty it.",
+    [DeviceError.VALUE.HANDPPEN_DUST_BOX_FULL]: "The dust bin is full. Please empty it.",
+    [DeviceError.VALUE.HUICHENGHE_FULL]: "The dust bin is full. Please empty it.",
+    [DeviceError.VALUE.MOPPING_NOT_EXIST]: "Mop attachment missing.",
+    [DeviceError.VALUE.WATER_BOX_NOT_EXIST]: "Water tank missing.",
+    [DeviceError.VALUE.WATER_TRUNK_EMPTY]: "Water tank empty.",
 };
 
 function throttle(callback, wait = 1000, immediate = true) {
@@ -788,12 +799,15 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         const flag =
       DEVICE_MODE_TO_STATUS_STATE_FLAG[mode?.value] ||
       StatusStateAttribute.FLAG.NONE;
+        const errorValue = error && error.value !== DeviceError.VALUE.NONE ? error.value : undefined;
+        const errorDescription = errorValue ? (DEVICE_ERROR_TO_DESCRIPTION[errorValue] || errorValue) : undefined;
+        const value = errorValue ? StatusStateAttribute.VALUE.ERROR : (state ? state.value : StatusStateAttribute.VALUE.DOCKED);
 
         return new StatusStateAttribute({
-            value: state ? state.value : StatusStateAttribute.VALUE.DOCKED,
+            value: value,
             flag: flag,
             metaData: {
-                error_description: error && error.value,
+                error_description: errorDescription,
             },
         });
     }
