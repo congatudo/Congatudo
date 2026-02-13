@@ -25,7 +25,7 @@ const VoicePackControl: FunctionComponent = () => {
 
     const {mutate: sendVoicePackCommand, isPending: voicePackMutating} = useVoicePackManagementMutation();
 
-    const intervalRef = React.useRef<any>();
+    const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
     React.useEffect(() => {
         const operationType = voicePack?.operationStatus.type;
         if (operationType === "downloading" || operationType === "installing") {
@@ -33,10 +33,15 @@ const VoicePackControl: FunctionComponent = () => {
                 return voicePackRefetch();
             }, 1000);
             return () => {
-                if (intervalRef.current) {
+                if (intervalRef.current !== null) {
                     clearInterval(intervalRef.current);
+                    intervalRef.current = null;
                 }
             };
+        }
+        if (intervalRef.current !== null) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
         }
     }, [voicePack, voicePackRefetch]);
 

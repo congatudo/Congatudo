@@ -20,7 +20,6 @@ const ControlsBody = (): React.ReactElement => {
         fanSpeed,
         waterControl,
         operationMode,
-        triggerEmptySupported,
         mopDockCleanTriggerSupported,
         mopDockDryTriggerSupported,
         currentStatistics,
@@ -77,7 +76,7 @@ const ControlsBody = (): React.ReactElement => {
             )}
 
             {
-                (triggerEmptySupported || mopDockCleanTriggerSupported || mopDockDryTriggerSupported) &&
+                (mopDockCleanTriggerSupported || mopDockDryTriggerSupported) &&
 
                 <Dock/>
             }

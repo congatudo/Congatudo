@@ -9,7 +9,6 @@ import {
 import {useCapabilitiesSupported} from "../CapabilitiesProvider";
 import {Button, Grid, Icon, styled, Typography} from "@mui/material";
 import {
-    RestoreFromTrash as EmptyIcon,
     Villa as DockIcon,
     Water as CleanMopIcon,
     WindPower as DryMopIcon,
@@ -38,7 +37,6 @@ const Dock = (): React.ReactElement => {
     });
 
     const [
-        triggerEmptySupported,
         mopDockCleanTriggerSupported,
         mopDockDryTriggerSupported,
     ] = useCapabilitiesSupported(
@@ -120,23 +118,6 @@ const Dock = (): React.ReactElement => {
                         </Button>
                     </Grid>
                 }
-                {
-                    triggerEmptySupported &&
-                    <Grid item xs>
-                        <Button
-                            disabled={commandIsExecuting || robotState !== "docked"}
-                            variant="outlined"
-                            size="medium"
-                            color="inherit"
-                            onClick={() => {
-                                triggerDockEmpty();
-                            }}
-                            sx={{width: "100%"}}
-                        >
-                            <StyledIcon as={EmptyIcon} /> Empty
-                        </Button>
-                    </Grid>
-                }
             </Grid>
         );
     }, [
@@ -152,8 +133,6 @@ const Dock = (): React.ReactElement => {
         feedbackPending,
         setFeedbackPending,
         robotStatus,
-        triggerDockEmpty,
-        triggerEmptySupported,
         triggerMopDockCleanCommand,
         triggerMopDockDryCommand
     ]);
