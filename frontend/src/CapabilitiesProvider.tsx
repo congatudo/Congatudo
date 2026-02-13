@@ -17,10 +17,10 @@ const CapabilitiesProvider = (props: {
         refetch: refetchCapabilities
     } = useCapabilitiesQuery();
     const {enqueueSnackbar, closeSnackbar} = useSnackbar();
-    const snackbarKey = React.useRef<SnackbarKey>();
+    const snackbarKey = React.useRef<SnackbarKey | null>(null);
 
     React.useEffect(() => {
-        if (capabilitiesLoadError || snackbarKey.current === undefined) {
+        if (capabilitiesLoadError || snackbarKey.current === null) {
             return;
         }
 
@@ -49,7 +49,7 @@ const CapabilitiesProvider = (props: {
             );
         };
 
-        if (snackbarKey.current) {
+        if (snackbarKey.current !== null) {
             closeSnackbar(snackbarKey.current);
         }
 

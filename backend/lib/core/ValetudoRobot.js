@@ -106,6 +106,13 @@ class ValetudoRobot {
 
         this.state.subscribe(
             new CallbackAttributeSubscriber((eventType, status, prevStatus) => {
+                const currentErrorMessage =
+                    //@ts-ignore
+                    status?.error?.message || status?.metaData?.error_description || "Unknown Error";
+                const previousErrorMessage =
+                    //@ts-ignore
+                    prevStatus?.error?.message || prevStatus?.metaData?.error_description || "Unknown Error";
+
                 if (
                     //@ts-ignore
                     (eventType === AttributeSubscriber.EVENT_TYPE.ADD && status.value === StatusStateAttribute.VALUE.ERROR) ||
@@ -113,14 +120,24 @@ class ValetudoRobot {
                         eventType === AttributeSubscriber.EVENT_TYPE.CHANGE &&
                         //@ts-ignore
                         status.value === StatusStateAttribute.VALUE.ERROR &&
-                        prevStatus &&
-                        //@ts-ignore
-                        prevStatus.value !== StatusStateAttribute.VALUE.ERROR
+                        (
+                            (
+                                prevStatus &&
+                                //@ts-ignore
+                                prevStatus.value !== StatusStateAttribute.VALUE.ERROR
+                            ) ||
+                            (
+                                prevStatus &&
+                                //@ts-ignore
+                                prevStatus.value === StatusStateAttribute.VALUE.ERROR &&
+                                currentErrorMessage !== previousErrorMessage
+                            )
+                        )
                     )
                 ) {
                     this.valetudoEventStore.raise(new ErrorStateValetudoEvent({
                         //@ts-ignore
-                        message: status.error?.message || status.metaData?.error_description || "Unknown Error",
+                        message: currentErrorMessage,
                     }));
                 }
             }),

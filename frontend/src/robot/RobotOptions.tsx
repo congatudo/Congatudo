@@ -21,7 +21,6 @@ import React from "react";
 import {ListMenu} from "../components/list_menu/ListMenu";
 import {ToggleSwitchListMenuItem} from "../components/list_menu/ToggleSwitchListMenuItem";
 import {
-    AutoDelete as AutoEmptyControlIcon,
     Cable as ObstacleAvoidanceControlIcon,
     Lock as KeyLockIcon,
     MiscellaneousServices as MiscIcon,

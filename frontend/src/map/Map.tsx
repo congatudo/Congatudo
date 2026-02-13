@@ -78,7 +78,7 @@ abstract class Map<P, S> extends React.Component<P & MapProps, S & MapState > {
     protected constructor(props : MapProps) {
         super(props as Readonly<P & MapProps>);
 
-        this.canvasRef = createRef();
+        this.canvasRef = createRef<HTMLCanvasElement>() as React.RefObject<HTMLCanvasElement>;
 
 
         this.structureManager = new StructureManager();
