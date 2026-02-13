@@ -59,7 +59,7 @@ const Dock = (): React.ReactElement => {
 
     const body = React.useMemo(() => {
         const dockStatusIsRelevant = mopDockCleanTriggerSupported || mopDockDryTriggerSupported;
-        const commandIsExecuting =  mopDockCleanCommandExecuting || mopDockDryCommandExecuting;
+        const commandIsExecuting = mopDockCleanCommandExecuting || mopDockDryCommandExecuting;
         const mopAttachmentAttached = attachments?.find(a => {
             return a.type === "mop";
         })?.attached === true;
