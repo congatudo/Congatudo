@@ -34,6 +34,17 @@ const DEVICE_MODE_TO_STATUS_STATE_FLAG = {
     [DeviceMode.VALUE.ZONE]: StatusStateAttribute.FLAG.ZONE,
 };
 
+/** @type {Set<string>} */
+const NON_BLOCKING_DEVICE_ERRORS = new Set([
+    DeviceError.VALUE.GLOBAL_APPOINT_CLEAN,
+    DeviceError.VALUE.ROBOT_CHANGING_FINISH,
+    DeviceError.VALUE.ROBOT_RELOCALITION_ING,
+    DeviceError.VALUE.ROBOT_REPEAT_CLEANING,
+    DeviceError.VALUE.ROBOT_SELF_CHECKING,
+    DeviceError.VALUE.SYSTEM_UPGRADE,
+    DeviceError.VALUE.WAIT_CHARGE_FINISH,
+]);
+
 const DEVICE_ERROR_TO_DESCRIPTION = {
     [DeviceError.VALUE.BATTERY_TEMPERATURE]: "Battery temperature is out of range.",
     [DeviceError.VALUE.BROKEN_CHARGING]: "Charging error. Please check the dock and contacts.",
@@ -833,7 +844,12 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
       StatusStateAttribute.FLAG.NONE;
         const errorValue = error && error.value !== DeviceError.VALUE.NONE ? error.value : undefined;
         const errorDescription = errorValue ? (DEVICE_ERROR_TO_DESCRIPTION[errorValue] || errorValue) : undefined;
-        const value = errorValue ? StatusStateAttribute.VALUE.ERROR : (state ? state.value : StatusStateAttribute.VALUE.DOCKED);
+        const hasActionableError = typeof errorValue === "string" && !NON_BLOCKING_DEVICE_ERRORS.has(errorValue);
+        const deviceStateIsError = state?.value === DeviceState.VALUE.ERROR;
+        const value =
+      hasActionableError || deviceStateIsError ?
+          StatusStateAttribute.VALUE.ERROR :
+          (state ? state.value : StatusStateAttribute.VALUE.DOCKED);
 
         return new StatusStateAttribute({
             value: value,
