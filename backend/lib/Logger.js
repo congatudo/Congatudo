@@ -1,7 +1,7 @@
 const EventEmitter = require("events").EventEmitter;
 const fs = require("fs");
 const os = require("os");
-const path = require("path");
+const path = require("node:path");
 const Tools = require("./utils/Tools");
 const util = require("util");
 
@@ -67,14 +67,16 @@ class Logger {
         }
 
         this.logFilePath = filePath;
+        const isLoggingToStdout = Tools.ARE_SAME_FILES(filePath, "/proc/self/fd/1");
+
         // Check if output is already redirected to that same file. If
         // it is, we do not need to write to that same file, because that
         // would lead to duplicate log entries.
         // Setting the LogFilename anyway ensures that the UI Log still works.
-        if (!Tools.ARE_SAME_FILES(filePath, "/proc/self/fd/1")) {
-            this.logFileWriteStream = this.createLogFileWriteStream(this.logFilePath);
-        } else {
+        if (isLoggingToStdout) {
             this._currentLogFileSize = 0;
+        } else {
+            this.logFileWriteStream = this.createLogFileWriteStream(this.logFilePath);
         }
 
         this.log("info", "Set Logfile to " + filePath);
@@ -88,6 +90,19 @@ class Logger {
      */
     buildLogLinePrefix(logLevel) {
         return `[${new Date().toISOString()}] [${logLevel}]`;
+    }
+
+    /**
+     * @private
+     * @param {string} message
+     * @param {any} [error]
+     */
+    logInternalWarning(message, error) {
+        if (error !== undefined) {
+            Logger.LogLevels.warn.callback(this.buildLogLinePrefix("WARN"), message, error);
+        } else {
+            Logger.LogLevels.warn.callback(this.buildLogLinePrefix("WARN"), message);
+        }
     }
 
     /**
@@ -123,7 +138,10 @@ class Logger {
      * @returns {string}
      */
     getRotatedLogFilePath() {
-        const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+        const timestamp = new Date().toISOString()
+            .split("-").join("")
+            .split(":").join("")
+            .split(".").join("");
         let candidatePath = `${this.logFilePath}.${timestamp}`;
         let collisionCounter = 1;
 
@@ -162,6 +180,8 @@ class Logger {
                     return b.mtimeMs - a.mtimeMs;
                 });
         } catch (e) {
+            this.logInternalWarning("Failed to enumerate archived logfiles.", e);
+
             return [];
         }
     }
@@ -183,14 +203,20 @@ class Logger {
             .map(archivedLogFile => {
                 return archivedLogFile.path;
             });
+        let failedDeletions = 0;
 
         filesToDelete.forEach(filePath => {
             try {
                 fs.unlinkSync(filePath);
             } catch (e) {
-                //intentional
+                failedDeletions++;
+                this.logInternalWarning(`Failed to delete archived logfile '${filePath}'.`, e);
             }
         });
+
+        if (failedDeletions > 0) {
+            this.logInternalWarning(`Failed to delete ${failedDeletions} archived logfile(s).`);
+        }
 
         return filesToDelete;
     }
@@ -217,11 +243,12 @@ class Logger {
                 this.info(`Deleted ${deletedArchivedLogFiles.length} archived logfile(s).`);
             }
         } catch (e) {
-            // noinspection EmptyCatchBlockJS
+            this.logInternalWarning("Failed to rotate logfile. Falling back to truncation.", e);
+
             try {
                 fs.writeFileSync(this.logFilePath, "");
-            } catch (e) {
-                //intentional
+            } catch (writeError) {
+                this.logInternalWarning("Failed to truncate logfile during rotation fallback.", writeError);
             }
 
             this.logFileWriteStream = this.createLogFileWriteStream(this.logFilePath);
