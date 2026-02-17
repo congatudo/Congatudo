@@ -98,11 +98,13 @@ class Logger {
      * @param {any} [error]
      */
     logInternalWarning(message, error) {
-        if (error !== undefined) {
-            Logger.LogLevels.warn.callback(this.buildLogLinePrefix("WARN"), message, error);
-        } else {
-            Logger.LogLevels.warn.callback(this.buildLogLinePrefix("WARN"), message);
+        const callbackArgs = [this.buildLogLinePrefix("WARN"), message];
+
+        if (arguments.length > 1) {
+            callbackArgs.push(error);
         }
+
+        Logger.LogLevels.warn.callback(...callbackArgs);
     }
 
     /**
