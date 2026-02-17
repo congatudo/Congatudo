@@ -1,6 +1,7 @@
 const EventEmitter = require("events").EventEmitter;
 const fs = require("fs");
 const os = require("os");
+const path = require("node:path");
 const Tools = require("./utils/Tools");
 const util = require("util");
 
@@ -8,13 +9,16 @@ class Logger {
     constructor() {
         this._logEventEmitter = new EventEmitter();
         this._logFileMaxSizeCheckLineCounter = 1;
+        this._currentLogFileSize = 0;
 
 
         this.logFileMaxSize = 4 * 1024 * 1024; //4MiB
+        this.logFileMaxArchivedFiles = Logger.DEFAULT_MAX_ARCHIVED_LOGFILES;
+        this.logFileMaxArchivedFileAgeMs = Logger.DEFAULT_MAX_ARCHIVED_LOGFILE_AGE_MS;
         this.logLevel = Logger.LogLevels["info"];
 
         this.logFilePath = os.type() === "Windows_NT" ? Logger.DEFAULT_LOGFILE_PATHS.WINNT : Logger.DEFAULT_LOGFILE_PATHS.POSIX;
-        this.logFileWriteStream = fs.createWriteStream(this.logFilePath, Logger.LogFileOptions);
+        this.logFileWriteStream = this.createLogFileWriteStream(this.logFilePath);
     }
 
     /**
@@ -63,12 +67,16 @@ class Logger {
         }
 
         this.logFilePath = filePath;
+        const isLoggingToStdout = Tools.ARE_SAME_FILES(filePath, "/proc/self/fd/1");
+
         // Check if output is already redirected to that same file. If
         // it is, we do not need to write to that same file, because that
         // would lead to duplicate log entries.
         // Setting the LogFilename anyway ensures that the UI Log still works.
-        if (!Tools.ARE_SAME_FILES(filePath, "/proc/self/fd/1")) {
-            this.logFileWriteStream = fs.createWriteStream(this.logFilePath, Logger.LogFileOptions);
+        if (isLoggingToStdout) {
+            this._currentLogFileSize = 0;
+        } else {
+            this.logFileWriteStream = this.createLogFileWriteStream(this.logFilePath);
         }
 
         this.log("info", "Set Logfile to " + filePath);
@@ -82,6 +90,172 @@ class Logger {
      */
     buildLogLinePrefix(logLevel) {
         return `[${new Date().toISOString()}] [${logLevel}]`;
+    }
+
+    /**
+     * @private
+     * @param {string} message
+     * @param {any} [error]
+     */
+    logInternalWarning(message, error) {
+        const callbackArgs = [this.buildLogLinePrefix("WARN"), message];
+
+        if (arguments.length > 1) {
+            callbackArgs.push(error);
+        }
+
+        Logger.LogLevels.warn.callback(...callbackArgs);
+    }
+
+    /**
+     * @private
+     * @param {string} filePath
+     * @returns {fs.WriteStream}
+     */
+    createLogFileWriteStream(filePath) {
+        /*
+            fs.createWriteStream may open asynchronously.
+            Touching the file synchronously avoids transient ENOENTs during immediate size checks.
+         */
+        fs.closeSync(fs.openSync(filePath, "a"));
+        this._currentLogFileSize = fs.statSync(filePath).size;
+
+        return fs.createWriteStream(filePath, Logger.LogFileOptions);
+    }
+
+    /**
+     * @private
+     * @param {string} [pathToCheck]
+     * @returns {boolean}
+     */
+    shouldManageLogFile(pathToCheck = this.logFilePath) {
+        return (
+            pathToCheck !== Logger.DEFAULT_LOGFILE_PATHS.WINNT &&
+            pathToCheck !== Logger.DEFAULT_LOGFILE_PATHS.POSIX
+        );
+    }
+
+    /**
+     * @private
+     * @returns {string}
+     */
+    getRotatedLogFilePath() {
+        const timestamp = new Date().toISOString()
+            .split("-").join("")
+            .split(":").join("")
+            .split(".").join("");
+        let candidatePath = `${this.logFilePath}.${timestamp}`;
+        let collisionCounter = 1;
+
+        while (fs.existsSync(candidatePath)) {
+            candidatePath = `${this.logFilePath}.${timestamp}.${collisionCounter}`;
+            collisionCounter++;
+        }
+
+        return candidatePath;
+    }
+
+    /**
+     * @private
+     * @returns {Array<{path: string, mtimeMs: number}>}
+     */
+    getArchivedLogFiles() {
+        const directoryPath = path.dirname(this.logFilePath);
+        const logFilename = path.basename(this.logFilePath);
+        const prefix = `${logFilename}.`;
+
+        try {
+            return fs.readdirSync(directoryPath, {withFileTypes: true})
+                .filter(dirent => {
+                    return dirent.isFile() && dirent.name.startsWith(prefix);
+                })
+                .map(dirent => {
+                    const absolutePath = path.join(directoryPath, dirent.name);
+                    const stats = fs.statSync(absolutePath);
+
+                    return {
+                        path: absolutePath,
+                        mtimeMs: stats.mtimeMs
+                    };
+                })
+                .sort((a, b) => {
+                    return b.mtimeMs - a.mtimeMs;
+                });
+        } catch (e) {
+            this.logInternalWarning("Failed to enumerate archived logfiles.", e);
+
+            return [];
+        }
+    }
+
+    /**
+     * @private
+     * @returns {Array<string>}
+     */
+    cleanupArchivedLogs() {
+        const now = Date.now();
+        const archivedLogFiles = this.getArchivedLogFiles();
+        const filesToDelete = archivedLogFiles
+            .filter((archivedLogFile, index) => {
+                const exceedsConfiguredCount = index >= this.logFileMaxArchivedFiles;
+                const exceedsConfiguredAge = now - archivedLogFile.mtimeMs > this.logFileMaxArchivedFileAgeMs;
+
+                return exceedsConfiguredCount || exceedsConfiguredAge;
+            })
+            .map(archivedLogFile => {
+                return archivedLogFile.path;
+            });
+        let failedDeletions = 0;
+
+        filesToDelete.forEach(filePath => {
+            try {
+                fs.unlinkSync(filePath);
+            } catch (e) {
+                failedDeletions++;
+                this.logInternalWarning(`Failed to delete archived logfile '${filePath}'.`, e);
+            }
+        });
+
+        if (failedDeletions > 0) {
+            this.logInternalWarning(`Failed to delete ${failedDeletions} archived logfile(s).`);
+        }
+
+        return filesToDelete;
+    }
+
+    /**
+     * @private
+     * @param {number} fileSize
+     */
+    rotateLogFile(fileSize) {
+        const rotatedLogFilePath = this.getRotatedLogFilePath();
+
+        try {
+            this.logFileWriteStream.close();
+            this.logFileWriteStream = null;
+
+            fs.renameSync(this.logFilePath, rotatedLogFilePath);
+            this.logFileWriteStream = this.createLogFileWriteStream(this.logFilePath);
+
+            const deletedArchivedLogFiles = this.cleanupArchivedLogs();
+
+            this.warn(`Logfile ${this.logFilePath} was rotated after reaching ${fileSize} bytes.`);
+
+            if (deletedArchivedLogFiles.length > 0) {
+                this.info(`Deleted ${deletedArchivedLogFiles.length} archived logfile(s).`);
+            }
+        } catch (e) {
+            this.logInternalWarning("Failed to rotate logfile. Falling back to truncation.", e);
+
+            try {
+                fs.writeFileSync(this.logFilePath, "");
+            } catch (writeError) {
+                this.logInternalWarning("Failed to truncate logfile during rotation fallback.", writeError);
+            }
+
+            this.logFileWriteStream = this.createLogFileWriteStream(this.logFilePath);
+            this.warn(`Logfile ${this.logFilePath} was truncated after reaching a size of ${fileSize} bytes.`);
+        }
     }
 
     /**
@@ -124,33 +298,19 @@ class Logger {
             this._logFileMaxSizeCheckLineCounter = (this._logFileMaxSizeCheckLineCounter + 1) % 100;
 
             if (this._logFileMaxSizeCheckLineCounter === 0) {
-                if (
-                    this.logFilePath !== Logger.DEFAULT_LOGFILE_PATHS.WINNT &&
-                    this.logFilePath !== Logger.DEFAULT_LOGFILE_PATHS.POSIX
-                ) {
-                    let fileSize = 0;
-
-                    try {
-                        const stat = fs.statSync(this.logFilePath);
-
-                        fileSize = stat.size;
-                    } catch (e) {
-                        this.error("Error while checking Logfile size:", e);
-                    }
-
-                    if (fileSize > this.logFileMaxSize) {
-                        this.logFileWriteStream.close();
-                        fs.writeFileSync(this.logFilePath, "");
-                        this.logFileWriteStream = fs.createWriteStream(this.logFilePath, Logger.LogFileOptions);
-
-                        this.warn(`Logfile ${this.logFilePath} was cleared after reaching a size of ${fileSize} bytes.`);
+                if (this.shouldManageLogFile() === true) {
+                    if (this._currentLogFileSize > this.logFileMaxSize) {
+                        this.rotateLogFile(this._currentLogFileSize);
                     }
                 }
             }
 
 
+            const writtenLine = `${line}\n`;
+
             this.logFileWriteStream.write(line);
             this.logFileWriteStream.write("\n");
+            this._currentLogFileSize += Buffer.byteLength(writtenLine, "utf-8");
         }
     }
 
@@ -238,6 +398,9 @@ Logger.LogLevels = Object.freeze({
 Logger.LogFileOptions = Object.freeze({
     flags: "as"
 });
+
+Logger.DEFAULT_MAX_ARCHIVED_LOGFILES = 5;
+Logger.DEFAULT_MAX_ARCHIVED_LOGFILE_AGE_MS = 7 * 24 * 60 * 60 * 1000; //7 days
 
 Logger.DEFAULT_LOGFILE_PATHS = Object.freeze({
     POSIX: "/dev/null",

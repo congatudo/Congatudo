@@ -27,6 +27,7 @@ const {
 } = require("../../entities/map");
 const { DeviceError } = require("@agnoc/core/lib/value-objects/device-error.value-object");
 const { DeviceMode } = require("@agnoc/core");
+const {sleep} = require("../../utils/misc");
 
 const DEVICE_MODE_TO_STATUS_STATE_FLAG = {
     [DeviceMode.VALUE.NONE]: StatusStateAttribute.FLAG.NONE,
@@ -86,6 +87,9 @@ const DEVICE_ERROR_TO_DESCRIPTION = {
     [DeviceError.VALUE.WATER_TRUNK_EMPTY]: "Water tank empty.",
     [DeviceError.VALUE.WHEEL_UP]: "Wheel lifted. Place the robot on the floor.",
 };
+const TRANSIENT_CONNECTION_WARNING_LOG_INTERVAL_MS = 30 * 1000;
+const SEND_RECV_TIMEOUT_RETRY_DELAY_MS = 250;
+const SEND_RECV_WRAPPED_FLAG = Symbol("congatudo_send_recv_wrapped");
 
 function throttle(callback, wait = 1000, immediate = true) {
     let timeout = null;
@@ -115,6 +119,8 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
 
         this.pathPoints = [];
         this.server = new CloudServer();
+        this.lastTransientConnectionWarningTimestamp = 0;
+        this.suppressedTransientConnectionWarnings = 0;
         this.emitStateUpdated = throttle(this.emitStateUpdated.bind(this));
         this.emitStateAttributesUpdated = throttle(
             this.emitStateAttributesUpdated.bind(this)
@@ -274,7 +280,83 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     }
 
     onError(err) {
-        Logger.error(err);
+        if (this.isTransientConnectionError(err) === true) {
+            this.logRateLimitedTransientConnectionWarning(err);
+        } else {
+            Logger.error(err);
+        }
+    }
+
+    /**
+     * @param {any} err
+     * @returns {boolean}
+     */
+    isTransientConnectionError(err) {
+        if (typeof err?.code === "string" && err.code === "ECONNRESET") {
+            return true;
+        }
+
+        return typeof err?.message === "string" && err.message.includes("ECONNRESET");
+    }
+
+    /**
+     * @param {any} err
+     */
+    logRateLimitedTransientConnectionWarning(err) {
+        const now = Date.now();
+
+        if (now - this.lastTransientConnectionWarningTimestamp >= TRANSIENT_CONNECTION_WARNING_LOG_INTERVAL_MS) {
+            Logger.warn("Transient robot connection issue", {
+                message: err.message,
+                code: err.code,
+                errno: err.errno,
+                syscall: err.syscall,
+                suppressedSinceLastLog: this.suppressedTransientConnectionWarnings
+            });
+
+            this.lastTransientConnectionWarningTimestamp = now;
+            this.suppressedTransientConnectionWarnings = 0;
+        } else {
+            this.suppressedTransientConnectionWarnings++;
+        }
+    }
+
+    /**
+     * @param {any} err
+     * @returns {boolean}
+     */
+    isSendRecvTimeoutError(err) {
+        return typeof err?.message === "string" && err.message.startsWith("Timeout waiting for response from opcode ");
+    }
+
+    /**
+     * Retry one timeout in agnoc sendRecv() to reduce transient command failures.
+     *
+     * @param {import("@agnoc/core").Robot} robot
+     */
+    wrapRobotSendRecv(robot) {
+        if (robot[SEND_RECV_WRAPPED_FLAG] === true) {
+            return;
+        }
+
+        const originalSendRecv = robot.sendRecv.bind(robot);
+
+        robot.sendRecv = async (sendOPName, recvOPName, sendObject) => {
+            try {
+                return await originalSendRecv(sendOPName, recvOPName, sendObject);
+            } catch (e) {
+                if (!this.isSendRecvTimeoutError(e)) {
+                    throw e;
+                }
+
+                Logger.warn(`Timeout waiting for '${recvOPName}' after sending '${sendOPName}'. Retrying once.`);
+                await sleep(SEND_RECV_TIMEOUT_RETRY_DELAY_MS);
+
+                return originalSendRecv(sendOPName, recvOPName, sendObject);
+            }
+        };
+
+        robot[SEND_RECV_WRAPPED_FLAG] = true;
     }
 
     /**
@@ -282,6 +364,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
      */
     onAddRobot(robot) {
         Logger.info(`Added new robot with id '${robot.device.id}'`);
+        this.wrapRobotSendRecv(robot);
 
         robot.on("updateDevice", () => {
             return this.onUpdateDevice(robot);
