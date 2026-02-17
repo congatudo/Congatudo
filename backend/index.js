@@ -4,6 +4,49 @@ const Logger = require("./lib/Logger");
 const Valetudo = require("./lib/Valetudo");
 
 const valetudo = new Valetudo();
+let lastTransientUnhandledRejectionLogTimestamp = 0;
+let suppressedTransientUnhandledRejections = 0;
+
+const TRANSIENT_UNHANDLED_REJECTION_LOG_INTERVAL_MS = 30 * 1000;
+
+/**
+ * @param {any} reason
+ * @returns {boolean}
+ */
+function isTransientUnhandledRejection(reason) {
+    const message = typeof reason?.message === "string" ? reason.message : "";
+
+    if (reason?.code === "ECONNRESET") {
+        return true;
+    }
+
+    if (message.includes("Timeout waiting for response from opcode 'DEVICE_CONTROL_LOCK_RSP'")) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * @param {any} reason
+ */
+function logRateLimitedTransientUnhandledRejection(reason) {
+    const now = Date.now();
+
+    if (now - lastTransientUnhandledRejectionLogTimestamp >= TRANSIENT_UNHANDLED_REJECTION_LOG_INTERVAL_MS) {
+        Logger.warn("unhandledRejection (transient connection issue)", {
+            reason: reason,
+            //@ts-ignore
+            stack: reason?.stack,
+            suppressedSinceLastLog: suppressedTransientUnhandledRejections
+        });
+
+        lastTransientUnhandledRejectionLogTimestamp = now;
+        suppressedTransientUnhandledRejections = 0;
+    } else {
+        suppressedTransientUnhandledRejections++;
+    }
+}
 
 /*
     This is the easiest and most complete Mitigation against CWE-1321 Prototype Pollution
@@ -14,6 +57,12 @@ const valetudo = new Valetudo();
 Object.freeze(Object.prototype);
 
 process.on("unhandledRejection", (reason, promise) => {
+    if (isTransientUnhandledRejection(reason) === true) {
+        logRateLimitedTransientUnhandledRejection(reason);
+
+        return;
+    }
+
     Logger.error("unhandledRejection", {
         reason: reason,
         //@ts-ignore

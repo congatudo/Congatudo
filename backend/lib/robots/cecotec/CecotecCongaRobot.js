@@ -86,6 +86,7 @@ const DEVICE_ERROR_TO_DESCRIPTION = {
     [DeviceError.VALUE.WATER_TRUNK_EMPTY]: "Water tank empty.",
     [DeviceError.VALUE.WHEEL_UP]: "Wheel lifted. Place the robot on the floor.",
 };
+const TRANSIENT_CONNECTION_WARNING_LOG_INTERVAL_MS = 30 * 1000;
 
 function throttle(callback, wait = 1000, immediate = true) {
     let timeout = null;
@@ -115,6 +116,8 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
 
         this.pathPoints = [];
         this.server = new CloudServer();
+        this.lastTransientConnectionWarningTimestamp = 0;
+        this.suppressedTransientConnectionWarnings = 0;
         this.emitStateUpdated = throttle(this.emitStateUpdated.bind(this));
         this.emitStateAttributesUpdated = throttle(
             this.emitStateAttributesUpdated.bind(this)
@@ -274,7 +277,45 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     }
 
     onError(err) {
-        Logger.error(err);
+        if (this.isTransientConnectionError(err) === true) {
+            this.logRateLimitedTransientConnectionWarning(err);
+        } else {
+            Logger.error(err);
+        }
+    }
+
+    /**
+     * @param {any} err
+     * @returns {boolean}
+     */
+    isTransientConnectionError(err) {
+        if (typeof err?.code === "string" && err.code === "ECONNRESET") {
+            return true;
+        }
+
+        return typeof err?.message === "string" && err.message.includes("ECONNRESET");
+    }
+
+    /**
+     * @param {any} err
+     */
+    logRateLimitedTransientConnectionWarning(err) {
+        const now = Date.now();
+
+        if (now - this.lastTransientConnectionWarningTimestamp >= TRANSIENT_CONNECTION_WARNING_LOG_INTERVAL_MS) {
+            Logger.warn("Transient robot connection issue", {
+                message: err.message,
+                code: err.code,
+                errno: err.errno,
+                syscall: err.syscall,
+                suppressedSinceLastLog: this.suppressedTransientConnectionWarnings
+            });
+
+            this.lastTransientConnectionWarningTimestamp = now;
+            this.suppressedTransientConnectionWarnings = 0;
+        } else {
+            this.suppressedTransientConnectionWarnings++;
+        }
     }
 
     /**
