@@ -846,10 +846,11 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         const errorDescription = errorValue ? (DEVICE_ERROR_TO_DESCRIPTION[errorValue] || errorValue) : undefined;
         const hasActionableError = typeof errorValue === "string" && !NON_BLOCKING_DEVICE_ERRORS.has(errorValue);
         const deviceStateIsError = state?.value === DeviceState.VALUE.ERROR;
+        const currentStateValue = state ? state.value : StatusStateAttribute.VALUE.DOCKED;
         const value =
       hasActionableError || deviceStateIsError ?
           StatusStateAttribute.VALUE.ERROR :
-          (state ? state.value : StatusStateAttribute.VALUE.DOCKED);
+          currentStateValue;
 
         return new StatusStateAttribute({
             value: value,
