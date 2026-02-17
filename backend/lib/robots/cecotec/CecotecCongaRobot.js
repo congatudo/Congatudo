@@ -27,6 +27,7 @@ const {
 } = require("../../entities/map");
 const { DeviceError } = require("@agnoc/core/lib/value-objects/device-error.value-object");
 const { DeviceMode } = require("@agnoc/core");
+const {sleep} = require("../../utils/misc");
 
 const DEVICE_MODE_TO_STATUS_STATE_FLAG = {
     [DeviceMode.VALUE.NONE]: StatusStateAttribute.FLAG.NONE,
@@ -87,6 +88,8 @@ const DEVICE_ERROR_TO_DESCRIPTION = {
     [DeviceError.VALUE.WHEEL_UP]: "Wheel lifted. Place the robot on the floor.",
 };
 const TRANSIENT_CONNECTION_WARNING_LOG_INTERVAL_MS = 30 * 1000;
+const SEND_RECV_TIMEOUT_RETRY_DELAY_MS = 250;
+const SEND_RECV_WRAPPED_FLAG = Symbol("congatudo_send_recv_wrapped");
 
 function throttle(callback, wait = 1000, immediate = true) {
     let timeout = null;
@@ -319,10 +322,49 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     }
 
     /**
+     * @param {any} err
+     * @returns {boolean}
+     */
+    isSendRecvTimeoutError(err) {
+        return typeof err?.message === "string" && err.message.startsWith("Timeout waiting for response from opcode ");
+    }
+
+    /**
+     * Retry one timeout in agnoc sendRecv() to reduce transient command failures.
+     *
+     * @param {import("@agnoc/core").Robot} robot
+     */
+    wrapRobotSendRecv(robot) {
+        if (robot[SEND_RECV_WRAPPED_FLAG] === true) {
+            return;
+        }
+
+        const originalSendRecv = robot.sendRecv.bind(robot);
+
+        robot.sendRecv = async (sendOPName, recvOPName, sendObject) => {
+            try {
+                return await originalSendRecv(sendOPName, recvOPName, sendObject);
+            } catch (e) {
+                if (!this.isSendRecvTimeoutError(e)) {
+                    throw e;
+                }
+
+                Logger.warn(`Timeout waiting for '${recvOPName}' after sending '${sendOPName}'. Retrying once.`);
+                await sleep(SEND_RECV_TIMEOUT_RETRY_DELAY_MS);
+
+                return originalSendRecv(sendOPName, recvOPName, sendObject);
+            }
+        };
+
+        robot[SEND_RECV_WRAPPED_FLAG] = true;
+    }
+
+    /**
      * @param {import("@agnoc/core").Robot} robot
      */
     onAddRobot(robot) {
         Logger.info(`Added new robot with id '${robot.device.id}'`);
+        this.wrapRobotSendRecv(robot);
 
         robot.on("updateDevice", () => {
             return this.onUpdateDevice(robot);
