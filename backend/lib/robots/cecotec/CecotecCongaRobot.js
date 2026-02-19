@@ -134,6 +134,7 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         this.lastConsumablesTimeoutWarningTimestamp = 0;
         this.suppressedConsumablesTimeoutWarnings = 0;
         this.consumablesTimeoutCooldownUntil = 0;
+        this.loggedConsumablesPollingDisabled = false;
         this.emitStateUpdated = throttle(this.emitStateUpdated.bind(this));
         this.emitStateAttributesUpdated = throttle(
             this.emitStateAttributesUpdated.bind(this)
@@ -358,6 +359,22 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
     }
 
     /**
+     * @returns {boolean}
+     */
+    isConsumablesPollingDisabled() {
+        return this.config.get("robot")?.implementationSpecificConfig?.disableConsumablesPolling === true;
+    }
+
+    logConsumablesPollingDisabledWarning() {
+        if (this.loggedConsumablesPollingDisabled === true) {
+            return;
+        }
+
+        Logger.warn("Consumables polling disabled via config. Returning cached consumables only.");
+        this.loggedConsumablesPollingDisabled = true;
+    }
+
+    /**
      * Retry one timeout in agnoc sendRecv() to reduce transient command failures.
      *
      * @param {import("@agnoc/core").Robot} robot
@@ -408,6 +425,11 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         }
 
         robot.getConsumables = async () => {
+            if (this.isConsumablesPollingDisabled()) {
+                this.logConsumablesPollingDisabledWarning();
+                return robot.device?.consumables ?? [];
+            }
+
             if (Date.now() < this.consumablesTimeoutCooldownUntil) {
                 return robot.device?.consumables ?? [];
             }
