@@ -12,7 +12,7 @@
       'nightly_build':
         {
           'runs-on': 'ubuntu-latest',
-          'if': "github.repository_owner == 'congatudo'",
+          'if': "github.repository_owner == 'knuspel'",
           'steps':
             [
               { 
@@ -60,10 +60,10 @@
                 },
                 'with': {
                   'source-directory': 'build',
-                  'destination-github-username': 'congatudo-bot',
+                  'destination-github-username': 'knuspel',
                   'destination-repository-name': 'congatudo-nightly',
-                  'destination-repository-username': 'congatudo',
-                  'user-email': 'congatudo@congatudo.cloud',
+                  'destination-repository-username': 'knuspel',
+                  'user-email': 'github@knuspel.de',
                   'target-branch': 'master'
                 }
               }

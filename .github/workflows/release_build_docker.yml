@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: congatudo/Congatudo
+          repository: knuspel/Congatudo
           fetch-depth: 0
           token: ${{ github.token }}
       - name: Set up variables
@@ -63,8 +63,8 @@ jobs:
           push: false
           load: true
           tags: |
-            ${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
-            ${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-latest
+            ${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+            ${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           build-args: |
@@ -74,8 +74,8 @@ jobs:
             "BUILD_PLATFORM=${{ matrix.platform }}"
       - name: Push
         run: |
-          docker push ${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
-          docker push ${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-latest
+          docker push ${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}
+          docker push ${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-latest
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
@@ -96,28 +96,28 @@ jobs:
       - name: Create manifest
         run: |
           # TODO: Use matrix here.
-          docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:alpine-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-armv7-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-aarch64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-latest
-          docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armhf-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armv7-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-aarch64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-latest
-          docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:alpine-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-armv7-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-aarch64-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-${{ needs.info.outputs.version }}
-          docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armhf-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armv7-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-aarch64-${{ needs.info.outputs.version }} \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }}
+          docker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:alpine-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-armv7-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-aarch64-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-amd64-latest
+          docker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armhf-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armv7-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-aarch64-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-amd64-latest
+          docker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:alpine-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-armv7-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-aarch64-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-amd64-${{ needs.info.outputs.version }}
+          docker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armhf-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armv7-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-aarch64-${{ needs.info.outputs.version }} \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }}
       - name: Push manifest
         run: |
           # TODO: Use matrix here.
-          docker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:alpine-latest
-          docker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-latest
-          docker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:alpine-${{ needs.info.outputs.version }}
-          docker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-${{ needs.info.outputs.version }}
+          docker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:alpine-latest
+          docker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-latest
+          docker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:alpine-${{ needs.info.outputs.version }}
+          docker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-${{ needs.info.outputs.version }}

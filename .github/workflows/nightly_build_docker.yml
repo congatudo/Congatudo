@@ -48,7 +48,7 @@ jobs:
           push: false
           load: true
           tags: |
-            ${{ env.REGISTRY }}/congatudo/congatudo-nightly:${{ matrix.image_name }}-latest
+            ${{ env.REGISTRY }}/knuspel/congatudo-nightly:${{ matrix.image_name }}-latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
           build-args: |
@@ -58,7 +58,7 @@ jobs:
             "BUILD_PLATFORM=${{ matrix.platform }}"
       - name: Push
         run: |
-          docker push ${{ env.REGISTRY }}/congatudo/congatudo-nightly:${{ matrix.image_name }}-latest
+          docker push ${{ env.REGISTRY }}/knuspel/congatudo-nightly:${{ matrix.image_name }}-latest
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
@@ -79,17 +79,17 @@ jobs:
       - name: Create manifest
         run: |
           # TODO: Use matrix here.
-          docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo-nightly:alpine-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo-nightly:alpine-armv7-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo-nightly:alpine-aarch64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo-nightly:alpine-amd64-latest
-          docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo-nightly:homeassistant-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo-nightly:homeassistant-armhf-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo-nightly:homeassistant-armv7-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo-nightly:homeassistant-aarch64-latest \
-            --amend ${{ env.REGISTRY }}/congatudo/congatudo-nightly:homeassistant-amd64-latest
+          docker manifest create ${{ env.REGISTRY }}/knuspel/congatudo-nightly:alpine-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo-nightly:alpine-armv7-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo-nightly:alpine-aarch64-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo-nightly:alpine-amd64-latest
+          docker manifest create ${{ env.REGISTRY }}/knuspel/congatudo-nightly:homeassistant-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo-nightly:homeassistant-armhf-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo-nightly:homeassistant-armv7-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo-nightly:homeassistant-aarch64-latest \
+            --amend ${{ env.REGISTRY }}/knuspel/congatudo-nightly:homeassistant-amd64-latest
       - name: Push manifest
         run: |
           # TODO: Use matrix here.
-          docker manifest push ${{ env.REGISTRY }}/congatudo/congatudo-nightly:alpine-latest
-          docker manifest push ${{ env.REGISTRY }}/congatudo/congatudo-nightly:homeassistant-latest
+          docker manifest push ${{ env.REGISTRY }}/knuspel/congatudo-nightly:alpine-latest
+          docker manifest push ${{ env.REGISTRY }}/knuspel/congatudo-nightly:homeassistant-latest
