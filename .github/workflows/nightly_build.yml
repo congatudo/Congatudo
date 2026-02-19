@@ -64,7 +64,7 @@
                   'destination-repository-name': 'congatudo-nightly',
                   'destination-repository-username': 'knuspel',
                   'user-email': 'github@knuspel.de',
-                  'target-branch': 'master'
+                  'target-branch': 'main'
                 }
               }
             ],
