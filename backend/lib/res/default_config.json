@@ -3,7 +3,8 @@
     "robot": {
         "implementation": "auto",
         "implementationSpecificConfig": {
-            "ip": "127.0.0.1"
+            "ip": "127.0.0.1",
+            "disableConsumablesPolling": false
         }
     },
     "webserver": {
