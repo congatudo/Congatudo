@@ -18,10 +18,10 @@ USER node:node
 WORKDIR /usr/src/app
 
 # Force cache invalidation
-ADD https://api.github.com/repos/congatudo/Congatudo/git/refs/heads/master /usr/src/version.json
+ADD https://api.github.com/repos/knuspel/Congatudo/git/refs/heads/main /usr/src/version.json
 
 # Download valetudo
-RUN git clone --depth 1 https://github.com/congatudo/Congatudo --single-branch .
+RUN git clone --depth 1 https://github.com/knuspel/Congatudo --single-branch .
 
 # Build environment
 ENV NODE_ENV=production
