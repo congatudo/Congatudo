@@ -13,7 +13,7 @@ jobs:
       version: ${{ steps.vars.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: congatudo/Congatudo
           fetch-depth: 0
@@ -28,7 +28,7 @@ jobs:
       matrix: ${{ steps.vars.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up variables
         id: vars
         run: echo "matrix=$(jq -c . matrix.json)" >> $GITHUB_OUTPUT
