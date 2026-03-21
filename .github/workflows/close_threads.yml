@@ -1,36 +1,24 @@
-{
-  "name": "Close Threads",
-  "on": {
-    "schedule": [
-      {
-        "cron": "42 2 * * *"
-      }
-    ],
-    "workflow_dispatch": null
-  },
-  "permissions": {
-    "issues": "write",
-    "pull-requests": "write"
-  },
-  "concurrency": {
-    "group": "lock"
-  },
-  "jobs": {
-    "close_unconfirmed_after_inactivity": {
-      "runs-on": "ubuntu-latest",
-      "steps": [
-        {
-          "uses": "actions/stale@v9",
-          "with": {
-            "stale-issue-label": "unconfirmed",
-            "ignore-updates": true,
-            "remove-stale-when-updated": false,
-            "days-before-stale": -1,
-            "days-before-close": 45,
-            "close-issue-message": "Closing after being unconfirmed for 45 Days."
-          }
-        }
-      ]
-    }
-  }
-}
+name: 'Close Threads'
+on:
+    schedule:
+        -
+            cron: '42 2 * * *'
+    workflow_dispatch: null
+permissions:
+    issues: write
+    pull-requests: write
+concurrency:
+    group: lock
+jobs:
+    close_unconfirmed_after_inactivity:
+        runs-on: ubuntu-latest
+        steps:
+            -
+                uses: actions/stale@5bef64f19d7facfb25b37b414482c7164d639639 # v9
+                with:
+                    stale-issue-label: unconfirmed
+                    ignore-updates: true
+                    remove-stale-when-updated: false
+                    days-before-stale: -1
+                    days-before-close: 45
+                    close-issue-message: 'Closing after being unconfirmed for 45 Days.'

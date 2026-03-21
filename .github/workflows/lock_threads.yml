@@ -1,45 +1,32 @@
-{
-  "name": "Lock Threads",
-  "on": {
-    "schedule": [
-      {
-        "cron": "52 3 * * *"
-      }
-    ],
-    "workflow_dispatch": null
-  },
-  "permissions": {
-    "issues": "write",
-    "pull-requests": "write"
-  },
-  "concurrency": {
-    "group": "lock"
-  },
-  "jobs": {
-    "lock_all_after_1y_of_inactivity": {
-      "runs-on": "ubuntu-latest",
-      "steps": [
-        {
-          "uses": "dessant/lock-threads@v5",
-          "with": {
-              "log-output": true
-          }
-        }
-      ]
-    },
-    "lock_invalid_issues": {
-      "runs-on": "ubuntu-latest",
-      "steps": [
-        {
-          "uses": "dessant/lock-threads@v5",
-          "with": {
-            "include-any-issue-labels" : "invalid",
-            "process-only": "issues",
-            "issue-inactive-days": 1,
-            "log-output": true
-          }
-        }
-      ]
-    }
-  }
-}
+name: 'Lock Threads'
+on:
+    schedule:
+        -
+            cron: '52 3 * * *'
+    workflow_dispatch: null
+concurrency:
+    group: lock
+jobs:
+    lock_all_after_1y_of_inactivity:
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+            pull-requests: write
+        steps:
+            -
+                uses: dessant/lock-threads@1bf7ec25051fe7c00bdd17e6a7cf3d7bfb7dc771 # v5
+                with:
+                    log-output: true
+    lock_invalid_issues:
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+            pull-requests: write
+        steps:
+            -
+                uses: dessant/lock-threads@1bf7ec25051fe7c00bdd17e6a7cf3d7bfb7dc771 # v5
+                with:
+                    include-any-issue-labels: invalid
+                    process-only: issues
+                    issue-inactive-days: 1
+                    log-output: true

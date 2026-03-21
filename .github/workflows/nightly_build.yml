@@ -1,73 +1,41 @@
-{
-  'name': 'Nightly build',
-  'on': {
-    'schedule': [
-      {
-        'cron': '22 2 * * *'
-      }
-    ]
-  },
-  'jobs':
-    {
-      'nightly_build':
-        {
-          'runs-on': 'ubuntu-latest',
-          'if': "github.repository_owner == 'congatudo'",
-          'steps':
-            [
-              { 
-                'uses': 'actions/checkout@v4',
-                'with': {
-                  'fetch-depth': 0
-                }
-              },
-              {
-                'name': 'Use Node.js 20.10.0',
-                'uses': 'actions/setup-node@v4',
-                'with': { 'node-version': '20.10.0' },
-              },
-              { 'name': 'Install', 'run': 'npm ci' },
-              {
-                'name': 'Generate OpenAPI Docs',
-                'run': 'npm run build_openapi_schema',
-              },
-              {
-                'name': 'Build Congatudo frontend',
-                'run': 'npm run build --workspace=frontend',
-              },
-              {
-                'name': 'Build Congatudo',
-                'run': 'npm run build --workspace=backend',
-              },
-              {
-                'name': 'UPX-compress Congatudo binaries',
-                'run': 'npm run upx',
-              },
-              {
-                'name': 'Generate changelog',
-                'run': 'npm run generate_nightly_changelog',
-              },
-              {
-                'name': 'Build manifest',
-                'run': 'npm run build_release_manifest nightly',
-              },
-              {
-                'name': 'Push binaries to nightly repo',
-                'id': 'push_directory',
-                'uses': 'congatudo/github-action-push-to-another-repository@main',
-                'env': {
-                  'API_TOKEN_GITHUB': '${{ secrets.NIGHTLY_API_TOKEN_GITHUB }}'
-                },
-                'with': {
-                  'source-directory': 'build',
-                  'destination-github-username': 'congatudo-bot',
-                  'destination-repository-name': 'congatudo-nightly',
-                  'destination-repository-username': 'congatudo',
-                  'user-email': 'congatudo@congatudo.cloud',
-                  'target-branch': 'master'
-                }
-              }
-            ],
-        },
-    },
-}
+name: Nightly build
+on:
+  workflow_dispatch:
+jobs:
+  nightly_build:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'congatudo'
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+      - name: Use Node.js 20.10.0
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20.10.0
+      - name: Install
+        run: npm ci
+      - name: Generate OpenAPI Docs
+        run: npm run build_openapi_schema
+      - name: Build Congatudo frontend
+        run: npm run build --workspace=frontend
+      - name: Build Congatudo
+        run: npm run build --workspace=backend
+      - name: UPX-compress Congatudo binaries
+        run: npm run upx
+      - name: Generate changelog
+        run: npm run generate_nightly_changelog
+      - name: Build manifest
+        run: npm run build_release_manifest nightly
+      - name: Push binaries to nightly repo
+        id: push_directory
+        uses: congatudo/github-action-push-to-another-repository@9e487f29582587eeb4837c0552c886bb0644b6b9 # main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.NIGHTLY_API_TOKEN_GITHUB }}
+        with:
+          source-directory: build
+          destination-github-username: congatudo
+          destination-repository-name: congatudo-nightly
+          destination-repository-username: congatudo
+          user-email: 'congatudo@congatudo.cloud'
+          target-branch: master

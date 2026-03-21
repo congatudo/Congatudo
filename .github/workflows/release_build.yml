@@ -1,165 +1,137 @@
-{
-  'name': 'Release build',
-  'on': { 'release': { 'types': ['released'] } },
-  'jobs':
-    {
-      'publish-release':
-        {
-          'runs-on': 'ubuntu-latest',
-          'strategy': { 'matrix': { 'node-version': ['20.10.0'] } },
-          'steps':
-            [
-              { 'uses': 'actions/checkout@v4' },
-              {
-                'name': 'Use Node.js ${{ matrix.node-version }}',
-                'uses': 'actions/setup-node@v4',
-                'with': { 'node-version': '${{ matrix.node-version }}' },
-              },
-              { 'name': 'Install', 'run': 'npm ci' },
-              {
-                'name': 'Generate OpenAPI Docs',
-                'run': 'npm run build_openapi_schema',
-              },
-              {
-                'name': 'Build Congatudo frontend',
-                'run': 'npm run build --workspace=frontend',
-              },
-              {
-                'name': 'Build Congatudo armv7',
-                'run': 'npm run build_armv7 --workspace=backend',
-              },
-              {
-                'name': 'Build Congatudo armv7 lowmem',
-                'run': 'npm run build_armv7_lowmem --workspace=backend',
-              },
-              {
-                'name': 'Build Congatudo aarch64',
-                'run': 'npm run build_aarch64 --workspace=backend',
-              },
-              {
-                'name': 'Build Congatudo amd64',
-                'run': 'npm run build_amd64 --workspace=backend',
-              },
-
-              {
-                'name': 'Upload Congatudo armv7',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/armv7/valetudo',
-                    'asset_name': 'valetudo-armv7',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-              {
-                'name': 'Upload Congatudo armv7 lowmem',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/armv7/valetudo-lowmem',
-                    'asset_name': 'valetudo-armv7-lowmem',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-              {
-                'name': 'Upload Congatudo aarch64',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/aarch64/valetudo',
-                    'asset_name': 'valetudo-aarch64',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-              {
-                'name': 'Upload Congatudo amd64',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/amd64/valetudo',
-                    'asset_name': 'valetudo-amd64',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-
-              {
-                'name': 'UPX-compress Congatudo binaries',
-                'run': 'npm run upx',
-              },
-              {
-                'name': 'Upload Congatudo armv7.upx',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/armv7/valetudo.upx',
-                    'asset_name': 'valetudo-armv7.upx',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-              {
-                'name': 'Upload Congatudo armv7 lowmem.upx',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/armv7/valetudo-lowmem.upx',
-                    'asset_name': 'valetudo-armv7-lowmem.upx',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-              {
-                'name': 'Upload Congatudo aarch64.upx',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/aarch64/valetudo.upx',
-                    'asset_name': 'valetudo-aarch64.upx',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-              {
-                'name': 'Upload Congatudo amd64.upx',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/amd64/valetudo.upx',
-                    'asset_name': 'valetudo-amd64.upx',
-                    'asset_content_type': 'binary/octet-stream',
-                  },
-              },
-
-              {
-                'name': 'Build manifest',
-                'run': 'npm run build_release_manifest',
-              },
-              {
-                'name': 'Upload manifest',
-                'uses': 'congatudo/upload-release-asset@v1.2.0',
-                'env': { 'GITHUB_TOKEN': '${{ secrets.GITHUB_TOKEN }}' },
-                'with':
-                  {
-                    'upload_url': '${{ github.event.release.upload_url }}',
-                    'asset_path': './build/valetudo_release_manifest.json',
-                    'asset_name': 'valetudo_release_manifest.json',
-                    'asset_content_type': 'application/json',
-                  },
-              },
-            ],
-        },
-    },
-}
+name: 'Release build'
+on:
+    release:
+        types:
+            - released
+jobs:
+    publish-release:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version:
+                    - 20.10.0
+        steps:
+            -
+                uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+            -
+                name: 'Use Node.js ${{ matrix.node-version }}'
+                uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+                with:
+                    node-version: '${{ matrix.node-version }}'
+            -
+                name: Install
+                run: 'npm ci'
+            -
+                name: 'Generate OpenAPI Docs'
+                run: 'npm run build_openapi_schema'
+            -
+                name: 'Build Congatudo frontend'
+                run: 'npm run build --workspace=frontend'
+            -
+                name: 'Build Congatudo armv7'
+                run: 'npm run build_armv7 --workspace=backend'
+            -
+                name: 'Build Congatudo armv7 lowmem'
+                run: 'npm run build_armv7_lowmem --workspace=backend'
+            -
+                name: 'Build Congatudo aarch64'
+                run: 'npm run build_aarch64 --workspace=backend'
+            -
+                name: 'Build Congatudo amd64'
+                run: 'npm run build_amd64 --workspace=backend'
+            -
+                name: 'Upload Congatudo armv7'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/armv7/valetudo
+                    asset_name: valetudo-armv7
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'Upload Congatudo armv7 lowmem'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/armv7/valetudo-lowmem
+                    asset_name: valetudo-armv7-lowmem
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'Upload Congatudo aarch64'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/aarch64/valetudo
+                    asset_name: valetudo-aarch64
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'Upload Congatudo amd64'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/amd64/valetudo
+                    asset_name: valetudo-amd64
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'UPX-compress Congatudo binaries'
+                run: 'npm run upx'
+            -
+                name: 'Upload Congatudo armv7.upx'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/armv7/valetudo.upx
+                    asset_name: valetudo-armv7.upx
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'Upload Congatudo armv7 lowmem.upx'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/armv7/valetudo-lowmem.upx
+                    asset_name: valetudo-armv7-lowmem.upx
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'Upload Congatudo aarch64.upx'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/aarch64/valetudo.upx
+                    asset_name: valetudo-aarch64.upx
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'Upload Congatudo amd64.upx'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/amd64/valetudo.upx
+                    asset_name: valetudo-amd64.upx
+                    asset_content_type: binary/octet-stream
+            -
+                name: 'Build manifest'
+                run: 'npm run build_release_manifest'
+            -
+                name: 'Upload manifest'
+                uses: congatudo/upload-release-asset@fe215ec089bc37bd881ebbca566039ebfe9c9ef0 # v.1.2.0
+                env:
+                    GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+                with:
+                    upload_url: '${{ github.event.release.upload_url }}'
+                    asset_path: ./build/valetudo_release_manifest.json
+                    asset_name: valetudo_release_manifest.json
+                    asset_content_type: application/json
