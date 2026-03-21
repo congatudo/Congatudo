@@ -1,137 +1,95 @@
-{
-  'name': 'Manual Build',
-  'on': ['workflow_dispatch'],
-  'jobs':
-    {
-      'build-congatudo':
-        {
-          'runs-on': 'ubuntu-latest',
-          'steps':
-            [
-              { 'uses': 'actions/checkout@v4' },
-              {
-                'name': 'Use Node.js 20.10.0',
-                'uses': 'actions/setup-node@v4',
-                'with': { 'node-version': '20.10.0' },
-              },
-              { 'name': 'Install', 'run': 'npm ci' },
-              {
-                'name': 'Generate OpenAPI Docs',
-                'run': 'npm run build_openapi_schema',
-              },
-              {
-                'name': 'Build Congatudo frontend',
-                'run': 'npm run build --workspace=frontend',
-              },
-              {
-                'name': 'Build Congatudo armv7',
-                'run': 'npm run build_armv7 --workspace=backend',
-              },
-              {
-                'name': 'Build Congatudo armv7 lowmem',
-                'run': 'npm run build_armv7_lowmem --workspace=backend',
-              },
-              {
-                'name': 'Build Congatudo aarch64',
-                'run': 'npm run build_aarch64 --workspace=backend',
-              },
-              {
-                'name': 'Build Congatudo arm64',
-                'run': 'npm run build_amd64 --workspace=backend',
-              },
-
-              {
-                'name': 'Upload armv7 build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-armv7',
-                    'path': './build/armv7/valetudo',
-                  },
-              },
-              {
-                'name': 'Upload armv7 lowmem build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-armv7-lowmem',
-                    'path': './build/armv7/valetudo-lowmem',
-                  },
-              },
-              {
-                'name': 'Upload aarch64 build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-aarch64',
-                    'path': './build/aarch64/valetudo',
-                  },
-              },
-              {
-                'name': 'Upload arm64 build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-arm64',
-                    'path': './build/arm64/valetudo',
-                  },
-              },
-
-              {
-                'name': 'UPX-compress Congatudo binaries',
-                'run': 'npm run upx',
-              },
-              {
-                'name': 'Upload armv7 upx build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-armv7.upx',
-                    'path': './build/armv7/valetudo.upx',
-                  },
-              },
-              {
-                'name': 'Upload armv7 lowmem upx build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-armv7-lowmem.upx',
-                    'path': './build/armv7/valetudo-lowmem.upx',
-                  },
-              },
-              {
-                'name': 'Upload aarch64 upx build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-aarch64.upx',
-                    'path': './build/aarch64/valetudo.upx',
-                  },
-              },
-              {
-                'name': 'Upload arm64 upx build',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo-arm64.upx',
-                    'path': './build/arm64/valetudo.upx',
-                  },
-              },
-
-              {
-                'name': 'Build manifest',
-                'run': 'npm run build_release_manifest',
-              },
-              {
-                'name': 'Upload manifest',
-                'uses': 'actions/upload-artifact@v4',
-                'with':
-                  {
-                    'name': 'valetudo_release_manifest.json',
-                    'path': './build/valetudo_release_manifest.json',
-                  },
-              },
-            ],
-        },
-    },
-}
+name: 'Manual Build'
+on:
+    - workflow_dispatch
+jobs:
+    build-congatudo:
+        runs-on: ubuntu-latest
+        steps:
+            -
+                uses: actions/checkout@v4
+            -
+                name: 'Use Node.js 20.10.0'
+                uses: actions/setup-node@v4
+                with:
+                    node-version: 20.10.0
+            -
+                name: Install
+                run: 'npm ci'
+            -
+                name: 'Generate OpenAPI Docs'
+                run: 'npm run build_openapi_schema'
+            -
+                name: 'Build Congatudo frontend'
+                run: 'npm run build --workspace=frontend'
+            -
+                name: 'Build Congatudo armv7'
+                run: 'npm run build_armv7 --workspace=backend'
+            -
+                name: 'Build Congatudo armv7 lowmem'
+                run: 'npm run build_armv7_lowmem --workspace=backend'
+            -
+                name: 'Build Congatudo aarch64'
+                run: 'npm run build_aarch64 --workspace=backend'
+            -
+                name: 'Build Congatudo arm64'
+                run: 'npm run build_amd64 --workspace=backend'
+            -
+                name: 'Upload armv7 build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-armv7
+                    path: ./build/armv7/valetudo
+            -
+                name: 'Upload armv7 lowmem build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-armv7-lowmem
+                    path: ./build/armv7/valetudo-lowmem
+            -
+                name: 'Upload aarch64 build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-aarch64
+                    path: ./build/aarch64/valetudo
+            -
+                name: 'Upload arm64 build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-arm64
+                    path: ./build/arm64/valetudo
+            -
+                name: 'UPX-compress Congatudo binaries'
+                run: 'npm run upx'
+            -
+                name: 'Upload armv7 upx build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-armv7.upx
+                    path: ./build/armv7/valetudo.upx
+            -
+                name: 'Upload armv7 lowmem upx build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-armv7-lowmem.upx
+                    path: ./build/armv7/valetudo-lowmem.upx
+            -
+                name: 'Upload aarch64 upx build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-aarch64.upx
+                    path: ./build/aarch64/valetudo.upx
+            -
+                name: 'Upload arm64 upx build'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo-arm64.upx
+                    path: ./build/arm64/valetudo.upx
+            -
+                name: 'Build manifest'
+                run: 'npm run build_release_manifest'
+            -
+                name: 'Upload manifest'
+                uses: actions/upload-artifact@v4
+                with:
+                    name: valetudo_release_manifest.json
+                    path: ./build/valetudo_release_manifest.json
