@@ -6,10 +6,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -
-                uses: actions/checkout@v4
+                uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
             -
                 name: 'Use Node.js 20.10.0'
-                uses: actions/setup-node@v4
+                uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
                 with:
                     node-version: 20.10.0
             -
@@ -35,25 +35,25 @@ jobs:
                 run: 'npm run build_amd64 --workspace=backend'
             -
                 name: 'Upload armv7 build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-armv7
                     path: ./build/armv7/valetudo
             -
                 name: 'Upload armv7 lowmem build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-armv7-lowmem
                     path: ./build/armv7/valetudo-lowmem
             -
                 name: 'Upload aarch64 build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-aarch64
                     path: ./build/aarch64/valetudo
             -
                 name: 'Upload arm64 build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-arm64
                     path: ./build/arm64/valetudo
@@ -62,25 +62,25 @@ jobs:
                 run: 'npm run upx'
             -
                 name: 'Upload armv7 upx build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-armv7.upx
                     path: ./build/armv7/valetudo.upx
             -
                 name: 'Upload armv7 lowmem upx build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-armv7-lowmem.upx
                     path: ./build/armv7/valetudo-lowmem.upx
             -
                 name: 'Upload aarch64 upx build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-aarch64.upx
                     path: ./build/aarch64/valetudo.upx
             -
                 name: 'Upload arm64 upx build'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo-arm64.upx
                     path: ./build/arm64/valetudo.upx
@@ -89,7 +89,7 @@ jobs:
                 run: 'npm run build_release_manifest'
             -
                 name: 'Upload manifest'
-                uses: actions/upload-artifact@v4
+                uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
                 with:
                     name: valetudo_release_manifest.json
                     path: ./build/valetudo_release_manifest.json

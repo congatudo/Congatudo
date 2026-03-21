@@ -76,12 +76,33 @@ class HassController {
      * @return {string}
      */
     toHassObjectIdFragment(value) {
-        return (value ?? "")
-            .toString()
-            .toLowerCase()
-            .replace(/[^a-z0-9_]/g, "_")
-            .replace(/_+/g, "_")
-            .replace(/^_+|_+$/g, "");
+        const str = (value ?? "").toString().toLowerCase();
+        let result = "";
+        let prevUnderscore = false;
+
+        for (const ch of str) {
+            const isValid = (ch >= "a" && ch <= "z") || (ch >= "0" && ch <= "9") || ch === "_";
+            const next = isValid ? ch : "_";
+
+            if (next === "_") {
+                if (result.length === 0 || prevUnderscore) {
+                    prevUnderscore = true;
+                    continue;
+                }
+
+                result += "_";
+                prevUnderscore = true;
+            } else {
+                result += next;
+                prevUnderscore = false;
+            }
+        }
+
+        if (result.endsWith("_")) {
+            result = result.slice(0, -1);
+        }
+
+        return result;
     }
 
     /**

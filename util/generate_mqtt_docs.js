@@ -28,7 +28,14 @@ const ValetudoEventStore = require("congatudo-backend/lib/ValetudoEventStore");
 
 
 function jekyllAlert(type, content) {
-    return "{% include alert.html type=\"" + type + "\" content=\"" + content.replace(/"/g, "\\\"") + "\" %}\n\n";
+    const escapedContent = content
+        .replace(/\\/g, "\\\\")
+        .replace(/"/g, "\\\"")
+        .replace(/\r/g, "\\r")
+        .replace(/\n/g, "\\n")
+        .replace(/\t/g, "\\t");
+
+    return "{% include alert.html type=\"" + type + "\" content=\"" + escapedContent + "\" %}\n\n";
 }
 
 const markdownPreamble = `---
