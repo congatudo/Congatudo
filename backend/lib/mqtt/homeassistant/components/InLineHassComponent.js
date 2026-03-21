@@ -37,7 +37,7 @@ class InLineHassComponent extends HassComponent {
     getAutoconf() {
         return Object.assign(this.autoconf, {
             name: this.friendlyName,
-            object_id: `${this.hass.objectId}_${this.friendlyName.toLowerCase().replace(/ /g, "_")}`
+            object_id: `${this.hass.objectId}_${this.hass.toHassObjectIdFragment(this.friendlyName)}`
         });
     }
 

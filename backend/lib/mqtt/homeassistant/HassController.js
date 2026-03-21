@@ -54,7 +54,7 @@ class HassController {
         this.identifier = this.controller.currentConfig.identity.identifier;
         this.qos = this.controller.currentConfig.qos;
 
-        this.objectId = `valetudo_${this.identifier.toLowerCase()}`;
+        this.objectId = `valetudo_${this.toHassObjectIdFragment(this.identifier)}`;
 
         this.debugAnchors = debugConfig.debugHassAnchors ?? false;
     }
@@ -66,6 +66,22 @@ class HassController {
      */
     getBaseTopic() {
         return this.topicPrefix + "/" + this.identifier + "/hass";
+    }
+
+    /**
+     * Convert a string to a Home Assistant object_id-safe fragment.
+     *
+     * @public
+     * @param {string} value
+     * @return {string}
+     */
+    toHassObjectIdFragment(value) {
+        return (value ?? "")
+            .toString()
+            .toLowerCase()
+            .replace(/[^a-z0-9_]/g, "_")
+            .replace(/_+/g, "_")
+            .replace(/^_+|_+$/g, "");
     }
 
     /**
