@@ -40,7 +40,10 @@ class HassComponent {
      * @return {string}
      */
     getAutoconfTopic() {
-        return "homeassistant/" + this.componentType + "/" + this.hass.identifier + "/" + this.componentId + "/config";
+        const nodeId = this.hass.toHassObjectIdFragment(this.hass.identifier);
+        const objectId = this.hass.toHassObjectIdFragment(this.componentId);
+
+        return "homeassistant/" + this.componentType + "/" + nodeId + "/" + objectId + "/config";
     }
 
     /**
