@@ -23,7 +23,7 @@ class VacuumHassComponent extends HassComponent {
     getAutoconf() {
         const result = {
             name: "Robot",
-            default_entity_id: this.hass.objectId,
+            default_entity_id: `${this.componentType}.${this.hass.objectId}`,
             supported_features: [
                 "status",
                 "start",
