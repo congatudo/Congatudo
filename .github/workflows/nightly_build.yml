@@ -4,7 +4,7 @@ on:
 jobs:
   nightly_build:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'knuspel'
+    if: github.repository_owner == 'congatudo'
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -34,8 +34,8 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.NIGHTLY_API_TOKEN_GITHUB }}
         with:
           source-directory: build
-          destination-github-username: knuspel
+          destination-github-username: congatudo
           destination-repository-name: congatudo-nightly
-          destination-repository-username: knuspel
-          user-email: github@knuspel.de
-          target-branch: main
+          destination-repository-username: congatudo
+          user-email: 'congatudo@congatudo.cloud'
+          target-branch: master
