@@ -17,7 +17,7 @@ jobs:
                 name: Checkout
                 uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
                 with:
-                    repository: knuspel/Congatudo
+                    repository: congatudo/Congatudo
                     fetch-depth: 0
                     token: '${{ github.token }}'
             -
@@ -73,13 +73,13 @@ jobs:
                 with:
                     push: false
                     load: true
-                    tags: "${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}\n${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-latest\n"
+                    tags: "${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}\n${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-latest\n"
                     cache-from: 'type=local,src=/tmp/.buildx-cache'
                     cache-to: 'type=local,dest=/tmp/.buildx-cache-new'
                     build-args: "\"BUILD_FROM=${{ matrix.build_from }}\"\n\"PKG_TARGET=${{ matrix.pkg_target }}\"\n\"PKG_OPTIONS=${{ matrix.pkg_options }}\"\n\"BUILD_PLATFORM=${{ matrix.platform }}\"\n"
             -
                 name: Push
-                run: "docker push ${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}\ndocker push ${{ env.REGISTRY }}/knuspel/congatudo:${{ matrix.image_name }}-latest\n"
+                run: "docker push ${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-${{ needs.info.outputs.version }}\ndocker push ${{ env.REGISTRY }}/congatudo/congatudo:${{ matrix.image_name }}-latest\n"
             -
                 name: 'Move cache'
                 run: "rm -rf /tmp/.buildx-cache\nmv /tmp/.buildx-cache-new /tmp/.buildx-cache\n"
@@ -102,7 +102,7 @@ jobs:
                     password: '${{ secrets.GITHUB_TOKEN }}'
             -
                 name: 'Create manifest'
-                run: "docker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:alpine-latest \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-armv7-latest \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-aarch64-latest \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-amd64-latest\ndocker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-latest \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armhf-latest \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armv7-latest \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-aarch64-latest \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-amd64-latest\ndocker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:alpine-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-armv7-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-aarch64-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:alpine-amd64-${{ needs.info.outputs.version }}\ndocker manifest create ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armhf-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-armv7-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-aarch64-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }}\n"
+                run: "docker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:alpine-latest \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-armv7-latest \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-aarch64-latest \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-latest\ndocker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-latest \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armhf-latest \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armv7-latest \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-aarch64-latest \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-latest\ndocker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:alpine-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-armv7-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-aarch64-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:alpine-amd64-${{ needs.info.outputs.version }}\ndocker manifest create ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armhf-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-armv7-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-aarch64-${{ needs.info.outputs.version }} \\\n  --amend ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-amd64-${{ needs.info.outputs.version }}\n"
             -
                 name: 'Push manifest'
-                run: "docker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:alpine-latest\ndocker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-latest\ndocker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:alpine-${{ needs.info.outputs.version }}\ndocker manifest push ${{ env.REGISTRY }}/knuspel/congatudo:homeassistant-${{ needs.info.outputs.version }}\n"
+                run: "docker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:alpine-latest\ndocker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-latest\ndocker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:alpine-${{ needs.info.outputs.version }}\ndocker manifest push ${{ env.REGISTRY }}/congatudo/congatudo:homeassistant-${{ needs.info.outputs.version }}\n"
