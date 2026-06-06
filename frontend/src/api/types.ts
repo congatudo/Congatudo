@@ -34,6 +34,7 @@ export enum Capability {
     WifiConfiguration = "WifiConfigurationCapability",
     WifiScan = "WifiScanCapability",
     ZoneCleaning = "ZoneCleaningCapability",
+    EdgeCleaning = "EdgeCleaningCapability",
     Quirks = "QuirksCapability",
 }
 

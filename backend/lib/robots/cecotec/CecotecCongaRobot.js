@@ -240,6 +240,12 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
             })
         );
 
+        this.registerCapability(
+            new capabilities.CecotecEdgeCleaningCapability({
+                robot: this,
+            })
+        );
+
         this.server.on("error", this.onError.bind(this));
         this.server.on("addRobot", this.onAddRobot.bind(this));
 

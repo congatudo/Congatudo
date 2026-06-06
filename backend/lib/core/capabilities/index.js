@@ -5,6 +5,7 @@ module.exports = {
     ConsumableMonitoringCapability: require("./ConsumableMonitoringCapability"),
     CurrentStatisticsCapability: require("./CurrentStatisticsCapability"),
     DoNotDisturbCapability: require("./DoNotDisturbCapability"),
+    EdgeCleaningCapability: require("./EdgeCleaningCapability"),
     FanSpeedControlCapability: require("./FanSpeedControlCapability"),
     GoToLocationCapability: require("./GoToLocationCapability"),
     KeyLockCapability: require("./KeyLockCapability"),

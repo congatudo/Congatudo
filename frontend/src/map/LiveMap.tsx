@@ -5,6 +5,7 @@ import {ActionsContainer} from "./Styled";
 import SegmentActions from "./actions/live_map_actions/SegmentActions";
 import SegmentLabelMapStructure from "./structures/map_structures/SegmentLabelMapStructure";
 import ZoneActions from "./actions/live_map_actions/ZoneActions";
+import EdgeActions from "./actions/live_map_actions/EdgeActions";
 import ZoneClientStructure from "./structures/client_structures/ZoneClientStructure";
 import GoToActions from "./actions/live_map_actions/GoToActions";
 import {TapTouchHandlerEvent} from "./utils/touch_handling/events/TapTouchHandlerEvent";
@@ -12,13 +13,14 @@ import React from "react";
 import {LiveMapModeSwitcher} from "./LiveMapModeSwitcher";
 
 
-export type LiveMapMode = "segments" | "zones" | "goto" | "none";
+export type LiveMapMode = "segments" | "zones" | "edges" | "goto" | "none";
 const LIVE_MAP_MODE_LOCAL_STORAGE_KEY = "live-map-mode";
 
 interface LiveMapProps extends MapProps {
     supportedCapabilities: {
         [Capability.MapSegmentation]: boolean,
         [Capability.ZoneCleaning]: boolean,
+        [Capability.EdgeCleaning]: boolean,
         [Capability.GoToLocation]: boolean
     }
 }
@@ -42,6 +44,9 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
         }
         if (props.supportedCapabilities[Capability.ZoneCleaning]) {
             this.supportedModes.push("zones");
+        }
+        if (props.supportedCapabilities[Capability.EdgeCleaning]) {
+            this.supportedModes.push("edges");
         }
         if (props.supportedCapabilities[Capability.GoToLocation]) {
             this.supportedModes.push("goto");
@@ -270,6 +275,11 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
                                 this.draw();
                             }}
                         />
+                    }
+                    {
+                        this.state.mode === "edges" &&
+
+                        <EdgeActions />
                     }
                     {
                         this.state.mode === "goto" &&

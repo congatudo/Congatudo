@@ -44,9 +44,22 @@ const StyledSpeedDial = styled(SpeedDial)(({theme}) => {
     };
 });
 
+
+const EdgeModeIcon = (): React.ReactElement => {
+    return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 5V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray="2 3"/>
+            <path d="M6 5H18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray="2 3"/>
+            <path d="M18 5V19" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" opacity="0.55"/>
+            <path d="M10 19H18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" opacity="0.55"/>
+        </svg>
+    );
+};
+
 const modeToIcon: Record<LiveMapMode, React.ReactElement> = {
     "segments": <SegmentModeIcon/>,
     "zones": <ZoneModeIcon/>,
+    "edges": <EdgeModeIcon/>,
     "goto": <GoToModeIcon/>,
     "none": <NoneModeIcon/>
 };
@@ -54,6 +67,7 @@ const modeToIcon: Record<LiveMapMode, React.ReactElement> = {
 const modeToLabel: Record<LiveMapMode, string> = {
     "segments": "Segments",
     "zones": "Zones",
+    "edges": "Edge",
     "goto": "Go To",
     "none": "None"
 };
