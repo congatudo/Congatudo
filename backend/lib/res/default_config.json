@@ -88,5 +88,11 @@
         "customizations": {
             "friendlyName": ""
         }
+    },
+    "congatudo": {
+        "zoneMeasurement": {
+            "cmPerMapUnit": null,
+            "segmentAreaMultiplier": 1
+        }
     }
 }

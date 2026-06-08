@@ -1,6 +1,7 @@
 import ClientStructure from "./ClientStructure";
 import deleteButtonIconSVG from "../icons/delete_zone.svg";
 import scaleButtonIconSVG from "../icons/scale_zone.svg";
+import {getEffectiveCmPerMapUnit} from "../../MapMeasurementConfig";
 import {StructureInterceptionHandlerResult} from "../Structure";
 import {Canvas2DContextTrackingWrapper} from "../../utils/Canvas2DContextTrackingWrapper";
 import {PointCoordinates} from "../../utils/types";
@@ -45,9 +46,10 @@ class ZoneClientStructure extends ClientStructure {
         const p0 = new DOMPoint(this.x0, this.y0).matrixTransform(transformationMatrixToScreenSpace);
         const p1 = new DOMPoint(this.x1, this.y1).matrixTransform(transformationMatrixToScreenSpace);
 
+        const cmPerMapUnit = getEffectiveCmPerMapUnit(pixelSize);
         const dimensions = {
-            x: ((Math.round(this.x1) - Math.round(this.x0)) * pixelSize) / 100,
-            y: ((Math.round(this.y1) - Math.round(this.y0)) * pixelSize) / 100
+            x: ((Math.round(this.x1) - Math.round(this.x0)) * cmPerMapUnit) / 100,
+            y: ((Math.round(this.y1) - Math.round(this.y0)) * cmPerMapUnit) / 100
         };
         const label = dimensions.x.toFixed(2) + " x " + dimensions.y.toFixed(2) + "m";
 

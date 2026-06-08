@@ -154,7 +154,8 @@ class SegmentLabelMapStructure extends MapStructure {
             }
 
             if (scaleFactor >= considerHiDPI(11)) {
-                let metaString = (this.area / 10000).toPrecision(2) + " m²";
+                const displayedArea = (this.area / 10000) * getSegmentAreaMultiplier();
+                let metaString = displayedArea.toPrecision(2) + " m²";
                 metaString += ` (id=${this.id})`;
 
                 ctx.font = `${considerHiDPI(fontSize - 5)}px sans-serif`;
