@@ -111,8 +111,8 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
         let modeIdxToUse = 0;
         let zoneOrderModeToUse: LiveMapZoneOrderMode = "manual";
         try {
-            const previousMode = window.localStorage.getItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY);
-            const previousZoneOrderMode = window.localStorage.getItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY);
+            const previousMode = globalThis.localStorage.getItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY);
+            const previousZoneOrderMode = globalThis.localStorage.getItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY);
 
             modeIdxToUse = Math.max(
                 this.supportedModes.findIndex(e => e === previousMode),
@@ -278,7 +278,7 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
                             });
 
                             try {
-                                window.localStorage.setItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY, newMode);
+                                globalThis.localStorage.setItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY, newMode);
                             } catch (e) {
                                 /* intentional */
                             }
@@ -322,11 +322,7 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
                                     this.redrawLayers();
                                 });
 
-                                try {
-                                    window.localStorage.setItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY, newZoneOrderMode);
-                                } catch (e) {
-                                    /* intentional */
-                                }
+                                globalThis.localStorage.setItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY, newZoneOrderMode);
                             }}
                             convertPixelCoordinatesToCMSpace={(coordinates => {
                                 return this.structureManager.convertPixelCoordinatesToCMSpace(coordinates);
