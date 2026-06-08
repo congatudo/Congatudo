@@ -17,6 +17,29 @@ export type LiveMapZoneOrderMode = "manual" | "auto";
 const LIVE_MAP_MODE_LOCAL_STORAGE_KEY = "live-map-mode";
 const LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY = "live-map-zone-order-mode";
 
+const getLiveMapLocalStorageItem = (key: string): string | null => {
+    try {
+        return globalThis.localStorage.getItem(key);
+    } catch (error) {
+        if (!(error instanceof DOMException) && !(error instanceof TypeError)) {
+            throw error;
+        }
+
+        return null;
+    }
+};
+
+const setLiveMapLocalStorageItem = (key: string, value: string): void => {
+    try {
+        globalThis.localStorage.setItem(key, value);
+    } catch (error) {
+        if (!(error instanceof DOMException) && !(error instanceof TypeError)) {
+            throw error;
+        }
+    }
+};
+
+
 const getLiveMapZoneCenter = (zone: ZoneClientStructure): {x: number, y: number} => {
     return {
         x: (zone.x0 + zone.x1) / 2,
@@ -110,19 +133,15 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
 
         let modeIdxToUse = 0;
         let zoneOrderModeToUse: LiveMapZoneOrderMode = "manual";
-        try {
-            const previousMode = globalThis.localStorage.getItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY);
-            const previousZoneOrderMode = globalThis.localStorage.getItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY);
+        const previousMode = getLiveMapLocalStorageItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY);
+        const previousZoneOrderMode = getLiveMapLocalStorageItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY);
 
-            modeIdxToUse = Math.max(
-                this.supportedModes.findIndex(e => e === previousMode),
-                0 //default to the first if not defined or not supported
-            );
+        modeIdxToUse = Math.max(
+            this.supportedModes.findIndex(e => e === previousMode),
+            0 //default to the first if not defined or not supported
+        );
 
-            zoneOrderModeToUse = previousZoneOrderMode === "auto" ? "auto" : "manual";
-        } catch (e) {
-            /* users with non-working local storage will have to live with the defaults */
-        }
+        zoneOrderModeToUse = previousZoneOrderMode === "auto" ? "auto" : "manual";
 
         this.state = {
             mode: this.supportedModes[modeIdxToUse] ?? "none",
@@ -277,11 +296,7 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
                                 mode: newMode
                             });
 
-                            try {
-                                globalThis.localStorage.setItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY, newMode);
-                            } catch (e) {
-                                /* intentional */
-                            }
+                            setLiveMapLocalStorageItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY, newMode);
                         }}
                     />
                 }
@@ -322,7 +337,7 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
                                     this.redrawLayers();
                                 });
 
-                                globalThis.localStorage.setItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY, newZoneOrderMode);
+                                setLiveMapLocalStorageItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY, newZoneOrderMode);
                             }}
                             convertPixelCoordinatesToCMSpace={(coordinates => {
                                 return this.structureManager.convertPixelCoordinatesToCMSpace(coordinates);
