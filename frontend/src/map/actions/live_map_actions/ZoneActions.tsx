@@ -9,6 +9,7 @@ import {Box, Button, CircularProgress, Container, Grid, Typography} from "@mui/m
 import { useLongPress } from "use-long-press";
 import {ActionButton} from "../../Styled";
 import ZoneClientStructure from "../../structures/client_structures/ZoneClientStructure";
+import type {LiveMapZoneOrderMode} from "../../LiveMap";
 import IntegrationHelpDialog from "../../../components/IntegrationHelpDialog";
 import {PointCoordinates} from "../../utils/types";
 import {IterationsIcon} from "../../../assets/icon_components/IterationsIcon";
@@ -18,8 +19,69 @@ import {
     Add as AddIcon
 } from "@mui/icons-material";
 
+
+const getZoneCenter = (zone: ZoneClientStructure): PointCoordinates => {
+    return {
+        x: (zone.x0 + zone.x1) / 2,
+        y: (zone.y0 + zone.y1) / 2
+    };
+};
+
+const getSquaredDistance = (a: PointCoordinates, b: PointCoordinates): number => {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+
+    return dx * dx + dy * dy;
+};
+
+const getAutomaticZoneOrder = (zones: ZoneClientStructure[]): ZoneClientStructure[] => {
+    if (zones.length <= 2) {
+        return zones;
+    }
+
+    const remaining = [...zones];
+
+    remaining.sort((a, b) => {
+        const ca = getZoneCenter(a);
+        const cb = getZoneCenter(b);
+
+        return (ca.x + ca.y) - (cb.x + cb.y);
+    });
+
+    const ordered: ZoneClientStructure[] = [];
+    let current = remaining.shift();
+
+    while (current !== undefined) {
+        ordered.push(current);
+
+        if (remaining.length === 0) {
+            break;
+        }
+
+        const currentCenter = getZoneCenter(current);
+        let bestIndex = 0;
+        let bestDistance = getSquaredDistance(currentCenter, getZoneCenter(remaining[0]));
+
+        for (let i = 1; i < remaining.length; i++) {
+            const distance = getSquaredDistance(currentCenter, getZoneCenter(remaining[i]));
+
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestIndex = i;
+            }
+        }
+
+        current = remaining.splice(bestIndex, 1)[0];
+    }
+
+    return ordered;
+};
+
 interface ZoneActionsProperties {
     zones: ZoneClientStructure[];
+    zoneOrderMode: LiveMapZoneOrderMode;
+
+    onZoneOrderModeToggle(): void;
 
     convertPixelCoordinatesToCMSpace(coordinates: PointCoordinates) : PointCoordinates
 
@@ -31,7 +93,7 @@ interface ZoneActionsProperties {
 const ZoneActions = (
     props: ZoneActionsProperties
 ): React.ReactElement => {
-    const { zones, convertPixelCoordinatesToCMSpace, onClear, onAdd } = props;
+    const { zones, zoneOrderMode, onZoneOrderModeToggle, convertPixelCoordinatesToCMSpace, onClear, onAdd } = props;
     const [iterationCount, setIterationCount] = React.useState(1);
     const [integrationHelpDialogOpen, setIntegrationHelpDialogOpen] = React.useState(false);
     const [integrationHelpDialogPayload, setIntegrationHelpDialogPayload] = React.useState("");
@@ -56,7 +118,9 @@ const ZoneActions = (
     const didSelectZones = zones.length > 0;
 
     const zonesForAPI = React.useMemo(() => {
-        return zones.map((zone) => {
+        const zonesForCleaning = zoneOrderMode === "auto" ? getAutomaticZoneOrder(zones) : zones;
+
+        return zonesForCleaning.map((zone) => {
             return {
                 points: {
                     pA: convertPixelCoordinatesToCMSpace({
@@ -78,7 +142,7 @@ const ZoneActions = (
                 }
             };
         });
-    }, [zones, convertPixelCoordinatesToCMSpace]);
+    }, [zones, zoneOrderMode, convertPixelCoordinatesToCMSpace]);
 
     const handleClick = React.useCallback(() => {
         if (!didSelectZones || !canClean) {
@@ -114,10 +178,10 @@ const ZoneActions = (
     );
 
     const handleIterationToggle = React.useCallback(() => {
-        if (zoneProperties) {
+        if (zoneProperties && didSelectZones && canClean && !cleanTemporaryZonesIsExecuting) {
             setIterationCount(iterationCount % zoneProperties.iterationCount.max + 1);
         }
-    }, [iterationCount, setIterationCount, zoneProperties]);
+    }, [iterationCount, setIterationCount, zoneProperties, didSelectZones, canClean, cleanTemporaryZonesIsExecuting]);
 
     if (zonePropertiesLoadError) {
         return (
@@ -180,6 +244,7 @@ const ZoneActions = (
                     zoneProperties.iterationCount.max > 1 &&
                     <Grid item>
                         <ActionButton
+                            disabled={!didSelectZones || cleanTemporaryZonesIsExecuting || !canClean}
                             color="inherit"
                             size="medium"
                             variant="extended"
@@ -195,7 +260,22 @@ const ZoneActions = (
                 }
                 <Grid item>
                     <ActionButton
-                        disabled={zones.length === zoneProperties.zoneCount.max || cleanTemporaryZonesIsExecuting}
+                        disabled={cleanTemporaryZonesIsExecuting || !canClean}
+                        color="inherit"
+                        size="medium"
+                        variant="extended"
+                        onClick={onZoneOrderModeToggle}
+                        title="Zone order mode"
+                        style={{
+                            textTransform: "initial"
+                        }}
+                    >
+                        {zoneOrderMode === "manual" ? "Manual" : "Auto"}
+                    </ActionButton>
+                </Grid>
+                <Grid item>
+                    <ActionButton
+                        disabled={zones.length === zoneProperties.zoneCount.max || cleanTemporaryZonesIsExecuting || !canClean}
                         color="inherit"
                         size="medium"
                         variant="extended"

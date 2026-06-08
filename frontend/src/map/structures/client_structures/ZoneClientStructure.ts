@@ -20,6 +20,7 @@ class ZoneClientStructure extends ClientStructure {
 
     public x1: number;
     public y1: number;
+    public orderLabel: string | undefined;
 
     constructor(
         x0: number, y0: number,
@@ -74,19 +75,48 @@ class ZoneClientStructure extends ClientStructure {
 
         ctxWrapper.restore();
 
-        ctxWrapper.save();
-        ctx.textAlign = "start";
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        ctx.strokeStyle = "rgba(18, 18, 18, 1)";
-        ctx.font = `${considerHiDPI(6) * scaleFactor}px sans-serif`;
+        if (this.active) {
+            ctxWrapper.save();
+            ctx.textAlign = "start";
+            ctx.fillStyle = "rgba(255, 255, 255, 1)";
+            ctx.strokeStyle = "rgba(18, 18, 18, 1)";
+            ctx.font = `${considerHiDPI(6) * scaleFactor}px sans-serif`;
 
-        ctx.lineWidth = considerHiDPI(3);
-        ctx.strokeText(label, p0.x, p0.y - considerHiDPI(8));
+            ctx.lineWidth = considerHiDPI(3);
+            ctx.strokeText(label, p0.x, p0.y - considerHiDPI(8));
 
-        ctx.lineWidth = considerHiDPI(1);
-        ctx.fillText(label, p0.x, p0.y - considerHiDPI(8));
+            ctx.lineWidth = considerHiDPI(1);
+            ctx.fillText(label, p0.x, p0.y - considerHiDPI(8));
 
-        ctxWrapper.restore();
+            ctxWrapper.restore();
+        }
+
+        if (this.orderLabel) {
+            const center = {
+                x: p0.x + ((p1.x - p0.x) / 2),
+                y: p0.y + ((p1.y - p0.y) / 2)
+            };
+            const orderFontSize = Math.max(
+                considerHiDPI(18),
+                Math.min(considerHiDPI(36), considerHiDPI(7) * scaleFactor)
+            );
+
+            ctxWrapper.save();
+
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "rgba(255, 255, 255, 1)";
+            ctx.strokeStyle = "rgba(18, 18, 18, 1)";
+            ctx.font = `bold ${orderFontSize}px sans-serif`;
+
+            ctx.lineWidth = considerHiDPI(4);
+            ctx.strokeText(this.orderLabel, center.x, center.y);
+
+            ctx.lineWidth = considerHiDPI(1);
+            ctx.fillText(this.orderLabel, center.x, center.y);
+
+            ctxWrapper.restore();
+        }
 
         if (this.active) {
             ctx.drawImage(
