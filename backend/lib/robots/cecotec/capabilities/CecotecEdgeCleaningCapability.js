@@ -7,7 +7,7 @@ module.exports = class CecotecEdgeCleaningCapability extends EdgeCleaningCapabil
         }
 
         if (typeof this.robot.robot.cleanEdgesDirect !== "function") {
-            throw new Error("Agnoc cleanEdgesDirect() is not available");
+            throw new TypeError("Agnoc cleanEdgesDirect() is not available");
         }
 
         await this.robot.robot.cleanEdgesDirect();
