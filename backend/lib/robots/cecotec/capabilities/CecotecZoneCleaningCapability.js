@@ -41,7 +41,16 @@ module.exports = class CecotecZoneCleaningCapability extends ZoneCleaningCapabil
                 ]);
         });
 
-        await this.robot.robot.cleanAreas(areas);
+        const iterations = Math.max(1, Math.min(2, Number(options.iterations) || 1));
+        const repeatedAreas = [];
+
+        areas.forEach(area => {
+            for (let i = 0; i < iterations; i++) {
+                repeatedAreas.push(area);
+            }
+        });
+
+        await this.robot.robot.cleanAreas(repeatedAreas);
     }
 
     /**
