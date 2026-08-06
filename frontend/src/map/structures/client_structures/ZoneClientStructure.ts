@@ -1,6 +1,7 @@
 import ClientStructure from "./ClientStructure";
 import deleteButtonIconSVG from "../icons/delete_zone.svg";
 import scaleButtonIconSVG from "../icons/scale_zone.svg";
+import {getEffectiveCmPerMapUnit} from "../../MapMeasurementConfig";
 import {StructureInterceptionHandlerResult} from "../Structure";
 import {Canvas2DContextTrackingWrapper} from "../../utils/Canvas2DContextTrackingWrapper";
 import {PointCoordinates} from "../../utils/types";
@@ -19,6 +20,7 @@ class ZoneClientStructure extends ClientStructure {
 
     public x1: number;
     public y1: number;
+    public orderLabel: string | undefined;
 
     constructor(
         x0: number, y0: number,
@@ -45,9 +47,10 @@ class ZoneClientStructure extends ClientStructure {
         const p0 = new DOMPoint(this.x0, this.y0).matrixTransform(transformationMatrixToScreenSpace);
         const p1 = new DOMPoint(this.x1, this.y1).matrixTransform(transformationMatrixToScreenSpace);
 
+        const cmPerMapUnit = getEffectiveCmPerMapUnit(pixelSize);
         const dimensions = {
-            x: ((Math.round(this.x1) - Math.round(this.x0)) * pixelSize) / 100,
-            y: ((Math.round(this.y1) - Math.round(this.y0)) * pixelSize) / 100
+            x: ((Math.round(this.x1) - Math.round(this.x0)) * cmPerMapUnit) / 100,
+            y: ((Math.round(this.y1) - Math.round(this.y0)) * cmPerMapUnit) / 100
         };
         const label = dimensions.x.toFixed(2) + " x " + dimensions.y.toFixed(2) + "m";
 
@@ -72,19 +75,48 @@ class ZoneClientStructure extends ClientStructure {
 
         ctxWrapper.restore();
 
-        ctxWrapper.save();
-        ctx.textAlign = "start";
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        ctx.strokeStyle = "rgba(18, 18, 18, 1)";
-        ctx.font = `${considerHiDPI(6) * scaleFactor}px sans-serif`;
+        if (this.active) {
+            ctxWrapper.save();
+            ctx.textAlign = "start";
+            ctx.fillStyle = "rgba(255, 255, 255, 1)";
+            ctx.strokeStyle = "rgba(18, 18, 18, 1)";
+            ctx.font = `${considerHiDPI(6) * scaleFactor}px sans-serif`;
 
-        ctx.lineWidth = considerHiDPI(3);
-        ctx.strokeText(label, p0.x, p0.y - considerHiDPI(8));
+            ctx.lineWidth = considerHiDPI(3);
+            ctx.strokeText(label, p0.x, p0.y - considerHiDPI(8));
 
-        ctx.lineWidth = considerHiDPI(1);
-        ctx.fillText(label, p0.x, p0.y - considerHiDPI(8));
+            ctx.lineWidth = considerHiDPI(1);
+            ctx.fillText(label, p0.x, p0.y - considerHiDPI(8));
 
-        ctxWrapper.restore();
+            ctxWrapper.restore();
+        }
+
+        if (this.orderLabel) {
+            const center = {
+                x: p0.x + ((p1.x - p0.x) / 2),
+                y: p0.y + ((p1.y - p0.y) / 2)
+            };
+            const orderFontSize = Math.max(
+                considerHiDPI(18),
+                Math.min(considerHiDPI(36), considerHiDPI(7) * scaleFactor)
+            );
+
+            ctxWrapper.save();
+
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "rgba(255, 255, 255, 1)";
+            ctx.strokeStyle = "rgba(18, 18, 18, 1)";
+            ctx.font = `bold ${orderFontSize}px sans-serif`;
+
+            ctx.lineWidth = considerHiDPI(4);
+            ctx.strokeText(this.orderLabel, center.x, center.y);
+
+            ctx.lineWidth = considerHiDPI(1);
+            ctx.fillText(this.orderLabel, center.x, center.y);
+
+            ctxWrapper.restore();
+        }
 
         if (this.active) {
             ctx.drawImage(

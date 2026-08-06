@@ -13,7 +13,90 @@ import {LiveMapModeSwitcher} from "./LiveMapModeSwitcher";
 
 
 export type LiveMapMode = "segments" | "zones" | "goto" | "none";
+export type LiveMapZoneOrderMode = "manual" | "auto";
 const LIVE_MAP_MODE_LOCAL_STORAGE_KEY = "live-map-mode";
+const LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY = "live-map-zone-order-mode";
+
+const getLiveMapLocalStorageItem = (key: string): string | null => {
+    try {
+        return globalThis.localStorage.getItem(key);
+    } catch (error) {
+        if (!(error instanceof DOMException) && !(error instanceof TypeError)) {
+            throw error;
+        }
+
+        return null;
+    }
+};
+
+const setLiveMapLocalStorageItem = (key: string, value: string): void => {
+    try {
+        globalThis.localStorage.setItem(key, value);
+    } catch (error) {
+        if (!(error instanceof DOMException) && !(error instanceof TypeError)) {
+            throw error;
+        }
+    }
+};
+
+
+const getLiveMapZoneCenter = (zone: ZoneClientStructure): {x: number, y: number} => {
+    return {
+        x: (zone.x0 + zone.x1) / 2,
+        y: (zone.y0 + zone.y1) / 2
+    };
+};
+
+const getLiveMapSquaredDistance = (a: {x: number, y: number}, b: {x: number, y: number}): number => {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+
+    return dx * dx + dy * dy;
+};
+
+const getAutomaticLiveMapZoneOrder = (zones: ZoneClientStructure[]): ZoneClientStructure[] => {
+    if (zones.length <= 2) {
+        return zones;
+    }
+
+    const remaining = [...zones];
+
+    remaining.sort((a, b) => {
+        const ca = getLiveMapZoneCenter(a);
+        const cb = getLiveMapZoneCenter(b);
+
+        return (ca.x + ca.y) - (cb.x + cb.y);
+    });
+
+    const ordered: ZoneClientStructure[] = [];
+    let current = remaining.shift();
+
+    while (current !== undefined) {
+        ordered.push(current);
+
+        if (remaining.length === 0) {
+            break;
+        }
+
+        const currentCenter = getLiveMapZoneCenter(current);
+        let bestIndex = 0;
+        let bestDistance = getLiveMapSquaredDistance(currentCenter, getLiveMapZoneCenter(remaining[0]));
+
+        for (let i = 1; i < remaining.length; i++) {
+            const distance = getLiveMapSquaredDistance(currentCenter, getLiveMapZoneCenter(remaining[i]));
+
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestIndex = i;
+            }
+        }
+
+        current = remaining.splice(bestIndex, 1)[0];
+    }
+
+    return ordered;
+};
+
 
 interface LiveMapProps extends MapProps {
     supportedCapabilities: {
@@ -25,6 +108,7 @@ interface LiveMapProps extends MapProps {
 
 interface LiveMapState extends MapState {
     mode: LiveMapMode,
+    zoneOrderMode: LiveMapZoneOrderMode,
     zones: Array<ZoneClientStructure>,
     goToTarget: GoToTargetClientStructure | undefined
 }
@@ -48,19 +132,20 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
         }
 
         let modeIdxToUse = 0;
-        try {
-            const previousMode = window.localStorage.getItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY);
+        let zoneOrderModeToUse: LiveMapZoneOrderMode = "manual";
+        const previousMode = getLiveMapLocalStorageItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY);
+        const previousZoneOrderMode = getLiveMapLocalStorageItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY);
 
-            modeIdxToUse = Math.max(
-                this.supportedModes.findIndex(e => e === previousMode),
-                0 //default to the first if not defined or not supported
-            );
-        } catch (e) {
-            /* users with non-working local storage will have to live with the defaults */
-        }
+        modeIdxToUse = Math.max(
+            this.supportedModes.findIndex(e => e === previousMode),
+            0 //default to the first if not defined or not supported
+        );
+
+        zoneOrderModeToUse = previousZoneOrderMode === "auto" ? "auto" : "manual";
 
         this.state = {
             mode: this.supportedModes[modeIdxToUse] ?? "none",
+            zoneOrderMode: zoneOrderModeToUse,
             selectedSegmentIds: [],
             selectedZoneIds: [],
             zones: [],
@@ -71,10 +156,22 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
     protected updateState() : void {
         super.updateState();
 
+        const zones = this.structureManager.getClientStructures().filter(s => {
+            return s.type === ZoneClientStructure.TYPE;
+        }) as Array<ZoneClientStructure>;
+
+        const zonesForLabels = this.state.zoneOrderMode === "auto" ? getAutomaticLiveMapZoneOrder(zones) : zones;
+
+        zones.forEach(zone => {
+            zone.orderLabel = undefined;
+        });
+
+        zonesForLabels.forEach((zone, idx) => {
+            zone.orderLabel = `${idx + 1}`;
+        });
+
         this.setState({
-            zones: this.structureManager.getClientStructures().filter(s => {
-                return s.type === ZoneClientStructure.TYPE;
-            }) as Array<ZoneClientStructure>,
+            zones: zones,
             goToTarget: this.structureManager.getClientStructures().find(s => {
                 return s.type === GoToTargetClientStructure.TYPE;
             }) as GoToTargetClientStructure | undefined
@@ -199,11 +296,7 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
                                 mode: newMode
                             });
 
-                            try {
-                                window.localStorage.setItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY, newMode);
-                            } catch (e) {
-                                /* intentional */
-                            }
+                            setLiveMapLocalStorageItem(LIVE_MAP_MODE_LOCAL_STORAGE_KEY, newMode);
                         }}
                     />
                 }
@@ -233,6 +326,19 @@ class LiveMap extends Map<LiveMapProps, LiveMapState> {
 
                         <ZoneActions
                             zones={this.state.zones}
+                            zoneOrderMode={this.state.zoneOrderMode}
+                            onZoneOrderModeToggle={() => {
+                                const newZoneOrderMode: LiveMapZoneOrderMode = this.state.zoneOrderMode === "manual" ? "auto" : "manual";
+
+                                this.setState({
+                                    zoneOrderMode: newZoneOrderMode
+                                }, () => {
+                                    this.updateState();
+                                    this.redrawLayers();
+                                });
+
+                                setLiveMapLocalStorageItem(LIVE_MAP_ZONE_ORDER_MODE_LOCAL_STORAGE_KEY, newZoneOrderMode);
+                            }}
                             convertPixelCoordinatesToCMSpace={(coordinates => {
                                 return this.structureManager.convertPixelCoordinatesToCMSpace(coordinates);
                             })}

@@ -94,6 +94,9 @@
           "_version": {
             "type": "string",
             "description": "Used for migration purposes"
+          },
+          "congatudo": {
+            "$ref": "#/components/schemas/CongatudoConfiguration"
           }
         }
       },
@@ -490,6 +493,33 @@
                 }
               }
             }
+          }
+        }
+      },
+      "CongatudoZoneMeasurementConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cmPerMapUnit": {
+            "type": "number",
+            "nullable": true,
+            "minimum": 0.000001,
+            "description": "Optional UI-only centimeters-per-map-unit override for manual zone measurement labels. If null or unset, the frontend uses the map pixel size as before."
+          },
+          "segmentAreaMultiplier": {
+            "type": "number",
+            "minimum": 0.000001,
+            "default": 1,
+            "description": "Optional UI-only multiplier for displayed room/segment area labels. It does not affect maps or cleaning payloads."
+          }
+        }
+      },
+      "CongatudoConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "zoneMeasurement": {
+            "$ref": "#/components/schemas/CongatudoZoneMeasurementConfiguration"
           }
         }
       }

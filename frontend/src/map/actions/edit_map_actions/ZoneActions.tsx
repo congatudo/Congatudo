@@ -126,10 +126,10 @@ const ZoneActions = (
     );
 
     const handleIterationToggle = React.useCallback(() => {
-        if (zoneProperties) {
+        if (zoneProperties && didSelectZones && canClean && !cleanTemporaryZonesIsExecuting) {
             setIterationCount(iterationCount % zoneProperties.iterationCount.max + 1);
         }
-    }, [iterationCount, setIterationCount, zoneProperties]);
+    }, [iterationCount, setIterationCount, zoneProperties, didSelectZones, canClean, cleanTemporaryZonesIsExecuting]);
 
     if (zonePropertiesLoadError) {
         return (
@@ -191,6 +191,7 @@ const ZoneActions = (
                     zoneProperties.iterationCount.max > 1 &&
                     <Grid item>
                         <ActionButton
+                            disabled={!didSelectZones || cleanTemporaryZonesIsExecuting || !canClean}
                             color="inherit"
                             size="medium"
                             variant="extended"
@@ -206,7 +207,7 @@ const ZoneActions = (
                 }
                 <Grid item>
                     <ActionButton
-                        disabled={zones.length === zoneProperties.zoneCount.max || cleanTemporaryZonesIsExecuting}
+                        disabled={zones.length === zoneProperties.zoneCount.max || cleanTemporaryZonesIsExecuting || !canClean}
                         color="inherit"
                         size="medium"
                         variant="extended"

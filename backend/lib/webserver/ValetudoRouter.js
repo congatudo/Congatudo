@@ -173,6 +173,20 @@ class ValetudoRouter {
             }
         });
 
+        this.router.get("/config/congatudo", (req, res) => {
+            const congatudoConfig = this.config.get("congatudo") || {};
+            const zoneMeasurementConfig = congatudoConfig.zoneMeasurement || {};
+            const cmPerMapUnit = Number(zoneMeasurementConfig.cmPerMapUnit);
+            const segmentAreaMultiplier = Number(zoneMeasurementConfig.segmentAreaMultiplier);
+
+            res.json({
+                zoneMeasurement: {
+                    cmPerMapUnit: Number.isFinite(cmPerMapUnit) && cmPerMapUnit > 0 ? cmPerMapUnit : null,
+                    segmentAreaMultiplier: Number.isFinite(segmentAreaMultiplier) && segmentAreaMultiplier > 0 ? segmentAreaMultiplier : 1
+                }
+            });
+        });
+
         this.router.get("/config/customizations", (req, res) => {
             const valetudoConfig = this.config.get("valetudo");
 
