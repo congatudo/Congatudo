@@ -12,6 +12,7 @@
     "frontend"
   ],
   "scripts": {
+    "postinstall": "patch-package",
     "build": "npm run build --workspace=frontend && npm run build --workspace=backend",
     "lint_all": "npm run lint --workspace=frontend && npm run lint --workspace=backend",
     "ts-check_all": "npm run ts-check --workspace=frontend && npm run ts-check --workspace=backend",
@@ -24,6 +25,9 @@
     "generate_nightly_changelog": "npx auto-changelog --commit-limit false --tag-pattern .+ --unreleased-only --handlebars-setup ./util/res/auto_changelog_handlebars_helpers.js --template ./util/res/auto_changelog_template.hbs --output ./build/changelog_nightly.md",
     "generate_eslintrc_flavors": "node util/generate_eslintrc_flavors.js",
     "prepare": "husky install"
+  },
+  "dependencies": {
+    "patch-package": "^8.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",

@@ -1,4 +1,5 @@
 const MapSegmentationCapability = require("../../../core/capabilities/MapSegmentationCapability");
+const AttachmentStateAttribute = require("../../../entities/state/attributes/AttachmentStateAttribute");
 
 /**
  * @extends MapSegmentationCapability<import("../CecotecCongaRobot")>
@@ -15,6 +16,12 @@ class CecotecMapSegmentationCapability extends MapSegmentationCapability {
         if (!this.robot.robot) {
             throw new Error("There is no robot connected to server");
         }
+
+        const mopAttachment = this.robot.state.getFirstMatchingAttribute({
+            attributeClass: AttachmentStateAttribute.name,
+            attributeType: AttachmentStateAttribute.TYPE.MOP,
+        });
+        this.robot.robot.device.updateHasMopAttached(mopAttachment?.attached === true);
 
         const map = this.robot.robot.device.map;
 

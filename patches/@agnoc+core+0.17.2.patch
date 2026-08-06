@@ -1,0 +1,98 @@
+diff --git a/node_modules/@agnoc/core/lib/emitters/robot.emitter.js b/node_modules/@agnoc/core/lib/emitters/robot.emitter.js
+index c9aec7c..3c7e9f6 100644
+--- a/node_modules/@agnoc/core/lib/emitters/robot.emitter.js
++++ b/node_modules/@agnoc/core/lib/emitters/robot.emitter.js
+@@ -51,7 +51,7 @@ exports.MANUAL_MODE = MANUAL_MODE;
+   MANUAL_MODE[MANUAL_MODE["init"] = 10] = "init";
+ })(MANUAL_MODE || (exports.MANUAL_MODE = MANUAL_MODE = {}));
+ const MODE_CHANGE_TIMEOUT = 5000;
+-const RECV_TIMEOUT = 5000;
++const RECV_TIMEOUT = 30000;
+ const CONSUMABLE_TYPE_RESET = {
+   [_deviceConsumable.CONSUMABLE_TYPE.MAIN_BRUSH]: 1,
+   [_deviceConsumable.CONSUMABLE_TYPE.SIDE_BRUSH]: 2,
+@@ -98,6 +98,7 @@ let Robot = (_class = class Robot extends _tinyTypedEmitter.TypedEmitter {
+     this.multiplexer = multiplexer;
+     this.debug = (0, _debug.debug)(__filename).extend(this.device.id.toString());
+     this.debug('new robot');
++    this._pendingMopPass = false;
+   }
+   get isConnected() {
+     return this.multiplexer.hasConnections;
+@@ -199,10 +200,16 @@ let Robot = (_class = class Robot extends _tinyTypedEmitter.TypedEmitter {
+     }
+   }
+   async stop() {
+-    await this.sendRecv('DEVICE_AUTO_CLEAN_REQ', 'DEVICE_AUTO_CLEAN_RSP', {
+-      ctrlValue: CTRL_VALUE.STOP,
+-      cleanType: 2
+-    });
++    if (this.device.mode?.value === _deviceMode2.DeviceMode.VALUE.MOP) {
++      await this.sendRecv('DEVICE_MOP_FLOOR_CLEAN_REQ', 'DEVICE_MOP_FLOOR_CLEAN_RSP', {
++        ctrlValue: CTRL_VALUE.STOP
++      });
++    } else {
++      await this.sendRecv('DEVICE_AUTO_CLEAN_REQ', 'DEVICE_AUTO_CLEAN_RSP', {
++        ctrlValue: CTRL_VALUE.STOP,
++        cleanType: 2
++      });
++    }
+     if (this.device.system.supports(_deviceSystem.DEVICE_CAPABILITY.MAP_PLANS) && this.device.map) {
+       const {
+         id,
+@@ -659,11 +666,30 @@ let Robot = (_class = class Robot extends _tinyTypedEmitter.TypedEmitter {
+     await this.sendRecv('DEVICE_MAPID_GET_GLOBAL_INFO_REQ', 'DEVICE_MAPID_GET_GLOBAL_INFO_RSP', {
+       mask: 0x78ff
+     });
+-    await this.sendRecv('DEVICE_AUTO_CLEAN_REQ', 'DEVICE_AUTO_CLEAN_RSP', {
++    if (this.device.hasMopAttached) {
++      this._pendingMopPass = true;
++    }
++    this.send('DEVICE_AUTO_CLEAN_REQ', {
+       ctrlValue: CTRL_VALUE.START,
+       cleanType: 2
+     });
+   }
++  async _runMopPass() {
++    await (0, _waitFor.waitFor)(() => {
++      var _this$device$state2;
++      return ((_this$device$state2 = this.device.state) === null || _this$device$state2 === void 0 ? void 0 : _this$device$state2.value) === _deviceState2.DeviceState.VALUE.DOCKED;
++    }, {
++      timeout: 10 * 60 * 1000
++    });
++    if (this.device.mode?.value !== _deviceMode2.DeviceMode.VALUE.MOP) {
++      await this.setMode(new _deviceMode2.DeviceMode({
++        value: _deviceMode2.DeviceMode.VALUE.MOP
++      }));
++    }
++    await this.sendRecv('DEVICE_MOP_FLOOR_CLEAN_REQ', 'DEVICE_MOP_FLOOR_CLEAN_RSP', {
++      ctrlValue: CTRL_VALUE.START
++    });
++  }
+   async resetMap() {
+     await this.sendRecv('DEVICE_MAPID_SET_HISTORY_MAP_ENABLE_REQ', 'DEVICE_MAPID_SET_HISTORY_MAP_ENABLE_RSP', {});
+   }
+@@ -944,6 +970,10 @@ let Robot = (_class = class Robot extends _tinyTypedEmitter.TypedEmitter {
+     message.respond('UNK_11A4', {
+       unk1: 0
+     });
++    if (this._pendingMopPass) {
++      this._pendingMopPass = false;
++      this._runMopPass().catch(err => this.debug('mop pass failed: %s', err));
++    }
+   }
+   handleReportCleanmap(message) {
+     const object = message.packet.payload.object;
+diff --git a/node_modules/@agnoc/core/lib/mappers/device-mode.mapper.js b/node_modules/@agnoc/core/lib/mappers/device-mode.mapper.js
+index d181d1d..87d820f 100644
+--- a/node_modules/@agnoc/core/lib/mappers/device-mode.mapper.js
++++ b/node_modules/@agnoc/core/lib/mappers/device-mode.mapper.js
+@@ -11,7 +11,7 @@ const {
+   VALUE
+ } = _deviceMode.DeviceMode;
+ function getDomainValue(mode) {
+-  if ([0, 1, 2, 4, 5, 10, 11].includes(mode)) {
++  if ([0, 1, 2, 4, 5, 6, 10, 11, 20, 23, 25, 26, 27, 29].includes(mode)) {
+     return VALUE.NONE;
+   }
+   if ([30, 31, 32, 35].includes(mode)) {
