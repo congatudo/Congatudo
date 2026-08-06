@@ -5,6 +5,7 @@ module.exports = {
     CecotecConsumableMonitoringCapability: require("./CecotecConsumableMonitoringCapability"),
     CecotecCurrentStatisticsCapability: require("./CecotecCurrentStatisticsCapability"),
     CecotecDoNotDisturbCapability: require("./CecotecDoNotDisturbCapability"),
+    CecotecEdgeCleaningCapability: require("./CecotecEdgeCleaningCapability"),
     CecotecFanSpeedControlCapability: require("./CecotecFanSpeedControlCapability"),
     CecotecGoToLocationCapability: require("./CecotecGoToLocationCapability"),
     CecotecLocateCapability: require("./CecotecLocateCapability"),

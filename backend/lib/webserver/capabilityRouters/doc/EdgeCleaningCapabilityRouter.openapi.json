@@ -1,0 +1,37 @@
+{
+  "paths": {
+    "/api/v2/robot/capabilities/EdgeCleaningCapability": {
+      "put": {
+        "tags": ["Robot Capabilities"],
+        "summary": "Start edge cleaning",
+        "description": "Starts whole-house edge/follow-wall cleaning. Segment selection is not supported by this capability.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["action"],
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": ["clean", "start"],
+                    "default": "clean"
+                  }
+                }
+              },
+              "example": {
+                "action": "clean"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "OK"},
+          "400": {"description": "Bad request"},
+          "500": {"description": "Robot or firmware error"}
+        }
+      }
+    }
+  }
+}
