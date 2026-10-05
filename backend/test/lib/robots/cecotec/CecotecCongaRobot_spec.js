@@ -143,4 +143,73 @@ describe("CecotecCongaRobot", function () {
             done();
         });
     });
+
+    describe("getSegmentEntities", function () {
+        it("Should fill a room whose median pixel falls on an obstacle", function (done) {
+            const conga = newConga();
+            // 10x6 room with a bed (0) at x 2..7, y 2..5: the floor is an inverted U
+            const fullMap = Array.from({ length: 10 }, (_, x) => {
+                return Array.from({ length: 6 }, (_, y) => {
+                    return x >= 2 && x <= 7 && y >= 2 ? 0 : 255;
+                });
+            });
+            // reported pixels (0,5), (9,5), (5,0): their median (5,5) is on the bed
+            const map = {
+                size: { y: 100 },
+                rooms: [{
+                    id: { value: 1 },
+                    isEnabled: true,
+                    name: "Bedroom",
+                    pixels: [{ x: 0, y: 95 }, { x: 9, y: 95 }, { x: 5, y: 100 }],
+                }],
+            };
+
+            const segments = conga.getSegmentEntities(map, fullMap);
+
+            segments.should.have.length(1);
+            segments[0].dimensions.pixelCount.should.equal(36);
+            fullMap.flat().should.not.containEql(255);
+
+            done();
+        });
+
+        it("Should not let a door line split the room behind it", function (done) {
+            const conga = newConga();
+            // 12x5 free floor: room A is x 0..4, hallway B is x 5..11
+            const fullMap = Array.from({ length: 12 }, () => {
+                return new Array(5).fill(255);
+            });
+            const room = (id, cells) => {
+                return {
+                    id: { value: id },
+                    isEnabled: true,
+                    name: "room" + id,
+                    pixels: cells.map(([x, y]) => {
+                        return { x: x, y: 100 - y };
+                    }),
+                };
+            };
+            const outlineA = [];
+            const outlineB = [];
+
+            for (let x = 0; x < 12; x++) {
+                for (let y = 0; y < 5; y++) {
+                    if (x <= 4 && (x === 0 || x === 4 || y === 0 || y === 4)) {
+                        outlineA.push([x, y]); // includes the door line at x = 4
+                    } else if (x >= 5 && (x === 11 || y === 0 || y === 4)) {
+                        outlineB.push([x, y]); // open towards the door
+                    }
+                }
+            }
+
+            const segments = conga.getSegmentEntities({ size: { y: 100 }, rooms: [room(1, outlineA), room(2, outlineB)] }, fullMap);
+
+            segments.map(s => {
+                return s.dimensions.pixelCount;
+            }).should.eql([25, 35]);
+            segments[0].dimensions.x.max.should.equal(4);
+
+            done();
+        });
+    });
 });

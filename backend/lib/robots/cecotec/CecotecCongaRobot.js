@@ -546,44 +546,90 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         return map;
     }
 
-    // fill recursive
     /**
-     * @param {number} x
-     * @param {number} y
-     * @param {string | any[]} fullMap
-     * @param {import("../../../lib/entities/map/MapLayer")} layer
+     * Fills the unclaimed floor cells (255) of fullMap with the segments.
+     *
+     * The robot only reports the outline of each room, door lines included, so
+     * the interior has to be rebuilt. Every enclosed region of free floor goes
+     * to the segment whose pixels border most of it. A single seed point (e.g.
+     * the median) can fall on an obstacle, like a bed in the middle of the room,
+     * and leave the segment hollow. Growing from the outlines instead leaks
+     * through the door lines and splits a hallway between the rooms around it.
+     *
+     * @param {any[]} fullMap
+     * @param {Array<import("../../../lib/entities/map/MapLayer")>} layers
      */
-    boundaryFill8( x, y, fullMap, layer) {
-        let maxX = fullMap.length;
-        let maxY = fullMap[0].length;
-        let pixels = [];
-        fullMap[x][y] = layer.metaData.segmentId;
-        pixels.push(x, y);
-        while (pixels.length !== 0) {
-            x = pixels.shift();
-            y = pixels.shift();
+    fillSegments(fullMap, layers) {
+        const segments = new Map(layers.map(layer => {
+            return [layer.metaData.segmentId, layer];
+        }));
 
-            if (x + 1 <= maxX && fullMap[x+1][y] === 255) {
-                pixels.push(x + 1, y);
-                fullMap[x+1][y] = layer.metaData.segmentId;
-                layer.congaPixels.push(x+1, y);
-            }
-            if (y + 1 <= maxY && fullMap[x][y+1] === 255) {
-                pixels.push(x, y + 1);
-                fullMap[x][y+1] = layer.metaData.segmentId;
-                layer.congaPixels.push(x, y+1);
-            }
-            if (x - 1 >= 0 && fullMap[x-1][y] === 255) {
-                pixels.push(x - 1, y);
-                fullMap[x-1][y] = layer.metaData.segmentId;
-                layer.congaPixels.push(x-1, y);
-            }
-            if (y - 1 >= 0 && fullMap[x][y-1] === 255) {
-                pixels.push(x, y - 1);
-                fullMap[x][y-1] = layer.metaData.segmentId;
-                layer.congaPixels.push(x, y-1);
+        for (let x = 0; x < fullMap.length; x++) {
+            for (let y = 0; y < fullMap[x].length; y++) {
+                if (fullMap[x][y] !== 255) {
+                    continue;
+                }
+
+                // -1 marks visited cells; regions that border no segment keep it
+                const region = [[x, y]];
+                const votes = new Map();
+                fullMap[x][y] = -1;
+
+                for (let i = 0; i < region.length; i++) {
+                    for (const [dx, dy] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
+                        const nx = region[i][0] + dx;
+                        const ny = region[i][1] + dy;
+                        const cell = fullMap[nx]?.[ny];
+
+                        if (cell === 255) {
+                            fullMap[nx][ny] = -1;
+                            region.push([nx, ny]);
+                        } else if (segments.has(cell)) {
+                            votes.set(cell, (votes.get(cell) ?? 0) + 1);
+                        }
+                    }
+                }
+
+                const owner = [...votes].sort((a, b) => {
+                    return b[1] - a[1];
+                })[0]?.[0];
+
+                if (owner !== undefined) {
+                    region.forEach(([rx, ry]) => {
+                        fullMap[rx][ry] = owner;
+                        segments.get(owner).congaPixels.push(rx, ry);
+                    });
+                }
             }
         }
+    }
+
+    /**
+     * Rebuilds the layer with its pixels sorted row by row and without
+     * duplicates, which MapLayer needs to compress them and to get the
+     * dimensions (and thus the area) of the filled segment.
+     *
+     * @param {import("../../../lib/entities/map/MapLayer")} layer
+     * @returns {import("../../../lib/entities/map/MapLayer")}
+     */
+    finalizeSegmentLayer(layer) {
+        const pairs = [];
+
+        for (let i = 0; i < layer.congaPixels.length; i = i + 2) {
+            pairs.push([layer.congaPixels[i], layer.congaPixels[i + 1]]);
+        }
+
+        pairs.sort((a, b) => {
+            return a[1] - b[1] || a[0] - b[0];
+        });
+
+        return new MapLayer({
+            type: layer.type,
+            pixels: pairs.filter((p, i) => {
+                return i === 0 || p[0] !== pairs[i - 1][0] || p[1] !== pairs[i - 1][1];
+            }).flat(),
+            metaData: layer.metaData,
+        });
     }
 
     /**
@@ -618,50 +664,20 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
         for (let i = 0; i < layer.congaPixels.length; i = i + 2) {
             let x = layer.congaPixels[i];
             let y = layer.congaPixels[i + 1];
-            if (fullMap[x][y] === 255) {
+            if (fullMap[x] && fullMap[x][y] === 255) {
                 fullMap[x][y] = layer.metaData.segmentId;
             }
         }
     }
-
-    // Adapted from https://stackoverflow.com/a/53660837
-    /**
-     * @param {any[]} numbers
-     */
-    median (numbers) { //Note that this will modify the input array
-        numbers.sort((a, b) => {
-            return a - b;
-        });
-
-        const middle = Math.floor(numbers.length / 2);
-
-        if (numbers.length % 2 === 0) {
-            return (numbers[middle - 1] + numbers[middle]) / 2;
-        }
-
-        return numbers[middle];
-    }
-
-    // clean segments
-    /*clearSegment(s, fullMap) {
-        for (let i = 0; i < s.congaPixels.length; i = i + 2) {
-            x.push(s.congaPixels[i]);
-            y.push(s.congaPixels[i + 1]);
-        }
-    }*/
 
     /**
      * @param {import("@agnoc/core").DeviceMap} map
      * @param {any[]} fullMap
      */
     getSegmentEntities(map, fullMap) {
-        const { rooms } = map;
-
-        let r = (
-            rooms.map((room) => {
-                return this.getSegmentEntity(map, room);
-            }) || []
-        );
+        const r = map.rooms.map((room) => {
+            return this.getSegmentEntity(map, room);
+        }).filter(Boolean);
 
         if (fullMap.length !== 0) {
             // try to fill the segment, fu** Cec****
@@ -669,28 +685,13 @@ module.exports = class CecotecCongaRobot extends ValetudoRobot {
             r.forEach(s => {
                 this.dumpSegmentLayer(fullMap, s);
             });
-            r.forEach(s => {
-                let x = [];
-                let y = [];
 
-                for (let i = 0; i < s.congaPixels.length; i = i + 2) {
-                    x.push(s.congaPixels[i]);
-                    y.push(s.congaPixels[i + 1]);
-                }
-
-                let middleX = Math.round(this.median(x));
-                let middleY = Math.round(this.median(y));
-
-                this.boundaryFill8(middleX, middleY, fullMap, s);
-            });
+            this.fillSegments(fullMap, r);
         }
 
-        // compress congaPixels 
-        r.forEach(s => {
-            s.compressPixels(s.congaPixels);
+        return r.map(s => {
+            return this.finalizeSegmentLayer(s);
         });
-
-        return r;
     }
 
     /**
