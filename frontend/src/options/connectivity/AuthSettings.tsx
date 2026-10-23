@@ -135,7 +135,7 @@ const AuthSettings = (): React.ReactElement => {
                         }}
                     >
                         <Typography color="info">
-                            Congatudo will by default try to block access from public-routable IP addresses
+                            Congatudo will by default try to block access from publicly routable IP addresses
                             for your safety and convenience.
                             <br/><br/>
                             If you want to allow external access to your Congatudo instance, consider using a VPN such as

@@ -128,7 +128,7 @@ const AuthSettings = (): React.ReactElement => {
                 }}
             >
                 <Typography color="info">
-                    Valetudo will by default try to block access from public-routable IP addresses
+                    Valetudo will by default try to block access from publicly routable IP addresses
                     for your safety and convenience.
                     <br/><br/>
                     If you want to allow external access to your Valetudo instance, consider using a VPN such as

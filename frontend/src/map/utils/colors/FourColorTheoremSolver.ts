@@ -37,7 +37,7 @@ export class FourColorTheoremSolver {
 
     /*
      * @param {string} segmentId - ID of the segment you want to get the color for.
-     * The segment ID is extracted from the layer meta data in the first contructor parameter of this class.
+     * The segment ID is extracted from the layer meta data in the first constructor parameter of this class.
      * @returns {number} The segment color, represented as an integer. Starts at 0 and goes up the minimal number of colors required to color the map without collisions.
      */
     getColor(segmentId: string) : SegmentColorId {
